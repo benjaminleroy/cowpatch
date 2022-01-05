@@ -5,8 +5,13 @@ import pandas as pd
 import plotnine as p9
 import svgutils.transform as sg
 import io
+import os
 import re
 import cairosvg
+
+# for text in svg
+import matplotlib.pyplot as plt
+plt.rcParams['svg.fonttype'] = 'none'
 
 
 # Predefined plots
@@ -61,8 +66,8 @@ grobs = [p0,p1,p2,p3]
 full_width = width * dpi
 full_height = height * dpi
 
-full_width_pt = str(width * 72)+"pt"
-full_height_pt = str(height * 72)+"pt"
+full_width_pt = str(int(width * 72 * 3/4))+"pt"
+full_height_pt = str(int(height * 72 * 3/4))+"pt"
 
 
 def gg_to_svg(gg, width, height, dpi, limitsize=True):
@@ -99,7 +104,7 @@ def gg_to_svg(gg, width, height, dpi, limitsize=True):
 
     try:
         gg.save(fid, format= "svg", height = height, width = width,
-            dpi=dpi, units = "in", limitsize = limitsize)
+            dpi=dpi, units = "in", limitsize = limitsize, verbose=False) # TODO check why they have this naming...
     except ValueError:
         rasie(ValueError, "No ggplot SVG backend")
     fid.seek(0)
@@ -209,10 +214,12 @@ def find_left_corner(lc_raw, box_size, actual_size,
 
 
 
+# scaled to fill -----------------
 
 base_image = sg.SVGFigure(width = full_width_pt,
                           height = full_height_pt) # hoping for the best...
 base_image.set_size((full_width_pt, full_height_pt))
+#^ TODO: this size is somehow wrong... maybe it's expecting a different size structure or the rest is...
 base_image.append(sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#BDBDBD\"/>"))
 
 vjust = 1
@@ -225,7 +232,7 @@ lc_shifts = []
 scales = []
 
 for p_idx in np.arange(4, dtype = int):
-    print(p_idx)
+    #print(p_idx)
     svg = gg_to_svg(grobs[p_idx],
                           width = info_dict[p_idx]["full_size"][0],
                           height = info_dict[p_idx]["full_size"][1],
@@ -238,7 +245,7 @@ for p_idx in np.arange(4, dtype = int):
 
     scale = proposed_scaling_both(current_size, desired_size)
     scales.append(scale)
-    print(current_size)
+    #print(current_size)
 
     #svg.save("test1.svg")
 
@@ -254,9 +261,9 @@ for p_idx in np.arange(4, dtype = int):
     scaled_size = transform_size(scaled_size_raw)
     #scaled_svg.save("test2.svg")
 
-    print(desired_size)
-    print(scaled_size)
-    print("\n")
+    #print(desired_size)
+    #print(scaled_size)
+    #print("\n")
 
     svg_sizes.append(scaled_size)
     svg_desired_sizes.append(desired_size)
@@ -296,14 +303,118 @@ info_df = pd.DataFrame(data = {"p_idx": np.arange(4),
                      "upper_left_correct_actual": lc_shifts,
                      "scaled": scales})
 
-base_image.save("hopeful_v"+str(vjust)+"h"+str(hjust)+".svg")
+base_image.save("scaled_to_fill.svg")
 
 # this last step could be down with a buffer too
-cairosvg.svg2pdf(file_obj = open("hopeful_v"+str(vjust)+"h"+str(hjust)+".svg"),
-                 write_to = "hopeful_v"+str(vjust)+"h"+str(hjust)+".pdf")
+cairosvg.svg2pdf(file_obj = open("scaled_to_fill.svg"),
+                 write_to = "scaled_to_fill.pdf")
+
+# only scaled to fill one dimension ----------
+
+base_image = sg.SVGFigure(width = full_width_pt,
+                          height = full_height_pt) # hoping for the best...
+base_image.set_size((full_width_pt, full_height_pt))
+#base_image.append(sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#BDBDBD\"/>"))
+
+vjust = 1
+hjust = .5
+
+svg_sizes = []
+svg_desired_sizes = []
+lc_raws = []
+lc_shifts = []
+scales = []
+
+for p_idx in np.arange(4, dtype = int):
+    print(p_idx)
+    svg = gg_to_svg(grobs[p_idx],
+                          width = info_dict[p_idx]["full_size"][0],
+                          height = info_dict[p_idx]["full_size"][1],
+                          dpi = dpi)
+
+    current_size_raw = svg.get_size()
+    current_size = transform_size(current_size_raw)
+    desired_size_raw = [str(v *72)+"pt" for v in info_dict[p_idx]["full_size"]]
+    desired_size = transform_size(desired_size_raw)
+
+    scale = proposed_scaling(current_size, desired_size)
+    scales.append(scale)
+    print(current_size)
+
+    #svg.save("test1.svg")
+
+    inner_root = svg.getroot()
+    inner_root.moveto(x=0,y=0,scale_x=scale[0], scale_y=scale[1])
+
+    scaled_svg = sg.SVGFigure()
+    scaled_svg.set_size((str(current_size[0]*scale[0])+"pt",
+                      str(current_size[1]*scale[1])+"pt"))
+
+    scaled_svg.append(inner_root)
+    scaled_size_raw = scaled_svg.get_size()
+    scaled_size = transform_size(scaled_size_raw)
+    #scaled_svg.save("test2.svg")
+
+    #print(desired_size)
+    #print(scaled_size)
+    #print("\n")
+
+    svg_sizes.append(scaled_size)
+    svg_desired_sizes.append(desired_size)
 
 
+    # 1. extract expected vs actual dimensions
+    # 2. propose scaling with moveto
+    # 3. capture new actual vs expected
+    # 4. define upper left anchor relative to v_align l,r,c and h_align t,c,b
+    # 5. store upper left anchor (should allow for a way for a user to define
+    #   this)
 
+
+    inner_root = scaled_svg.getroot()
+
+    inner_lc_raw =(info_dict[p_idx]["start"][0] * 72,
+                    info_dict[p_idx]["start"][1] * 72)
+
+    lc_raws.append(inner_lc_raw)
+
+    new_lc = find_left_corner(lc_raw =inner_lc_raw,
+                             box_size = desired_size,
+                             actual_size = scaled_size,
+                             vjust=vjust,
+                             hjust=hjust)
+    lc_shifts.append(new_lc)
+
+    inner_root.moveto(x=new_lc[0],
+                      y=new_lc[1])
+    # thought scale to fit desired location, then center?
+    base_image.append(inner_root)
+
+info_df = pd.DataFrame(data = {"p_idx": np.arange(4),
+                     "svg_size": svg_sizes,
+                     "desired_size": svg_desired_sizes,
+                     "upper_left_corner_box": lc_raws,
+                     "upper_left_correct_actual": lc_shifts,
+                     "scaled": scales})
+
+# base_image.save("scaled_to_fill.svg")
+
+# fid = os.PathLike()
+
+# try:
+#     base_image.save(fid)
+# except ValueError: # not working....
+#     raise(ValueError, "No ggplot SVG backend")
+# fid.seek(0)
+# img_svg = cairosvg.svg2pdf(file_obj = fid.read(),
+#                            write_to = "scaled_to_fill.pdf")
+
+
+# this last step could be down with a buffer too
+base_image.save("scaled_to_fill_one_dim_v"+str(vjust)+"_h"+str(hjust)+".svg")
+
+cairosvg.svg2pdf(file_obj = open("scaled_to_fill_one_dim_v"+str(vjust)+"_h"+str(hjust)+".svg"),
+                 write_to = "scaled_to_fill_one_dim_v"+str(vjust)+"_h"+str(hjust)+".svg")
 
 # svg vs png
 # Pro: not razerized
