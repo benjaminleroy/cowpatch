@@ -1,6 +1,8 @@
 # Navigating scaling and fixed aspect ratios
 
-The current idea for this package is to create a image object^[1] then do a minor scaling to perfect fit the desired size for the object (with respect to the global image). The python file `proof_of_concept.py` file presents an example of the type of approach I'm thinking.
+The current idea for this package is to create a image object[^1] then do a minor scaling to perfect fit the desired size for the object (with respect to the global image). The python file `proof_of_concept.py` file presents an example of the type of approach I'm thinking.
+
+[^1]: In this case a `svg` but likely this problem would also occur in a different way with `png`, etc.
 
 The next question is then, how to navigate scaling of objects and when to not scale, only scale with a fixed aspect ratio or generally scale. I think we can successfully do so within the `svg` space with a few tools (I'm guessing a `svg` style proof of concept and then convert that into a more general `python` wrapper).
 
@@ -19,10 +21,7 @@ In the `basic_clean.svg` file you'll see an example of a basic svg image (`plotn
 
 ### My current approach
 
-After reading the [w3 chapter](https://www.w3.org/TR/SVG2/coords.html) I'll be trying to figure out the cleanest ways to scale things (with and without aspect ratio) and how to deal with text (which we actually don't want scaled at all- but wanted centered at the correct location). Probably will require segmentation of `svg` code like [CSS-tricks: scale parts of SVG seperately], understanding how to redefine object's anchoring locations and more.
-
-
-
+After reading the [w3 chapter](https://www.w3.org/TR/SVG2/coords.html) I'll be trying to figure out the cleanest ways to scale things (with and without aspect ratio) and how to deal with text (which we actually don't want scaled at all- but wanted centered at the correct location). Probably will require segmentation of `svg` code like [CSS-tricks: scale parts of SVG seperately](https://css-tricks.com/scale-svg/#how-to-scale-parts-of-an-svg-separately), understanding how to redefine object's anchoring locations and more.
 
 # Other things
 
@@ -31,7 +30,7 @@ After reading the [w3 chapter](https://www.w3.org/TR/SVG2/coords.html) I'll be t
 3. understanding svg `paths` and other object specification ([mozilla docs: SVG paths](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths))
 
 
-[^1]: In this case a `svg` but likely this problem would also occur in a different way with `png`, etc.
+
 
 
 # How to manipulate the `svg` objects
