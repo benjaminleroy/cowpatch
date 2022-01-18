@@ -8,6 +8,10 @@ import io
 import os
 import re
 
+import cairosvg
+from PIL import Image
+import progressbar
+
 # for text in svg
 import matplotlib.pyplot as plt
 plt.rcParams['svg.fonttype'] = 'none'
@@ -67,14 +71,16 @@ full_width_pt = str(int(width * 72 * 3/4))+"pt"
 full_height_pt = str(int(height * 72 * 3/4))+"pt"
 
 
+# functions -------------
+
 def gg_to_svg(gg, width, height, dpi, limitsize=True):
     """
-    Convert plotnine ggplot figure to PIL Image and return it
+    Convert plotnine ggplot figure to svgutils object and return it
 
     Arguments
     ---------
     gg: plotnine.ggplot.ggplot
-        object to save as a png image
+        object to save as a svg image
     width : float
         width in inches to be passed to the plotnine's ggplot.save function
     height: float
@@ -111,34 +117,36 @@ def gg_to_svg(gg, width, height, dpi, limitsize=True):
 
 
 
-def transform_size(size):
+def transform_size(size_string_tuple):
     """
     takes string with unit and converts it to a float w.r.t pt
 
     Argument
     --------
-    size : string tuple
+    size_string_tuple : string tuple
         tuple of strings with size of svg image 
 
     Return
     ------
     tuple of floats of sizes w.r.t pt
     """
-    value = [float(re.search(r'[0-9\.+]+', s).group()) for s in size]
+    value = [float(re.search(r'[0-9\.+]+', s).group())
+                for s in size_string_tuple]
     
-    if size[0].endswith("pt"):
+    if size_string_tuple[0].endswith("pt"):
        return (value[0], value[1])
-    elif size[0].endswith("in"):
+    elif size_string_tuple[0].endswith("in"):
         return (value[0]/72, value[1]/72)
+    elif size_string_tuple[0].endswith("px"):
+        return (value[0]*.75, value[1]*.75)
     else:
-        raise ValueError("size structure of object not as expected, "+\
-                         "new size type")
+        raise ValueError("size_string_tuple structure of object not as "+\
+                         "expected, new size type")
 
 
 def proposed_scaling_both(current, desired):
     """
-    identify a single scalar to scale the image by so that
-    it is closer to the desired scaling (fills the space as much as possible)
+    identify a x and y scaling to make the current size into the desired size
 
     Arguments
     ---------
@@ -149,8 +157,8 @@ def proposed_scaling_both(current, desired):
 
     Returns
     -------
-    float
-        constant scalar for size change
+    tuple
+        float tuple of scalar constants for size change in each dimension
     """
     scale_x = desired[0]/current[0]
     scale_y = desired[1]/current[1]
@@ -158,46 +166,48 @@ def proposed_scaling_both(current, desired):
     return scale_x, scale_y
 
 
-
-def find_left_corner(lc_raw, box_size, actual_size,
-                     vjust=1,
-                     hjust=.5):
+def real_size_out_svg(gg, height, width, dpi, limitsize=True):
     """
+    Calculate the output size for a plotnine.ggplot object saving as an
+    svg
+
+    Details
+    -------
+    This function is useful given default approach for the saving of
+    images uses `bbox_inches="tight"`. This appears to be done since to obtain
+    desirable containment of all parts in the image (not to overflow the
+    provided space) and because matplotlib's `plt.tight_layout()` doesn't
+    preform as expected for the `plotnine.ggplot` objects.
+
+    This code leverages ideas that are presented in a blog post by Kavi Gupta
+    at https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/
 
     Arguments
     ---------
-    lc_raw : tuple
-        float tuple of left corner of box
-    box_size: tuple
-        float tuple of box size for svg object
-    actual_size: tuple
-        float tuple of actual size of svg object
-    vjust: float
-        between 0 and 1, amount of shift vertically within box
-    hjust: float
-        between 0 and 1, amount of shift horizontally within box
+    gg : plotnine.ggplot.ggplot
+        ggplot object to calculate optimal size
+    height : float
+        desired height of svg output (in inches)
+    width : float
+        desired width of svg output (in inches)
+    dpi : float
+        dots per inch of saved object
+    limitsize : boolean
+        logic if plotnine's ggplot.save function should check if the requested
+        width and height in inches are greater than 50 (assumes the user
+        accidentally entered in these values w.r.t. pixels)
 
-    """
-    assert np.all(box_size >= actual_size), \
-        "actual size is larger than box size, please correct"
-
-    width_diff = box_size[0]-actual_size[0]
-    height_diff = box_size[1]-actual_size[1]
-
-    lc_out = (hjust * width_diff + lc_raw[0],
-              vjust * height_diff + lc_raw[1])
-
-    return lc_out
-
-def my_get_size_svg(gg, height, width, dpi, limitsize):
-    """
-    Get actual size of ggplot image saved (with bbox_inches="tight")
+    Returns
+    -------
+    tuple
+        of the actual height and width (in inches) of the svg image that would
+        be created if the above
     """
     fid = io.StringIO()
 
     try:
-        gg.save(fid, format= "svg", height = height, width = width,
-            dpi=dpi, units = "in", limitsize = limitsize, verbose=False) # TODO check why they have this naming...
+        gg.save(fid, format="svg", height=height, width=width,
+            dpi=dpi, units="in", limitsize=limitsize, verbose=False) # TODO check why they have this naming...
     except ValueError:
         rasie(ValueError, "No ggplot SVG backend")
     fid.seek(0)
@@ -208,65 +218,115 @@ def my_get_size_svg(gg, height, width, dpi, limitsize):
     return new_width / 72, new_height / 72 # this does it for inches...
 
 
-def my_set_size_svg(gg, height, width, dpi, limitsize=True,
-                    eps=1e-2, give_up=2, min_size_px = 10):
+def select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
+                    eps=1e-2, maxIter=2, min_size_px=10):
     """
-    interative procudure to find acceptable height & width with bbox_inches='tight'
+    Obtain the correct input saving size plotnine.ggplot object to actual
+    obtain desired height and width (inches)
+
+    Details
+    -------
+    This function is useful given default approach for the saving of
+    images uses `bbox_inches="tight"`. This appears to be done since to obtain
+    desirable containment of all parts in the image (not to overflow the
+    provided space) and because matplotlib's `plt.tight_layout()` doesn't
+    preform as expected for the `plotnine.ggplot` objects.
+
+    This code leverages ideas that are presented in a blog post by Kavi Gupta
+    at https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/.
+    It is iterative procedure in nature (the reason for eps and maxIter), eps
+    looks at the difference between the desired and obtained height and width.
+
+    Arguments
+    ---------
+    gg : plotnine.ggplot.ggplot
+        ggplot object to calculate optimal size
+    height : float
+        desired height of svg output (in inches)
+    width : float
+        desired width of svg output (in inches)
+    dpi : float
+        dots per inch of saved object
+    limitsize : boolean
+        logic if plotnine's ggplot.save function should check if the requested
+        width and height in inches are greater than 50 (assumes the user
+        accidentally entered in these values w.r.t. pixels)
+    eps : float
+        maximum allowed difference between height and width output versus the
+        desired output
+    maxIter : int
+        maximum number of steps that can be used to the difference
+        between desired and output height and width within minimum distance
+    min_size_px : int
+        early stopping rule if converging height or width has a pixel size
+        smaller than or equal to this value (assumes process will not converge)
+
+    Returns
+    -------
+    tuple
+        three value tuple of width, height to provide desired measures and a
+        boolean value (true if iteration was successful, false otherwise -
+        just returns original width and height)
     """
     # starting at desired values (a reasonsable starting values)
     desired_width, desired_height = width, height
     current_width, current_height = width, height
 
-    deltas = [] # how far we have
+    deltas = [] # how close we've gotten
     while True:
-        actual_width, actual_height = my_get_size_svg(gg = gg,
-                                                      height = current_height,
-                                                      width = current_width,
-                                                      dpi = dpi,
-                                                      limitsize = limitsize)
+        actual_width, actual_height = real_size_out_svg(gg=gg,
+                                                        height=current_height,
+                                                        width=current_width,
+                                                        dpi=dpi,
+                                                        limitsize=limitsize)
 
         current_width *= desired_width / actual_width
         current_height *= desired_height / actual_height
         deltas.append(abs(actual_width - desired_width) + \
                       abs(actual_height - desired_height))
+
+        # decisions to terminate interation
         if deltas[-1] < eps:
             return current_width, current_height, True
-        elif len(deltas) > give_up:#and sorted(deltas[-give_up:]) == deltas[-give_up:]:
+        elif len(deltas) > maxIter:
             raise StopIteration("unable to get correct size within epsilon and number of interations")
         elif current_width * dpi < min_size_px or current_height * dpi < min_size_px:
             raise ValueError("height or width is too small for acceptable image")
-    return width, height, False # if errors are suppressed...
+    return width, height, False
 
 # scaled to fill -----------------
 
 base_image = sg.SVGFigure()
 base_image.set_size((full_width_pt, full_height_pt))
-#^ TODO: this size is somehow wrong... maybe it's expecting a different size structure or the rest is...
-base_image.append(sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#BDBDBD\"/>"))
+base_image.append(
+    sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#BDBDBD\"/>"))
 
 
 
 svg_sizes = []
 svg_desired_sizes = []
 
+import progressbar
+
+bar = progressbar.ProgressBar()
 
 
-for p_idx in np.arange(4, dtype = int):
-    print(p_idx)
+for p_idx in bar(np.arange(4, dtype = int)):
     inner_width_in, inner_height_in = info_dict[p_idx]["full_size"]
     inner_width, inner_height = [int(val*dpi) for val in info_dict[p_idx]["full_size"]]
     c_start, r_start = [int(np.floor(val*dpi)) for val in info_dict[p_idx]["start"]]
 
     correct_width_in, \
-        correct_height_in, _ = my_set_size_svg(gg=grobs[p_idx],
-                                               height=inner_height_in,
-                                               width=inner_width_in,
-                                               dpi=dpi, give_up=4)
+        correct_height_in, _ = select_correcting_size_svg(gg=grobs[p_idx],
+                                                       height=inner_height_in,
+                                                       width=inner_width_in,
+                                                       dpi=dpi,
+                                                       maxIter=4)
 
     svg = gg_to_svg(grobs[p_idx],
-                          width = correct_width_in,
-                          height = correct_height_in,
-                          dpi = dpi)
+                    width=correct_width_in,
+                    height=correct_height_in,
+                    dpi=dpi)
 
     current_size_raw = svg.get_size()
     current_size = transform_size(current_size_raw)
@@ -302,6 +362,84 @@ for p_idx in np.arange(4, dtype = int):
 
 
 base_image.save("size_correction.svg")
+
+
+# file saving ----------
+
+
+# use cairosvg to convert to pdf, png, ps
+# todo: figure out how to correctly pass inches parameter (also if we allow
+# for different measurement types we need to pass everything all the way through)
+
+# use PIL to obtain raster images (jpg, jpeg)...
+
+
+base_image_string = base_image.to_str()
+
+file_options = ["pdf", "png", "ps", "eps", "jpg", "jpeg"]
+
+# should mirror ideas in https://github.com/has2k1/plotnine/blob/9fbb5f77c8a8fb8c522eb88d4274cd2fa4f8dd88/plotnine/ggplot.py#L646
+# ^ plotnine's save function (has a filename,and format information)
+
+# cairosvg direct -------------
+
+cairosvg.svg2pdf(bytestring = base_image_string,
+                 write_to = "size_correction.pdf",
+                 output_width = width * 96,
+                 output_height = height * 96)
+
+cairosvg.svg2png(bytestring = base_image_string,
+                 write_to = "size_correction.png",
+                 output_width = width * 96,
+                 output_height = height * 96) # I'm not sure how to make this better... (could we do raster with png and vector with svg?)
+
+
+
+cairosvg.svg2ps(bytestring = base_image_string,
+                write_to = "size_correction.ps",
+                output_width = width * 96,
+                output_height = height * 96)
+
+cairosvg.svg2eps(bytestring = base_image_string,
+                 write_to = "size_correction.eps")
+
+
+# cairosvg + PIL ----------------
+# png to jpg/ jpeg + others?
+
+# https://github.com/manatools/dnfdragora/blob/0a8a39b85f670207ef1870da63a08e9012dac88e/dnfdragora/updater.py#L178
+fid = io.BytesIO()
+out_bytes = cairosvg.svg2png(bytestring = base_image_string,
+                 write_to = fid,
+                 output_width = width * 96,
+                 output_height = height * 96)
+img_png = Image.open(io.BytesIO(fid.getvalue()))
+img_png.save('size_correction.jpg')
+img_png.save('size_correction.jpeg')
+
+
+
+# showing image... -------------
+
+fid = io.BytesIO()
+out_bytes = cairosvg.svg2png(bytestring = base_image_string,
+                 write_to = fid,
+                 output_width = width * 96,
+                 output_height = height * 96)
+img_png = Image.open(io.BytesIO(fid.getvalue()))
+img_png.show()
+
+
+# thinking about transparencies with jpeg, etc.... ---------
+
+# to get transparencies - transparent=True? https://matplotlib.org/2.0.2/api/figure_api.html?highlight=savefig#matplotlib.figure.Figure.savefig
+
+
+# next steps / things to demo --------------------
+
+## https://wilkelab.org/cowplot/articles/drawing_with_on_plots.html
+# insert plots + images all over the place? do we need to think about such things?
+# maybe inserts but nothing more?
 
 
 
