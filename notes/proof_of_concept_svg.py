@@ -73,6 +73,156 @@ full_height_pt = str(int(height * 72 * 3/4))+"pt"
 
 # functions -------------
 
+class text:
+    def __init__(self, text,
+                 size=None,
+                 font=None,
+                 weight=None,
+                 letterspacing=0,
+                 anchor="start",
+                 color=None):
+        """
+        {
+        sg.TextElement ------------
+
+        sg.TextElement( x,
+                    y,
+                    text,
+                    size=8,
+                    font='Verdana',
+                    weight='normal',
+                    letterspacing=0,
+                    anchor='start',
+                    color='black',
+                )
+
+
+        p9.element_text() ------------
+
+        family : str
+            Font family. See :meth:`matplotlib.text.Text.set_family`
+            for supported values.
+        style : str in ``['normal', 'italic', 'oblique']``
+            Font style
+        color : str | tuple
+            Text color
+        weight : str
+            Should be one of *normal*, *bold*, *heavy*, *light*,
+            *ultrabold* or *ultralight*.
+        size : float
+            text size
+        ha : str in ``['center', 'left', 'right']``
+            Horizontal Alignment.
+        va : str in ``['center' , 'top', 'bottom', 'baseline']``
+            Vertical alignment.
+        rotation : float
+            Rotation angle in the range [0, 360]
+        linespacing : float
+            Line spacing
+        backgroundcolor : str | tuple
+            Background color
+        margin : dict
+            Margin around the text. The keys are one of
+            ``['t', 'b', 'l', 'r']`` and ``units``. The units are
+            one of ``['pt', 'lines', 'in']``. The *units* default
+            to ``pt`` and the other keys to ``0``. Not all text
+            themeables support margin parameters and other than the
+            ``units``, only some of the other keys will a.
+        kwargs : dict
+            Parameters recognised by :class:`matplotlib.text.Text`
+
+
+        matplotlib.text.Text info: --------------------
+        Create a `.Text` instance at *x*, *y* with string *text*.
+
+        Valid keyword arguments are:
+
+        Properties:
+            agg_filter: a filter function, which takes a (m, n, 3) float array and a dpi value, and returns a (m, n, 3) array
+            alpha: scalar or None
+            animated: bool
+            backgroundcolor: color
+            bbox: dict with properties for `.patches.FancyBboxPatch`
+            clip_box: unknown
+            clip_on: unknown
+            clip_path: unknown
+            color or c: color
+            figure: `.Figure`
+            fontfamily or family: {FONTNAME, 'serif', 'sans-serif', 'cursive', 'fantasy', 'monospace'}
+            fontproperties or font or font_properties: `.font_manager.FontProperties` or `str` or `pathlib.Path`
+            fontsize or size: float or {'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large'}
+            fontstretch or stretch: {a numeric value in range 0-1000, 'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'}
+            fontstyle or style: {'normal', 'italic', 'oblique'}
+            fontvariant or variant: {'normal', 'small-caps'}
+            fontweight or weight: {a numeric value in range 0-1000, 'ultralight', 'light', 'normal', 'regular', 'book', 'medium', 'roman', 'semibold', 'demibold', 'demi', 'bold', 'heavy', 'extra bold', 'black'}
+            gid: str
+            horizontalalignment or ha: {'center', 'right', 'left'}
+            in_layout: bool
+            label: object
+            linespacing: float (multiple of font size)
+            math_fontfamily: str
+            multialignment or ma: {'left', 'right', 'center'}
+            parse_math: bool
+            path_effects: `.AbstractPathEffect`
+            picker: None or bool or float or callable
+            position: (float, float)
+            rasterized: bool
+            rotation: float or {'vertical', 'horizontal'}
+            rotation_mode: {None, 'default', 'anchor'}
+            sketch_params: (scale: float, length: float, randomness: float)
+            snap: bool or None
+            text: object
+            transform: `.Transform`
+            transform_rotates_text: bool
+            url: str
+            usetex: bool or None
+            verticalalignment or va: {'center', 'top', 'bottom', 'baseline', 'center_baseline'}
+            visible: bool
+            wrap: bool
+            x: float
+            y: float
+            zorder: float
+
+
+            -----
+            Signature: matplotlib.text.Text.set_fontfamily(self, fontname)
+            Docstring:
+            Set the font family.  May be either a single string, or a list of
+            strings in decreasing priority.  Each string may be either a real font
+            name or a generic font class name.  If the latter, the specific font
+            names will be looked up in the corresponding rcParams.
+
+            If a `Text` instance is constructed with ``fontfamily=None``, then the
+            font is set to :rc:`font.family`, and the
+            same is done when `set_fontfamily()` is called on an existing
+            `Text` instance.
+
+            Parameters
+            ----------
+            fontname : {FONTNAME, 'serif', 'sans-serif', 'cursive', 'fantasy', 'monospace'}
+        }
+
+        """
+        pass
+
+    def __add__(self, other):
+        if not inherits(other, plotnine.element_text):
+            raise ValueError("can only add plotnine.element_text to a text element")
+
+        # update self.properties
+
+
+#^ the problem I'm thinking about it that matplotlib allows to draw text as path and not text - this is pretty different/ can't just be ignored...
+# from cowplot it looks like the text is just left aligned in the plot window (so it can overlap)
+# it does allow for hjust and vjust (w.r.t. block image)
+
+
+# https://stackoverflow.com/questions/36191953/matplotlib-save-only-text-without-whitespace/36195601 (should get math stuff...) and correct cropping... - will want to remove backcolor and create to svg...fr33d0m
+
+
+
+
+
 def gg_to_svg(gg, width, height, dpi, limitsize=True):
     """
     Convert plotnine ggplot figure to svgutils object and return it
@@ -370,6 +520,8 @@ base_image.save("size_correction.svg")
 # use cairosvg to convert to pdf, png, ps
 # todo: figure out how to correctly pass inches parameter (also if we allow
 # for different measurement types we need to pass everything all the way through)
+# plotnine seems to do "to_inches(width, units)" -> could we try something like that?
+# https://github.com/has2k1/plotnine/blob/9fbb5f77c8a8fb8c522eb88d4274cd2fa4f8dd88/plotnine/ggplot.py#L701
 
 # use PIL to obtain raster images (jpg, jpeg)...
 
