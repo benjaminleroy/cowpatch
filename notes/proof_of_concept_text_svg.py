@@ -1,16 +1,13 @@
 import io
-from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
-import sympy
 import plotnine as p9
 import warnings
-from matplotlib.patches import Rectangle
 import svgutils.transform as sg
 import re
+from contextlib import suppress # suppress kwargs that are incorrect
 
-# function from poc_svg.py
 
-
+# function from proof_of_concept_svg.py -----------
 
 def transform_size(size_string_tuple):
     """
@@ -38,101 +35,8 @@ def transform_size(size_string_tuple):
         raise ValueError("size_string_tuple structure of object not as "+\
                          "expected, new size type")
 
-# x = sympy.symbols('x')
-# y = 5 /sympy.sqrt(1 + sympy.sin(sympy.sqrt(x**2 + 2))) 
-# lat = sympy.latex(y)
 
-# text = f"${lat}$"
-# fig = plt.figure()
-# t = plt.text(0.001, 0.001, text, fontsize=50)
-
-# fig.patch.set_facecolor('white')
-# plt.axis('off')
-# plt.tight_layout()
-
-
-
-# with io.BytesIO() as png_buf:
-#     plt.savefig(png_buf, bbox_inches='tight', pad_inches=0)
-#     png_buf.seek(0)
-#     image = Image.open(png_buf)
-#     image.load()
-#     inverted_image = ImageOps.invert(image.convert("RGB"))
-#     cropped = image.crop(inverted_image.getbbox())
-
-# inch_dim = [val / 96 for val in cropped.size]
-
-# bbox = fig.get_tightbbox(fig.canvas.get_renderer())
-# fig.set_constrained_layout(bbox)
-# fig.set_size_inches(inch_dim)
-
-
-# fid = io.BytesIO()
-# plt.savefig(fid, bbox_inches='tight', pad_inches=0, format = "svg",
-#             facecolor=None)
-# fid.seek(0)
-# image = Image.open(png_buf)
-
-
-# plt.savefig("test.svg", bbox_inches='tight', pad_inches=0,
-#             transparent=True)
-
-_acceptable_text_params = [
-    # plt.Text arguments (minus x,y,text/s)
-     "color", "verticalalignment",
-    "horizontalalignment", "multialignment",
-    "fontproperties","rotation",
-    "linespacing",
-    "rotation_mode",
-    "usetex",
-    "wrap",
-    "transform_rotates_text",
-    "parse_math",
-
-    # kargs of plt.Text
-    "agg_filter",
-    "alpha",
-    "animated",
-    "backgroundcolor",
-    "bbox",
-    "clip_box",
-    "clip_on",
-    "clip_path",
-    "color","c",
-    "figure",
-    "fontfamily","family" ,
-    "fontproperties", "font", "font_properties",
-    "fontsize", "size",
-    "fontstretch", "stretch",
-    "fontstyle","style",
-    "fontvariant","variant",
-    "fontweight", "weight",
-    "gid",
-    "horizontalalignment", "ha",
-    "in_layout",
-    "label",
-    "linespacing",
-    'math_fontfamily',
-    "multialignment", "ma",
-    "parse_math",
-    'path_effects',
-    "picker",
-    "position",
-    "rasterized",
-    "rotation",
-    "rotation_mode",
-    "sketch_params",
-    "snap",
-    "text",
-    "transform",
-    "transform_rotates_text",
-    "url",
-    "usetex",
-    "verticalalignment", "va", 
-    "visible",
-    "wrap",
-    "zorder"
-]
+# text class --------------
 
 class text:
     def __init__(self, label, element_text=None, theme=None):
@@ -166,9 +70,34 @@ class text:
         if element_text is not None and theme is not None:
             raise ValueError("please provide only a theme or element_text, "+\
                              "not both")
-        self.element_text = p9.element_text()#element_text
+        self.element_text = None # prep initialization
+        self._init_element_text(element_text)
         self.theme = theme
 
+    def _init_element_text(self, element_text):
+        """
+        make sure it's a themeable else create one
+
+        updates is place!
+
+        """
+        if element_text is None:
+            element_text = None
+
+        if isinstance(element_text, p9.themes.elements.element_text):
+            et_themeable = p9.theme(text = element_text
+                                    ).themeables.get("text")
+            element_text = et_themeable
+        else:
+            element_text = element_text
+
+        if self.element_text is not None:
+            self.element_text.merge(element_text)
+        else:
+            self.element_text = element_text
+
+
+        return None # just a reminder
 
     def __add__(self, other):
         """
@@ -195,33 +124,36 @@ class text:
                              "with element_text objects.")
         # need to update theme or element_text...
         if isinstance(other, p9.themes.themeable.element_text):
-            if self.element_text is None:
-                self.element_text = other
-            else:
-                # update element_text & theme...
-                pass
+            self._init_element_text(other)
 
+            # update theme if it already exists
+            # (if not we'll update it when it's required)
+            if self.theme is not None:
+                self.theme += p9.theme(text = self.element_text.theme_element)
 
         if isinstance(other, p9.theme):
             if self.theme is None:
                 self.theme = other
             else:
-                # update theme and element_text...
-                pass
+                self.theme.add_theme(other)
+
+                new_element_text = self.theme.themeables.get("text")
+                self._init_element_text(new_element_text)
+        return self # do I need to do a copy somewhere? (also weird __radd__ we'll need to think about...)
 
 
-    def _provide_complete_element_text(self):
+    def _provide_complete_theme(self):
         """
         It should be here that the current global theme is accessed, and thing are completed...
         """
         if self.theme is None:
             current_theme = p9.theme_get()
+            # and update with our element_text
+            if self.element_text is not None:
+                # problem here... (need to update themeable.get("text") instead)
+                current_theme += p9.theme(text=self.element_text.theme_element)
         else:
             current_theme = self.theme
-
-
-        if self.element_text is not None:
-            current_theme += theme(text=self.element_text)
 
         return current_theme
 
@@ -230,46 +162,53 @@ class text:
         this function mirrors the "_draw_title" function of plotnine ggplot
         found here: https://github.com/has2k1/plotnine/blob/9fbb5f77c8a8fb8c522eb88d4274cd2fa4f8dd88/plotnine/ggplot.py#L545
 
+        NOTE: these help define the x and y location - we'll need to
+        get that later since we currently do x=0,y=0 (but let's ignore that for now
+        # also not the _draw_title() function's default is ha="center", va="center")
 
+        TODO: we likely actually want the default to be left aligned (not centered...)
+        ^- Not sure this is where we do it though...
         """
-        theme = self._provide_complete_element_text()
-        rcParams = theme.rcParams
-        get_property = self.theme.themables.property
+        theme = self._provide_complete_theme()
+        # rcParams = theme.rcParams
+        # get_property = theme.themeables.property
 
-        # font size:
-        try:
-            fontsize = get_property('text', 'size')
-        except KeyError:
-            fontsize = float(rcParams.get("font.size", 12))
+        # # font size:
+        # try:
+        #     fontsize = get_property('text', 'size')
+        # except KeyError:
+        #     fontsize = float(rcParams.get("font.size", 12))
 
-        # linspace:
-        try:
-            linespacing = get_property('text', 'linespacing')
-        except KeyError:
-            linespacing = 1.2
+        # # linspace:
+        # try:
+        #     linespacing = get_property('text', 'linespacing')
+        # except KeyError:
+        #     linespacing = 1.2
 
-        # padding:
-        try:
-            margin = get_property('text', 'margin')
-        except KeyError:
-            pad = 0.09
-        else:
-            pad = margin.get_as('b', 'in')
+        # # padding:
+        # try:
+        #     margin = get_property('text', 'margin')
+        # except KeyError:
+        #     pad = 0.09
+        # else:
+        #     pad = margin.get_as('b', 'in')
 
-        # do we need to deal with multiple lines?
+        # updating_properties = dict(fontsize=fontsize,
+        #                            linespacing=linespacing,
+        #                            pad=pad)
+
+        return theme#, updating_properties
+
 
 
     def _gather_complete_rcParams(self):
         """
-        gathers current properties from global theme and combines them
-        with specified element_text theme.
+        should be replaced with _gather_text_properties and the theme
+        later in life
+
+        TODO: REMOVE
         """
-        full_rcParams = p9.theme_get().rcParams
-        full_rcParams.update(self.element_text.properties)
-
-        text_rcParams = {key:value for key,value in full_rcParams.items() 
-                            if key in _acceptable_text_params}
-
+        text_rcParams = p9.element_text().properties
 
         return text_rcParams
 
@@ -281,84 +220,101 @@ class text:
         theres a difference in the text bounding and the image boundary (text allows to tails and tops of glphs)
         """
 
+        # apply theme/element_text correctly ------
+
+        # mirrors code in p9.ggplot.draw_title() and
+        #  p9.themeable.plot_title.apply_figure()
+        # code references:
+        # - https://github.com/has2k1/plotnine/blob/9fbb5f77c8a8fb8c522eb88d4274cd2fa4f8dd88/plotnine/ggplot.py#L545
+        # - https://github.com/has2k1/plotnine/blob/6c82cdc20d6f81c96772da73fc07a672a0a0a6ef/plotnine/themes/themeable.py#L361
+        #
+
+        # collect desirable theme and properties --------
+        theme = self._gather_text_properties()
+
+        text_themeable = theme.themeables.get('text')
+        properties = text_themeable.properties.copy()
+
+
+        # create text and apply ----------
+        fig = plt.figure()
+        txt = plt.text(x=0.000, y=0.000, s=self.label)#,
+                     #**updating_properties)
+        with suppress(KeyError):
+            del properties['margin']
+        with suppress(KeyError):
+            txt.set(**properties)
+
+        # remove background structure from mpl ----------
+        #  (axis and background)
+
+        fig.patch.set_visible('false')
+        plt.axis('off')
+
+        # bbox aids in cutting all but the desired image
+        bbox = txt.get_window_extent(fig.canvas.get_renderer())
+
+        return fig, bbox
+
+    def _inner_prep_old(self):
+        """
+        shows text in cropped window
+
+        theres a difference in the text bounding and the image boundary (text allows to tails and tops of glphs)
+
+        this will be replaced with _inner_prep in the future
+
+        TODO: REMOVE
+        """
+
         # https://stackoverflow.com/questions/22667224/get-text-bounding-box-independent-of-backend?lq=1
 
         fig = plt.figure()
         txt = plt.text(x=0.000, y=0.000, s=self.label,
                      **self._gather_complete_rcParams()) # pads are not defaulted as 0... should figure that out for size...
 
-        #
+        # here we'd like to do something like:
+        # txt.set(**properties)
+        # where properties are part of the theme.
+        # ^note that previous code suggests some of theme is applied
+        # elsewhere / before this is applied (which is interesting)
+        # see code: https://github.com/has2k1/plotnine/blob/6c82cdc20d6f81c96772da73fc07a672a0a0a6ef/plotnine/themes/themeable.py#L534
 
-
-        # renderer2 = mpl.backend_bases.RendererBase()
-        # bbox2 = txt.get_window_extent(renderer2)
-        # rect2 = Rectangle([bbox2.x0, bbox2.y0], bbox2.width, bbox2.height, \
-        #     color = [1,0,0], fill = False)
-        # fig.patches.append(rect2)
-
-
-        # fig = plt.figure()
-        # ax = plt.subplot()
-        # txt = fig.text(0.15,0.5,'high', fontsize = 36)
-        # renderer1 = fig.canvas.get_renderer()
-        # bbox1 = txt.get_window_extent(renderer1)
-        # rect1 = Rectangle([bbox1.x0, bbox1.y0], bbox1.width, bbox1.height, \
-        #     color = [0,0,0], fill = False)
-        # fig.patches.append(rect1)
 
         fig.patch.set_visible('false')
         plt.axis('off')
 
-        with io.BytesIO() as png_buf:
-            plt.savefig(png_buf)
-            png_buf.seek(0)
-            image = Image.open(png_buf)
-            image.load()
-            inverted_image = ImageOps.invert(image.convert("RGB"))
-            cropped = image.crop(inverted_image.getbbox())
-
-        inch_dim = [val / 96 for val in cropped.size]
-
-        #fig.set_size_inches(inch_dim)
         bbox = txt.get_window_extent(fig.canvas.get_renderer())
-        #rect = Rectangle([bbox.x0, bbox.y0], bbox.width, bbox.height, 
-        #            color = [0,0,0], fill = False)
-        #fig.patches.append(rect)
 
-        #fig.set_constrained_layout(bbox)
-        #fig.set_constrained_layout_pads(w_pad=0,h_pad=0,wspace=0,hspace=0)
+        return fig, bbox
 
-        #fig.set_size_inches(inch_dim)
-
-
-        # do with svg - should be able to shift and then change size...
-        return fig, bbox, inch_dim
-
-    def _svg_object(self):
+    def _create_svg_object(self):
         """
         returns svgutils.transform.SVGFigure object representation of
         text 
         """
 
-        fig, bbox, inch_dim = self._inner_prep()
+        fig, bbox = self._inner_prep()
 
         # get original matplotlib image ------------
         fid = io.StringIO()
-        fig.savefig(fid, bbox_inches=fig.bbox_inches, format = 'svg')
+        fig.savefig(fid, bbox_inches=fig.bbox_inches, format='svg')
         fid.seek(0)
         image_string = fid.read()
         img = sg.fromstring(image_string)
         img_size = transform_size((img.width, img.height))
 
         # prep translated and smaller canvas image ----------
-        svg_bb_top_left_corner = (bbox.x0/fig.get_dpi()*72, 
-                                  img_size[1]-bbox.y1/fig.get_dpi()*72) # not sure why x0 isn't lower...
+        svg_bb_top_left_corner = (bbox.x0/fig.get_dpi() * 72,
+                                  img_size[1] - bbox.y1/fig.get_dpi() * 72) # not sure why x0 isn't lower...
 
-        new_image_size = (str(bbox.width/fig.get_dpi()*72)+"pt", 
-                          str(bbox.height/fig.get_dpi()*72)+"pt")
+        new_image_size = (str(bbox.width/fig.get_dpi() * 72)+"pt",
+                          str(bbox.height/fig.get_dpi() * 72)+"pt")
+
         # need to declare the viewBox for some reason...
+        new_image_size_string_val = [re.sub("pt","", val)
+                                        for val in new_image_size]
 
-        new_image_size_string_val = [re.sub("pt","", val) for val in new_image_size]
         new_viewBox = "0 0 %s %s" % (new_image_size_string_val[0], 
                                     new_image_size_string_val[1])
 
@@ -379,16 +335,19 @@ class text:
         save text object as image in minimal size object
 
         """
-        new_image = self._svg_object()
+        svg_obj = self._create_svg_object()
 
-        new_image.save(filename)
+        svg_obj.save(filename)
+        plt.close()
 
 
 # visual tests ---------
 
 # text structure ---------
 my_text = text("thing")
-my_text.save("thing_demo.svg")
+my_text.save("thing_demo3.svg")
+
+
 
 my_text_lower_only = text("gya")
 my_text_lower_only.save("gya_lower_only_demo.svg")
@@ -400,9 +359,38 @@ my_text_upper_only.save("tiHF_upper_only_demo.svg")
 # multiple lines
 my_text_mult_lines = text("stranger\nthings")
 my_text_mult_lines.save("stranger_things_multiple_lines_demo.svg")
+#^ notice that as of 1/19 these are centered (not sure we want that...)
+
 
 # element_text addition ----------
 
+my_text = text("thing")
+
+my_text += p9.element_text(size = 50)
+my_text.save("thing_demo50.svg")
+
+my_text += p9.element_text(size = 50, color = "red")
+my_text.save("thing_demo50red.svg")
+
+my_text_cumu = text("thing") + p9.element_text(size = 50) +\
+    p9.element_text(color = "red")
+my_text_cumu.save("thing_demo50red_2.svg")
+
+
+
+# theme addition --------
+
+my_text = text("thing")
+my_text += p9.theme(text= p9.element_text(size = 50))
+my_text.save("thing_demo50_theme.svg")
+
+my_text = text("thing")
+my_text += p9.theme(text= p9.element_text(size = 50, color = "red"))
+my_text.save("thing_demo50red_theme.svg")
+
+my_text_cumu = text("thing") + p9.theme(text= p9.element_text(size = 50)) +\
+    p9.theme(text= p9.element_text(color = "red"))
+my_text.save("thing_demo50red_2_theme.svg")
 
 
 
