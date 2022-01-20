@@ -1,7 +1,6 @@
 import io
 import matplotlib.pyplot as plt
 import plotnine as p9
-import warnings
 import svgutils.transform as sg
 import re
 from contextlib import suppress # suppress kwargs that are incorrect
@@ -57,7 +56,7 @@ class text:
 
         Details
         -------
-        This class leverages matplotlib to create the text (given that 
+        This class leverages matplotlib to create the text (given that
         matplotlib can create path-style objects for text if the individual
         is worried that the svg text visually won't be preserved - this is also
         annoying that this is the default).
@@ -200,19 +199,6 @@ class text:
         return theme#, updating_properties
 
 
-
-    def _gather_complete_rcParams(self):
-        """
-        should be replaced with _gather_text_properties and the theme
-        later in life
-
-        TODO: REMOVE
-        """
-        text_rcParams = p9.element_text().properties
-
-        return text_rcParams
-
-
     def _inner_prep(self):
         """
         shows text in cropped window
@@ -246,9 +232,9 @@ class text:
             txt.set(**properties)
 
         # remove background structure from mpl ----------
-        #  (axis and background)
-
-        fig.patch.set_visible('false')
+        #fig.patch.set_visible('false')
+        # help from: https://stackoverflow.com/questions/21687571/matplotlib-remove-patches-from-figure
+        fig.axes.pop()
         plt.axis('off')
 
         # bbox aids in cutting all but the desired image
@@ -256,42 +242,11 @@ class text:
 
         return fig, bbox
 
-    def _inner_prep_old(self):
-        """
-        shows text in cropped window
-
-        theres a difference in the text bounding and the image boundary (text allows to tails and tops of glphs)
-
-        this will be replaced with _inner_prep in the future
-
-        TODO: REMOVE
-        """
-
-        # https://stackoverflow.com/questions/22667224/get-text-bounding-box-independent-of-backend?lq=1
-
-        fig = plt.figure()
-        txt = plt.text(x=0.000, y=0.000, s=self.label,
-                     **self._gather_complete_rcParams()) # pads are not defaulted as 0... should figure that out for size...
-
-        # here we'd like to do something like:
-        # txt.set(**properties)
-        # where properties are part of the theme.
-        # ^note that previous code suggests some of theme is applied
-        # elsewhere / before this is applied (which is interesting)
-        # see code: https://github.com/has2k1/plotnine/blob/6c82cdc20d6f81c96772da73fc07a672a0a0a6ef/plotnine/themes/themeable.py#L534
-
-
-        fig.patch.set_visible('false')
-        plt.axis('off')
-
-        bbox = txt.get_window_extent(fig.canvas.get_renderer())
-
-        return fig, bbox
 
     def _create_svg_object(self):
         """
         returns svgutils.transform.SVGFigure object representation of
-        text 
+        text
         """
 
         fig, bbox = self._inner_prep()
@@ -315,7 +270,7 @@ class text:
         new_image_size_string_val = [re.sub("pt","", val)
                                         for val in new_image_size]
 
-        new_viewBox = "0 0 %s %s" % (new_image_size_string_val[0], 
+        new_viewBox = "0 0 %s %s" % (new_image_size_string_val[0],
                                     new_image_size_string_val[1])
 
         img_root = img.getroot()
@@ -326,9 +281,33 @@ class text:
         new_image.set_size(new_image_size)
         new_image.root.set("viewBox", new_viewBox)
 
-        new_image.append(img_root)
+        img_root_str = img_root.tostr()
+
+        # remove patch (lxml.etree) ----------
+        # img_root2_lxml = etree.fromstring(img_root_str)
+        # parent = img_root2_lxml.findall(".//{http://www.w3.org/2000/svg}g[@id=\"patch_1\"]")[0]
+        # to_remove = parent.getchildren()[0]
+        # parent.remove(to_remove)
+        # img_root2_str = etree.tostring(img_root2_lxml)
+        # img2 = sg.fromstring(img_root2_str.decode("utf-8"))
+
+        # remove path (xml.etree.ElementTree) ---------
+        img_root2_xml = ET.fromstring(img_root_str)
+        parent = img_root2_xml.findall(".//{http://www.w3.org/2000/svg}g[@id=\"patch_1\"]")[0]
+        to_remove =  img_root2_xml.findall(".//{http://www.w3.org/2000/svg}path")[0]
+        parent.remove(to_remove)
+        img_root2_xml_str = ET.tostring(img_root2_xml)
+        img2 = sg.fromstring(img_root2_xml_str.decode("utf-8"))
+
+        new_image.append(img2)
 
         return new_image
+
+    def create_svg_object(self):
+        out, out2 = self._create_svg_object()
+        plt.close()
+
+        return out, out2
 
     def save(self, filename):
         """
@@ -345,7 +324,7 @@ class text:
 
 # text structure ---------
 my_text = text("thing")
-my_text.save("thing_demo3.svg")
+my_text.save("thing_demo.svg")
 
 
 
