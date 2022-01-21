@@ -8,10 +8,57 @@ into the idea that it might be more used than the base plot functionality in
 plots, but it appears as if `plotnine` (around since mid-2017) is the pythonic
 equivalent. As will be seen in a later section, `plotnine` is pretty highly used,
 and I personally use it and enjoy using it more than `matplotlib` (or `seaborn`).
+At the same time, `plotnine` still has a lot of room to grow --or at least
+that's one way to put it-- in getting a larger user base. Naturally, one could
+imagine that a large amount of the users of `plotnine` may have been interested
+as they were also users of `R`. Hopefully, as `plotnine` ages, the value of
+the grammar of graphics framework might prove valuable to the larger `python`
+userbase (note only 139 plotnine posts on
+[stack exchange](https://stackoverflow.com/questions/tagged/plotnine) exist).
+Still, there is a constraint to using `plotnine` that may be holding back it's
+adoption among both users who have knowledge about `R` and `ggplot2` and those
+without such knowledge.
 
 ### Gap
 
-Discussed over text...
+One large gap in the `plotnine` toolkit is combining images. In `R` demand for
+this type of tool might be estimated at 28% relative to demand for the general
+plotting tool (if we compare relative downloads, a shitty metric -- see below).
+Three major `R` packages have been developed to combine `ggplot` graphics
+together. This is missing in the `python` implimentation.
+
+There are some signal that such a thing would be desirable.
+
+plotnine github issues:
+1. [issue 46: how to draw subplots?](https://github.com/has2k1/plotnine/issues/46)
+2. [issue 443: combined pdf images](https://github.com/has2k1/plotnine/issues/443)
+3. [issue 373: combining plotnine figures](https://github.com/has2k1/plotnine/issues/373)
+
+Moreover, these issues suggest that people are working on data science pipelines
+that transition the visualization part to `R` to leverage the larger toolkit
+([1](https://github.com/has2k1/plotnine/issues/373#issuecomment-1002204659),
+[2](https://github.com/has2k1/plotnine/issues/46#issuecomment-416880143),
+[3](https://github.com/has2k1/plotnine/issues/46#issuecomment-444220936),
+[4](https://github.com/has2k1/plotnine/issues/46#issuecomment-718723840),
+[5](https://github.com/has2k1/plotnine/issues/457#issuecomment-727200970),
+[6](https://github.com/has2k1/plotnine/issues/46#issuecomment-1002209781)).
+
+
+
+We also provide tools to solve:
+1. [issue 374: figure size incorrect](https://github.com/has2k1/plotnine/issues/374).
+We actually have the solution for this problem...
+([Kavi Gupta blogpost](https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/))
+
+We are technically "racing" against `kas2k1` (the developer of `plotnine`) who
+is looking at to figure out a way to solve this problem (but often runs into
+structure issues and `matplotlib`'s "unwillingness"/"inability" to solve the
+problems he's facing - which is w.r.t. how he processes the plot building with
+legends and away from `fig.tight_layout`.)
+1. [issue 390: utilize `tight_layout`](https://github.com/has2k1/plotnine/issues/390).
+
+
+## Additional numerical information
 
 ### Examining potential demand
 
@@ -60,18 +107,18 @@ left_join(year_downloads, last_month, by = "package") %>%
 ```
 -->
 
-|package   |       year|     month|
-|:---------|----------:|---------:|
-|ggplot2   | 25,170,000| 2,920,000|
-|gridExtra |  3,900,000|   400,000|
-|cowplot   |  3,450,000|   310,000|
-|patchwork |    890,000|   110,000|
+|package   |     month|
+|:---------|---------:|
+|ggplot2   | 2,920,000|
+|gridExtra |   400,000|
+|cowplot   |   310,000|
+|patchwork |   110,000|
 
 
-|package                              |       year|     month|
-|:------------------------------------|----------:|---------:|
-|ggplot2                              | 25,170,000| 2,920,000|
-|sum of gridExtra, cowplot, patchwork |  8,230,000|   820,000|
+|package                              |     month|
+|:------------------------------------|---------:|
+|ggplot2                              | 2,920,000|
+|sum of gridExtra, cowplot, patchwork |   820,000|
 
 #### Python downloads
 
@@ -79,49 +126,20 @@ We then examine the number of downloads of `python`'s `plotnine` package (just
 using `pip`, not `conda`). These values are calculated with respect to 11/2021
 (and days prior to that)[^2].
 
-|package |source|       year|   month|
-|:-------|:-----|----------:|-------:|
-|plotnine| PyPi | 1,100,000 | 180,000|
+|package    |source|      month |
+|:----------|:-----|-----------:|
+| plotnine  | PyPi |    170,000 |
+| seaborn   | PyPi |  5,000,000 |
+| matplotlib| PyPi | 26,000,000 |
 
 
-[^2]: This was done using the using `python` package `pypistats` and the website
-https://pypistats.org/packages/plotnine.
+[^2]: This was done using the using the websites
+https://pypistats.org/packages/plotnine,
+https://pypistats.org/packages/matplotlib,
+https://pypistats.org/packages/seaborn.
 
 
-<!--
-# pip install pypistats
-pypistats overall plotnine -sd 2020-11 -ed 2021-11
--->
-
-
-<!--
-|plotnine| [Conda]()
--->
-
-<!--
-### Conda code:
-
-```python
-# conda install -c conda-forge condastats
-from condastats.cli import overall
-
-overall("plotnine",month="2021-11")
-condastats overall plotnine --start_month 2020-11 --end_month 2019-03
-```
--->
-
-#### Projection
-
-If we view `R` `ggplot2` users as exchangeable with `python` `plotnine` users,
-one could imagine that there exists a potential for around 352,000 annual
-downloads and 57,600 monthly downloads (with respect to the month of 11/2021 and
-the year before 12/01/2021). This doesn't examine expected growth in demand
-(as `plotnine`'s version of `ggplot` is much younger than `ggplot2`) or
-accounting for different qualities of packages (or package will probably of a
-lower quality, and people may downloads `gridExtra`, `cowplot` and `patchwork`).
-
-
-## Proposed Solution
+## Proposed Solution (old comments - pre 1/20)
 
 The solution I have in mind has a few structures.
 
@@ -134,7 +152,7 @@ and `patchwork`
 then "sew" them together into a quilt
 
 
-### Functional needs
+### Functional needs (old comments - pre 1/20)
 
 1. matrix structure formating, e.g.
 ```
