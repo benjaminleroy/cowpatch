@@ -11,7 +11,9 @@ create a similar image in `python` that is expected in `R`. This visual example
 is demonstrated in `R` inside the `Rimages/cowplot_experiment.R` file, which
 creates a set of `.png` objects, including:
 
-![](Rimages/each_labeled.png)
+<p align="center">
+  <img src="Rimages/each_labeled.png" alt="r-cowplot-visual" width="600"/>
+</p>
 
 which presents an arangement of plots with labels added.
 
@@ -21,5 +23,9 @@ The most extensive replication of this plot can be found in the
 extensions of the following image (with a focus on creating such things in
 `.svg` extensions first).
 
-![](size_correction_and_text.png)
+<p align="center">
+  <img src="size_correction_and_text2.png" alt="our-python-visual" width="600"/>
+</p>
+
+
 
