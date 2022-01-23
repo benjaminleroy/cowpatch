@@ -1,6 +1,6 @@
 # cowpatch
 
-A package for combining python ggplot visuals
+A package for combining python ggplot visuals from [`plotnine`](https://plotnine.readthedocs.io/en/stable/). Internally, we leverage SVG objects and descriptions to accomplish our goals (as such one might have called this package `cowpathSVG` instead).
 
 ## Installation
 
@@ -18,7 +18,7 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 
 ## License
 
-`cowpatch` was created by Benjamin LeRoy. It is licensed under the terms of the MIT license.
+`cowpatch` was created by [Benjamin LeRoy](benjaminleroy) and [Mallory Wang](). It is licensed under the terms of the MIT license.
 
 ## Credits
 
