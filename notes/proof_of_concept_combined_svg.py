@@ -458,6 +458,9 @@ class text:
         new_image.append(img2)
 
 
+        # closing plot
+        plt.close()
+
         return new_image
 
 
@@ -477,7 +480,7 @@ class text:
         svg_obj = self._create_svg_object(width=width, height=height)
 
         svg_obj.save(filename)
-        plt.close()
+        plt.close() # do we need this?
 
 # text objects
 
@@ -1047,6 +1050,8 @@ save_svg_wrapper(base_image,
                  height = height)
 
 
+from IPython.display import SVG, display
+import IPython
 
 def show_image(svg, width, height, dpi = 300):
     """
@@ -1068,15 +1073,25 @@ def show_image(svg, width, height, dpi = 300):
     None
         shows svg object as a png (with provided width + height + dpi)
     """
-    fid = io.BytesIO()
-    save_svg_wrapper(svg, filename = fid,
-                      width = width,
-                      height = height,
-                      dpi = dpi,
-                      format = "png")
-    img_png = Image.open(io.BytesIO(fid.getvalue()))
 
-    img_png.show()
+    ipython_info = IPython.get_ipython()
+
+    if ipython_info is None or ipython_info.config.get("IPKernelApp") is None:
+        # base python or ipython in the terminal will just show png ----------
+        fid = io.BytesIO()
+        save_svg_wrapper(svg, filename = fid,
+                          width = width,
+                          height = height,
+                          dpi = dpi,
+                          format = "png")
+        img_png = Image.open(io.BytesIO(fid.getvalue()))
+
+        img_png.show()
+    else:
+        # jupyter notebook ------
+        base_image_string = svg.to_str()
+        IPython.display.display(IPython.display.SVG(data = base_image_string))
+
 
 if False:
     show_image(base_image,
