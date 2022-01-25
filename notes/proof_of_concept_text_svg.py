@@ -146,8 +146,6 @@ class text:
             contains an element_text)
         default_margin : boolean
 
-
-
         Details
         -------
         This class leverages matplotlib to create the text (given that
@@ -511,3 +509,15 @@ my_text = text("thing") + p9.element_text(va="top")
 my_text.save("thing_demo_width_top.svg", width = 4)
 my_text.save("thing_demo_height_top_and_width_center.svg",
              width = 4, height = 2)
+
+# rotation ---------
+
+my_text = text("thing for a long test") + p9.element_text(angle = 90)
+my_text.save("thing_demo_rotate.svg", height = 4)
+
+
+my_text = text("thing") + p9.element_text(angle = 45)
+my_text.save("thing_demo_rotate45.svg", height = 4)
+
+my_text = text("thing") + p9.element_text(angle = 45)
+my_text.save("thing_demo_rotate45_sq.svg", height = 4, width = 4)
