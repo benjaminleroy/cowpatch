@@ -18,7 +18,7 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 
 ## License
 
-`cowpatch` was created by [Benjamin LeRoy](benjaminleroy) and [Mallory Wang](wangmallory). It is licensed under the terms of the MIT license.
+`cowpatch` was created by [Benjamin LeRoy](https://github.com/benjaminleroy) and [Mallory Wang](https://github.com/wangmallory). It is licensed under the terms of the MIT license.
 
 ## Credits
 
