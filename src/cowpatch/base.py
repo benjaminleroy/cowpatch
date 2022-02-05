@@ -2,7 +2,12 @@ import numpy as np
 import plotnine as p9
 import re
 from PIL import Image
+import svgutils.transform as sg
+import svgutils
 import matplotlib.pyplot as plt
+
+import pdb
+
 from .utils import val_range
 from .image_utils import gg2img
 
@@ -98,7 +103,7 @@ class layout:
         ncol = int(ncol_lengths)
         nrow = len(re.findall("\n", design)) + 1
 
-        design = np.array([[ ord(val)-65 if val != "#" else None for val in r]
+        design = np.array([[ ord(val)-65 if val != "#" else np.nan for val in r]
                             for r in row_info])
 
         return design, nrow, ncol
@@ -150,11 +155,10 @@ class annotation:
     def __init__(self, sub_labels=None):
         # need to think about how labels would work across cowplot and patchwork's approaches
         # probably with respect to ordering of grobs
+        pass
 
 
 class cowpatch:
-    """The fundamental base class for cowpatch library"""
-
     def __init__(self, grobs=[]):
         """..."""
 
@@ -164,8 +168,7 @@ class cowpatch:
         self.png_obj = None # to be captured once processed (to not recreate unless necessary)
         self.layout = None
         self.depth = 1
-        self.max_depth = _update_depth(self, grobs = self.grobs)
-
+        self.max_depth = self._update_depth(grobs = self.grobs)
 
     def _update_depth(self, grobs):
         """
@@ -173,11 +176,10 @@ class cowpatch:
         """
         max_depth = 1
         for grob in grobs:
-            if inherits(grob, cowpatch):
+            if isinstance(grob, cowpatch):
                 grob.depth += 1
                 max_depth = np.max([max_depth, grob.depth])
         return max_depth
-
 
     def __str__(self):
         """convert to png and then show"""
@@ -186,7 +188,7 @@ class cowpatch:
             return self.png_obj
 
         self.updated = False # need to keep track of this... (and depth layering...)
-        self.png_obj = _create_png(self)
+        self.png_obj = self._create_png()
 
         return self.png_obj.show()
 
@@ -195,9 +197,38 @@ class cowpatch:
             return self.png_obj
 
         self.updated = False # need to keep track of this... (and depth layering...)
-        self.png_obj = _create_png(self)
+        self.png_obj = self._create_png()
 
         return self.png_obj.show()
+
+    def _create_svg(self,
+                    width=None,
+                    height=None,
+                    dpi=None,
+                    limitsize=True):
+        # setting defaults
+        if width is None:
+            width = plt.rcParams["figure.figsize"][0]# matplotlib default
+        if height is None:
+            height = plt.rcParams["figure.figsize"][1]# matplotlib default
+        if dpi is None:
+            dpi = plt.rcParams["figure.dpi"]
+
+        rel_widths = self.layout.widths/np.sum(self.layout.widths) * width
+        rel_heights = self.layout.heights/np.sum(self.layout.heights) * height
+
+        base_image = svgutils.SVGFigure(width =width, height=height) # hoping for the best...
+        # ^ I'm not sure this is in inches...
+        #https://jetholt.com/micro/programmatically-merging-svg-files/ suggests they might very?
+
+
+        info_dict = self._design_to_structure(width_px, height_px,
+                                      rel_widths,
+                                      rel_heights)
+
+        svg_list = self._create_svg_list(info_dict, dpi=dpi,
+                                 limitsize=limitsize)
+
 
     def _create_png(self,
                     width=None,
@@ -206,8 +237,6 @@ class cowpatch:
                     limitsize=True): # should do the same check here as p9 does.., (for the global object)
         """creates png of objects"""
 
-        units = "in"
-
         # setting defaults
         if width is None:
             width = plt.rcParams["figure.figsize"][0]# matplotlib default
@@ -215,17 +244,14 @@ class cowpatch:
             height = plt.rcParams["figure.figsize"][1]# matplotlib default
         if dpi is None:
             dpi = plt.rcParams["figure.dpi"]
-        if units is None:
 
-        width_px = dpi*width
-        height_px = dpi*height
+        width_px = int(np.ceil(dpi*width))
+        height_px = int(np.ceil(dpi*height))
 
-        rel_widths = self.widths/np.sum(self.widths) * width_px
-        rel_heights = self.heights/np.sum(self.widths) * height_px
+        rel_widths = self.layout.widths/np.sum(self.layout.widths) * width_px
+        rel_heights = self.layout.heights/np.sum(self.layout.heights) * height_px
 
-
-        base_image = Image.new("RGB", (width_px, height_px),
-                               (255,0,0,0)) # transparent color
+        base_image = Image.new("RGBA", (width_px, height_px), (0,0,0,0))
 
 
         info_dict = self._design_to_structure(width_px, height_px,
@@ -233,38 +259,71 @@ class cowpatch:
                                               rel_heights)
         png_list = self._create_png_list(info_dict, dpi=dpi,
                                          limitsize=limitsize)
-        # need to check index of elements...
+
         for vis_idx, inner_info in info_dict.items():
             inner_png = png_list[vis_idx]
             inner_png_array = np.array(inner_png)
 
+
             for s_idx, slice_info in enumerate(inner_info["slices"]):
-                    inner_start = slice_info[0]
+                print(vis_idx, s_idx)
+                print(slice_info)
+                inner_start = slice_info[0]
 
-                    corrected_start = (int(np.floor(inner_start[0])),
-                                       int(np.floor(inner_start[1])))
+                corrected_start = (int(np.floor(inner_start[0])),
+                                   int(np.floor(inner_start[1])))
 
-                    inner_width = slice_info[1]
-                    inner_height = slice_info[2]
+                inner_width = slice_info[1]
+                inner_height = slice_info[2]
 
-                    c1 = int(np.floor(inner_start[0] - inner_info["start"][0]))
-                    c2 = int(c1 + np.ceil(inner_width))
+                c1 = int(np.floor(inner_start[0] - inner_info["start"][0]))
+                c2 = int(c1 + np.ceil(inner_width))
 
-                    r1 = int(np.floor(inner_start[1] - inner_info["start"][1]))
-                    r2 = int(r1 + np.ceil(inner_height))
+                r1 = int(np.floor(inner_start[1] - inner_info["start"][1]))
+                r2 = int(r1 + np.ceil(inner_height))
 
-                    inner_image_array_slice = inner_png_array[r1:(r2+1), c1:(c2+1)]
-                    inner_image_slice = Image.fromarray(inner_image_array_slice)
+                inner_image_array_slice = inner_png_array[r1:(r2+1), c1:(c2+1)]
+                if s_idx > 4:
+                    pdb.set_trace()
+                inner_image_slice = Image.fromarray(inner_image_array_slice)
 
-                    base_image.paste(inner_image_slice, corrected_start)
+                base_image.paste(inner_image_slice, corrected_start)
 
         return base_image
 
+
+
+    def _create_svg_list(self, info_dict, dpi, limitsize):
+        images = []
+        for g_idx, grob in enumerate(self.grobs):
+            if isinstance(grob, p9.ggplot):
+                inner_png_raw = gg_to_svg(grob,
+                                       width = info_dict[g_idx]["full_size"][0]/dpi,
+                                       height = info_dict[g_idx]["full_size"][1]/dpi,
+                                       dpi = dpi,
+                                       limitsize=limitsize)
+                inner_png = inner_png_raw.resize((int(info_dict[g_idx]["full_size"][0]),
+                                  int(info_dict[g_idx]["full_size"][1])))
+                images.append(inner_png)
+            elif isinstance(grob, cowplot):
+                inner_png_raw = grob._create_png(width= info_dict[g_idx]["full_size"][0]/dpi,
+                                             height= info_dict[g_idx]["full_size"][1]/dpi,
+                                             dpi=dpi,
+                                             limitsize=limitsize)
+                inner_png = inner_png_raw.resize((int(info_dict[g_idx]["full_size"][0]),
+                                  int(info_dict[g_idx]["full_size"][1])))
+
+                images.append(inner_png)
+            else:
+                raise ValueError("trying to create image when object not p9.ggplot "+\
+                                 "or cowplot object")
+
+        return images
+
     def _create_png_list(self, info_dict, dpi, limitsize):
         images = []
-        for g_idx_minus, grob in enumerate(self.grobs):
-            g_idx = g_idx_minus + 1
-            if inherits(grobs, p9.ggplot.ggplot):
+        for g_idx, grob in enumerate(self.grobs):
+            if isinstance(grob, p9.ggplot):
                 inner_png_raw = gg2img(grob,
                                        width = info_dict[g_idx]["full_size"][0]/dpi,
                                        height = info_dict[g_idx]["full_size"][1]/dpi,
@@ -273,7 +332,7 @@ class cowpatch:
                 inner_png = inner_png_raw.resize((int(info_dict[g_idx]["full_size"][0]),
                                   int(info_dict[g_idx]["full_size"][1])))
                 images.append(inner_png)
-            elif inherits(grob, cowplot):
+            elif isinstance(grob, cowplot):
                 inner_png_raw = grob._create_png(width= info_dict[g_idx]["full_size"][0]/dpi,
                                              height= info_dict[g_idx]["full_size"][1]/dpi,
                                              dpi=dpi,
@@ -300,41 +359,42 @@ class cowpatch:
         height_loc = np.array([0] + list(np.cumsum(rel_heights[:rel_heights.shape[0]-1])))
 
         for g_idx in np.unique(self.layout.design):
-            inner_row = row_idx_mat[self.layout.design == g_idx]
-            inner_col = col_idx_mat[self.layout.design == g_idx]
+            if not np.isnan(g_idx):
+                g_idx = int(g_idx)
 
-            inner_range = (val_range(inner_row),
-                           val_range(inner_col))
-            # calc cumulative width and length for image
-            c_size = np.sum(rel_widths[np.arange(inner_range[0][0],
-                               inner_range[0][1]+1,
-                               dtype = int)])
+                inner_row = row_idx_mat[self.layout.design == g_idx]
+                inner_col = col_idx_mat[self.layout.design == g_idx]
 
-            r_size = np.sum(rel_heights[np.arange(inner_range[1][0],
-                               inner_range[1][1]+1,
-                               dtype = int)])
-            start_loc = (width_loc[val_range[0][0]],
-                         height_loc[val_range[1][0]])
+                inner_range = (val_range(inner_col),
+                               val_range(inner_row))
+                # calc cumulative width and length for image
+                c_size = np.sum(rel_widths[np.arange(inner_range[0][0],
+                                   inner_range[0][1]+1,
+                                   dtype = int)])
 
-            slices_list = []
-            for s_idx in np.arange(inner_row.shape[0],dtype = int):
-                r_idx = inner_row[s_idx]
-                c_idx = inner_col[s_idx]
+                r_size = np.sum(rel_heights[np.arange(inner_range[1][0],
+                                   inner_range[1][1]+1,
+                                   dtype = int)])
+                start_loc = (width_loc[inner_range[0][0]],
+                             height_loc[inner_range[1][0]])
 
-                slice_start = (width_loc[c_idx],
-                               height_loc[r_idx])
-                slice_width = rel_width[c_idx]
-                slice_height = rel_height[r_idx]
+                slices_list = []
+                for s_idx in np.arange(inner_row.shape[0],dtype = int):
+                    r_idx = inner_row[s_idx]
+                    c_idx = inner_col[s_idx]
+
+                    slice_start = (width_loc[c_idx],
+                                   height_loc[r_idx])
+                    slice_width = rel_widths[c_idx]
+                    slice_height = rel_heights[r_idx]
+
+                    slices_list.append((slice_start, slice_width,slice_height))
 
 
-
-            info_dict[g_idx] = dict(full_size = (c_size, r_size),
-                                    start_loc = start_loc,
-                                    slices = slices_list)
+                info_dict[g_idx] = dict(full_size = (c_size, r_size),
+                                        start = start_loc,
+                                        slices = slices_list)
         return info_dict
-
-
-
 
     def save(self,
             filename=None,
@@ -347,12 +407,11 @@ class cowpatch:
             limitsize=True,
             verbose=True):
         """save png version of object"""
-
-    # pathwork functions
-    ## these functions have to start tracking sizing scalars...
-    ## also - what does it mean to scale something if you alter the x and y sizes...
-    ## generally will need to think about this...
-
+        pass
+        # pathwork functions
+        ## these functions have to start tracking sizing scalars...
+        ## also - what does it mean to scale something if you alter the x and y sizes...
+        ## generally will need to think about this...
 
     def _clean_layout(self):
         """
@@ -368,26 +427,33 @@ class cowpatch:
     # https://patchwork.data-imaginist.com/reference/plot_arithmetic.html
     # this will be harder than I though given (a+b)+c is expected to look like...
     def __add__(self, other):
-        if inherits(other, layout):
+        if isinstance(other, layout):
             self.layout = other
-        elif inherits(other, p9.ggplot.ggplot):
+            return self
+        elif isinstance(other, p9.ggplot):
             self.grobs.append(other)
-        elif inherits(other, cowpatch):
+            return self
+        elif isinstance(other, cowpatch):
             self.grobs.append(other)
+            return self
         else:
             raise ValueError("cannot add non-ggplot, cowpatch, layout or"+\
                              "annoation objects to cowpatch")
-
-        # other must be ggplot object, cowpatch object or layout/annotation object
+    # other must be ggplot object, cowpatch object or layout/annotation object
     def __truediv__(self, other):
+        pass
         # ggplot object, cowpatch object
     def __or__(self, other):
+        pass
         # ggplot object, cowpatch object
     def __sub__(self, other):
+        pass
         # ggplot object, cowpatch object
     def __mul__(self, other):
+        pass
         # theme application (current level) - how to do this across patchwork and cowplot? - need to identify levels...
     def __and__(self, other):
+        pass
         # theme appilcation (global)
 
 
