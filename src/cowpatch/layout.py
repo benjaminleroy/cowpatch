@@ -1,7 +1,10 @@
 import re
 import numpy as np
 import warnings
-
+import copy
+from .utils import is_pos_int, is_non_neg_int, \
+                is_proportion, is_positive, is_non_negative
+import pdb
 
 class layout:
     def __init__(self,
@@ -247,6 +250,87 @@ class layout:
 
         return num_unique
 
+    def _element_locations(self, width_px, height_px):
+        """
+        create a list of `area` objects associated with the location of
+        each of the layout's grobs w.r.t. a given pixel width and height
+
+        Arguments
+        ---------
+        width_px : float
+            global width (in pixels) of the full arangement of patches
+        height_px : float
+            global height (in pixels) of the full arangement of patches
+
+        Returns
+        -------
+        List of `area` objects describing the location for each of the layout's
+        grobs (in the order of the index in the self.design)
+        """
+        areas = []
+
+        for p_idx in np.arange(self.num_items):
+            dmat_logic = self.design == p_idx
+            r_logic = dmat_logic.sum(axis=1) > 0
+            c_logic = dmat_logic.sum(axis=0) > 0
+
+            inner_x_where = np.argwhere(c_logic)
+            inner_x_left = np.min(inner_x_where)
+            inner_x_right = np.max(inner_x_where)
+            inner_width = inner_x_right - inner_x_left + 1
+
+            inner_x_where = np.argwhere(r_logic)
+            inner_y_top = np.min(inner_x_where)
+            inner_y_bottom = np.max(inner_x_where)
+            inner_height = inner_y_bottom - inner_y_top + 1
+
+            inner_design_area = area(x_left = inner_x_left,
+                              y_top = inner_y_top,
+                              width = inner_width,
+                              height = inner_height,
+                              _type = "design")
+            areas.append(inner_design_area.px(rel_widths=self.rel_widths,
+                                              rel_heights=self.rel_heights,
+                                              width_px=width_px,
+                                              height_px=height_px))
+
+        return areas
+
+    def _yokogaki_ordering(self):
+        """
+        calculates the yokogaki (left to right, top to bottom) ordering
+        the the patches
+
+        Returns
+        -------
+        numpy array (vector) of integer index of plots in yokogaki ordering
+
+        Details
+        -------
+        Yokogaki is a japanese word that concisely describes the left to right,
+        top to bottom writting format.
+
+        We'd like to thank stack overflow for pointing this out:
+        https://english.stackexchange.com/questions/81520/is-there-a-word-for-left-to-right-and-top-to-bottom
+        """
+        areas = self._element_locations(1,1) # basically getting relative positions (doesn't matter) - nor does it matter about rel_height and width, but ah well
+        all_x_left = np.array([a.x_left for a in areas])
+        all_y_top = np.array([a.y_top for a in areas])
+        index_list = np.arange(self.num_items)
+
+        yokogaki_ordering = []
+        # remember y_tops are w.r.t top axis
+        for y_val in np.sort(np.unique(all_y_top)):
+            given_row_logic = all_y_top == y_val
+            inner_index = index_list[given_row_logic]
+            inner_x_left = all_x_left[given_row_logic]
+
+            row_ids = inner_index[np.argsort(inner_x_left)]
+            yokogaki_ordering += list(row_ids)
+
+        return np.array(yokogaki_ordering)
+
+
     def __hash__(self):
         """
         Creates a 'unique' has for the object to help with identification
@@ -278,4 +362,199 @@ class layout:
         else:
             return False
 
+class area:
+    def __init__(self, x_left, y_top,
+                 width, height,
+                 _type):
+        """
+        Store locations information for a single figure
+
+
+        Arguments
+        ---------
+        x_left : float
+        y_top : float
+        width : float
+        height : float
+        _type : str
+            describes how the parameters are stored. Options include
+            ["design", "relative", "px"]. See Details for more information
+            between the options.
+
+        Details
+        -------
+        The `_type` parameter informs how to understand the other parameters
+
+        1. "design" means that the values are w.r.t. to a design matrix
+        relative to the `layout` class, and values are relative to the rows
+        and columns units.
+        2. "relative" means the values are defined relative to the full size of
+        the canvas and taking values between 0-1 (inclusive).
+        3. "px" means that values are defined relative to pixel values
+        """
+
+        # some structure check:
+        self._check_info_wrt_type(x_left, y_top, width, height, _type)
+
+        self.x_left = x_left
+        self.y_top = y_top
+        self.width = width
+        self.height = height
+        self._type = _type
+
+    def _check_info_wrt_type(self, x_left, y_top, width, height,_type):
+        """
+        some logic checks of inputs relative to _type parameter
+
+        Arguments
+        ---------
+        same as class initialization function
+        """
+
+        if _type not in ["design", "relative", "px"]:
+            raise ValueError("_type parameter not an acceptable option, see"+\
+                             " documentation")
+        elif _type == "design" and \
+            not np.all([is_non_neg_int(val) for val in [x_left,y_top]] +\
+                       [is_pos_int(val) for val in [width,height]]) :
+            raise ValueError("with _type=\"design\", all parameters must be "+\
+                             "positive integers")
+        elif _type == "relative" and \
+            not np.all([is_proportion(val) for val in [x_left,y_top,
+                                                       width,height]] +\
+                       [is_positive(val) for val in [width,height]]):
+            raise ValueError("with _type=\"relative\", all parameters should"+\
+                             " be between 0 and 1 (inclusive) and width and"+\
+                             " height cannot be 0")
+        elif _type == "px" and \
+            not np.all([is_non_negative(val) for val in [x_left,y_top]] +\
+                       [is_positive(val) for val in [width,height]]):
+            raise ValueError("with _type=\"px\", all x_left and y_top should"+\
+                             " be non-negative and width and height should"+\
+                             " be strictly positive")
+
+
+    def _design_to_relative(self, rel_widths, rel_heights):
+        """
+        translates an area(_type="design") to area(_type="relative")
+
+        Arguments
+        ---------
+        rel_widths : np.array (vector)
+            list of relative widths of each column of the layout matrix
+        rel_heights : np.array (vector)
+            list of relative heights of each row of the layout matrix
+
+        Returns
+        -------
+        area object, of `_type` "relative"
+        """
+        rel_widths = rel_widths/np.sum(rel_widths)
+        rel_heights = rel_heights/np.sum(rel_heights)
+
+
+        x_left = np.sum(rel_widths[:(self.x_left)])
+        y_top = np.sum(rel_heights[:(self.y_top)])
+
+        width = np.sum(rel_widths[self.x_left:(self.x_left + self.width)])
+        height = np.sum(rel_heights[self.y_top:(self.y_top + self.height)])
+
+        rel_area = area(x_left=x_left,
+                        y_top=y_top,
+                        width=width,
+                        height=height,
+                        _type="relative")
+        return rel_area
+
+    def _relative_to_px(self, width_px, height_px):
+        """
+        translates an area(_type="relative") to area(_type="px")
+
+        Arguments
+        ---------
+        width_px : float
+            width in pixels
+        height_px : float
+            height in pixels
+
+        Returns
+        -------
+        area object, of `_type` "px"
+        """
+        return area(x_left = self.x_left * width_px,
+                    y_top = self.y_top * height_px,
+                    width = self.width * width_px,
+                    height = self.height * height_px,
+                    _type = "px")
+
+    def px(self,
+           width_px=None,
+           height_px=None,
+           rel_widths=None,
+           rel_heights=None
+           ):
+        """
+        Translates area object to _type="px"
+
+        Arguments
+        ---------
+        width_px : float
+            width in pixels (required if _type is not "px")
+        height_px : float
+            height in pixels (required if _type is not "px")
+        rel_widths : np.array (vector)
+            list of relative widths of each column of the layout matrix
+            (required if _type is "design")
+        rel_heights : np.array (vector)
+            list of relative heights of each row of the layout matrix
+            (required if _type is "design")
+
+        Returns
+        -------
+        area object, of `_type` "px"
+        """
+        if self._type == "design":
+            rel_area = self._design_to_relative(rel_widths = rel_widths,
+                                                rel_heights = rel_heights)
+            return rel_area.px(width_px = width_px, height_px = height_px)
+        elif self._type == "relative":
+            return self._relative_to_px(width_px = width_px,
+                                        height_px = height_px)
+        elif self._type == "px":
+            return copy.deepcopy(self)
+        else:
+            raise ValueError("_type attributes altered to a non-acceptable"+\
+                             " value")
+
+    def _hash(self):
+        """
+        required since we defined __eq__ and this conflicts with the
+        standard __hash__ (I should figure out a way to fix this...)
+        """
+        return hash((self.x_left, self.y_top,
+                     self.width, self.height,
+                     self._type))
+
+    def __repr__(self):
+        return "<area (%d)>" % self._hash()
+
+    def __str__(self):
+        out = "_type: " + self._type +\
+            "\n\nx_left: " +\
+            self.x_left.__str__() +\
+            "\ny_top: " +\
+            self.y_top.__str__() +\
+            "\nwidth: " +\
+            self.width.__str__() +\
+            "\nheight: " +\
+            self.height.__str__()
+        return self.__repr__() + "\n" + out
+
+    def __eq__(self, other):
+        return type(self) == type(other) and \
+            np.allclose(np.array([self.x_left, self.y_top,
+                                self.width, self.height]),
+                      np.array([other.x_left, other.y_top,
+                                other.width, other.height])) and \
+            self._type == other._type
 
