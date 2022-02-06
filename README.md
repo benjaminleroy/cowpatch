@@ -1,6 +1,12 @@
 # cowpatch
 
-A package for combining python ggplot visuals from [`plotnine`](https://plotnine.readthedocs.io/en/stable/). Internally, we leverage SVG objects and descriptions to accomplish our goals (as such one might have called this package `cowpathSVG` instead).
+
+[![Python](https://img.shields.io/badge/python-3.8-blue)]()
+[![test and codecov](https://github.com/benjaminleroy/cowpatch/actions/workflows/ci.yml/badge.svg)](https://github.com/benjaminleroy/cowpatch/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/benjaminleroy/cowpatch/branch/main/graph/badge.svg?token=QM5G5WV7AE)](https://codecov.io/gh/benjaminleroy/cowpatch)
+[![CodeFactor](https://www.codefactor.io/repository/github/benjaminleroy/cowpatch/badge)](https://www.codefactor.io/repository/github/benjaminleroy/cowpatch)
+
+A package for combining python ggplot visuals from [`plotnine`](https://plotnine.readthedocs.io/en/stable/). Internally, we leverage SVG objects and descriptions to accomplish our goals (as such one might have called this package `cowpatchSVG` instead).
 
 ## Installation
 
