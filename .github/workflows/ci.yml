@@ -23,7 +23,9 @@ jobs:
     - uses: snok/install-poetry@v1
     # Step 5. Install our package
     - name: Install package
-      run: poetry install
+      run: |
+        poetry update
+        poetry install
     # Step 6. Run tests for package
     - name: Test with pytest
       run: poetry run pytest tests/ --cov=cowpatch --cov-report=xml
