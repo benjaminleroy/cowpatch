@@ -17,14 +17,18 @@ $ pip install cowpatch
 
 - TODO
 
-## Contributing
+
+## Package Logistics
+
+### Contributing
 
 Interested in contributing? Check out the contributing guidelines. Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.
 
-## License
+### License
 
 `cowpatch` was created by [Benjamin LeRoy](https://github.com/benjaminleroy) and [Mallory Wang](https://github.com/wangmallory). It is licensed under the terms of the MIT license.
 
-## Credits
+### Credits
 
 `cowpatch` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter).
+

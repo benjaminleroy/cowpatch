@@ -7,16 +7,22 @@ helps, and credit will always be given.
 
 ### Report Bugs
 
-If you are reporting a bug, please include:
+If you are reporting a bug, please make sure you provide
+
+* A reproducible data example (including all package imports, data imports and
+full code). This may mean that you will need to "dumb"-down your problem.
+
+Beyond that, please provide
 
 * Your operating system name and version.
 * Any details about your local setup that might be helpful in troubleshooting.
-* Detailed steps to reproduce the bug.
+
 
 ### Fix Bugs
 
 Look through the GitHub issues for bugs. Anything tagged with "bug" and "help
-wanted" is open to whoever wants to implement it.
+wanted" is open to whoever wants to implement it. If you are fixing bugs please
+add additional tests to capture what the bug was.
 
 ### Implement Features
 
@@ -28,6 +34,22 @@ and "help wanted" is open to whoever wants to implement it.
 You can never have enough documentation! Please feel free to contribute to any
 part of the documentation, such as the official docs, docstrings, or even 
 on the web in blog posts, articles, and such.
+
+### Write Additional Tests
+
+Generally speaking, the more tests the better. Additionally, given this was
+developed as a "statistical package", many functions and classes were not
+created in a "test-driven" fashion, so capturing additional use cases/edge case
+is looking upon favorably.
+
+To test `svg` and general objects we use the `pytest-regressions` package (and
+specifically it's `image_regression` tools. A member of the development team
+gave a talk at PyCon 2020 which can be found on youtube
+[here](https://youtu.be/YBuVGx3EYSY?t=1423). Beyond this talk and
+package [documentation](https://pytest-regressions.readthedocs.io/) don't
+capture how to use the tool clearly enough please see the `test/` folder's
+tests.
+
 
 ### Submit Feedback
 
