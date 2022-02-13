@@ -3,13 +3,14 @@ import plotnine as p9
 import cairosvg
 import svgutils.transform as sg
 from PIL import Image
+import re
 
 def _transform_size(size_string_tuple):
     """
     takes string with unit and converts it to a float w.r.t pt
 
-    Argument
-    --------
+    Arguments
+    ---------
     size_string_tuple : string tuple
         tuple of strings with size of svg image
 
@@ -65,7 +66,7 @@ def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
 
     try:
         gg.save(fid, format= "svg", height = height, width = width,
-            dpi=dpi, units = "in", limitsize = limitsize)
+            dpi=dpi, units = "in", limitsize = limitsize, verbose = False)
     except ValueError:
         rasie(ValueError, "No ggplot SVG backend")
     fid.seek(0)
@@ -192,7 +193,7 @@ def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
     return width, height, False
 
 def gg_to_svg(gg, width, height, dpi, limitsize=True,
-              eps=1e-2, maxIter=2, min_size_px=10):
+              eps=1e-2, maxIter=4, min_size_px=10):
     """
     Convert plotnine ggplot figure to svg and return it (with close to perfect
     sizing).

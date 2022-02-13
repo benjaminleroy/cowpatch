@@ -1,27 +1,76 @@
+from pytest_regressions import image_regression
+import io
 import cowpatch as cow
+import svgutils.transform as sg
 
-def def_test_gg_to_svg():
+import plotnine as p9
+import plotnine.data as p9_data
+
+
+def test__save_svg_wrapper(image_regression):
     """
-    this test is just testing consistency
+    image regression for _save_svg_wrapper (png only)
+
+    we are showing that if we have known svgutils.transform object (known
+    w.r.t. a plotnine plot definition), then the saved png object of the svg
+    object is static/doesn't regress.
     """
-    # new example --------
-    # https://github.com/pyvista/pyvista/blob/main/tests/plotting/test_plotting.py
+    p0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.facet_wrap("cyl") +\
+        p9.labs(title = 'Plot 0')
+
+    image_width = 6
+    image_height = 4
+    inner_dpi = 96
+
+    with io.StringIO() as fid1:
+        p0.save(fid1, format="svg", width = image_width,
+                height=image_height, verbose = False)
+        fid1.seek(0)
+        sg_obj = sg.fromstring(fid1.read())
+        with io.BytesIO() as fid2:
+            cow.svg_utils._save_svg_wrapper(svg=sg_obj,
+                                        width=image_width,
+                                        height=image_height,
+                                        _format="png",
+                                        dpi=inner_dpi,
+                                        filename=fid2)
+
+            image_regression.check(fid2.getvalue(), diff_threshold=.1)
 
 
-    # old notes --------
-    #from matplotlib.testing.decorators import image_comparison
-    # https://github.com/matplotlib/matplotlib/blob/f6e0ee49c598f59c6e6cf4eefe473e4dc634a58a/lib/matplotlib/tests/test_png.py
-    # https://www.pyimagesearch.com/2014/09/15/python-compare-two-images/
-    # ^ compare image pixels ()
 
-    # https://pypi.org/project/pixelmatch/ (# of pixels mismatched)
+def test__raw_gg_to_svg(image_regression):
+    """
+    image regression for _raw_gg_to_svg
 
-    # ^ plotnine saves png images (could also save svg objects... but harder to compare...)
-    # https://github.com/has2k1/plotnine/tree/master/plotnine/tests/baseline_images
-    # should we have differences somewhere?
+    we are showing that the _raw_gg_to_svg function preserves a ggplot's
+    image (and doesn't regress)
+    """
 
-    # ^ good snapshot test (but I'm currently worried about change element ordering in strings.)
+    mtcars = p9_data.mpg
 
-    # probably do something like plotnine (but not 100% sure about updating, etc.)
+    p0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.facet_wrap("cyl") +\
+        p9.labs(title = 'Plot 0')
 
-    pass
+    image_width = 6
+    image_height = 4
+    inner_dpi = 96
+    svg_obj = cow.svg_utils._raw_gg_to_svg(p0,
+                                      width=image_width,
+                                      height=image_height,
+                                      dpi=inner_dpi)
+    with io.BytesIO() as fid:
+        cow.svg_utils._save_svg_wrapper(svg=svg_obj,
+                                        width=image_width,
+                                        height=image_height,
+                                        _format="png",
+                                        dpi=inner_dpi,
+                                        filename=fid)
+
+        image_regression.check(fid.getvalue(), diff_threshold=.1)
+
+
