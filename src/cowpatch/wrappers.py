@@ -11,21 +11,21 @@ from .utils import inherits_plotnine
 #       size - this can probably be done with similar code to that done in the
 #       gg_to_svg approach
 
-class wapper_plotnine(patch):
-    """
-    wrapper for plotnine objects
-
-    Arguments
-    ---------
-    gg : plotnine ggplot object
-
-    Notes
-    -----
-    You can still use the plotnine ggplot "+" to this object to continue to
-    update this object. This wrapper creates a special patch object that
-    can be combined with other patch objects.
-    """
+class wrapper_plotnine(patch):
     def __init__(self,gg):
+        """
+        wrapper for plotnine objects
+
+        Arguments
+        ---------
+        gg : plotnine ggplot object
+
+        Notes
+        -----
+        You can still use the plotnine ggplot "+" to this object to continue to
+        update this object. This wrapper creates a special patch object that
+        can be combined with other patch objects.
+        """
         self.gg = gg
         self.layout = None
 
@@ -60,21 +60,21 @@ class wapper_plotnine(patch):
 
 
 class wrapper_matplotlib(patch):
-    """
-    wrapper for matplotlib objects
-
-    Arguments
-    ---------
-    fig : matplotlib figure object
-    axes : matplotlib axes object
-
-    Notes
-    -----
-    You can still update the plot using `object.fig.(function)` and
-    `object.fig.(function)`. This wrapper creates a special patch object that
-    can be combined with other patch objects.
-    """
     def __init__(self, fig, axes):
+        """
+        wrapper for matplotlib objects
+
+        Arguments
+        ---------
+        fig : matplotlib figure object
+        axes : matplotlib axes object
+
+        Notes
+        -----
+        You can still update the plot using `object.fig.(function)` and
+        `object.fig.(function)`. This wrapper creates a special patch object that
+        can be combined with other patch objects.
+        """
         self.fig = fig
         self.axes = axes
 
@@ -82,23 +82,22 @@ class wrapper_matplotlib(patch):
         raise ValueError("TODO: implement")
 
 class wrapper_seaborn(wrapper_matplotlib):
-    """
-    wrapper for seaborn objects
-
-    Arguments
-    ---------
-    fig : matplotlib figure object
-    axes : matplotlib axes object
-
-    Notes
-    -----
-    This is the same as the `wrapper_matplotlib` function.
-
-    You can still update the plot using `object.fig.(function)` and
-    `object.fig.(function)`. This wrapper creates a special patch object that
-    can be combined with other patch objects.
-
-    """
     def __init__(self, fig, axes):
-        super().__init__(fig, axes)
+        """
+        wrapper for seaborn objects
 
+        Arguments
+        ---------
+        fig : matplotlib figure object
+        axes : matplotlib axes object
+
+        Notes
+        -----
+        This is the same as the `wrapper_matplotlib` function.
+
+        You can still update the plot using `object.fig.(function)` and
+        `object.fig.(function)`. This wrapper creates a special patch object that
+        can be combined with other patch objects.
+
+        """
+        super().__init__(fig, axes)

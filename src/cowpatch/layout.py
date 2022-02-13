@@ -9,108 +9,6 @@ from .utils import is_pos_int, is_non_neg_int, \
 # 2/7 (Ben): thes objects are decently clean, but need testing
 
 class layout:
-    """
-    layout class to store information about arangement of patches
-
-
-    Arguments
-    ---------
-    ncol : integer
-        Integer for the number of columns to arrange the the patches in.
-        The default is None (which avoids conflicts if a value for
-        `design` is provided). If `ncol` is None but `nrow` is not, then
-        `ncol` will default to the minimum number of columns to make sure
-        that all patches can be visualized.
-    nrow : integer
-        Integer for the number of rows to arrange the the patches in.
-        The default is None (which avoids conflicts if a value for
-        `design` is provided). If `nrow` is None but `ncol` is not, then
-        `nrow` will default to the minimum number of rows to make sure
-        that all patches can be visualized.
-    byrow : boolean
-        If `ncol` and/or `nrow` is included, then this boolean indicates
-        if the patches should be ordered by row (default if byrow is None
-        or when parameter is True) or by column (if byrow was False).
-    design : np.array (float based) or str
-        Specification of the location of each patch in the arrangement.
-        Can either be a float numpy array with integers between 0 and
-        the number of patches to arrange, or a text string that captures
-        similar ideas to the array approach but uses capital alphabetical
-        characters (A-Z) to indicate each figure. More information is in
-        Details.
-    rel_widths : list, np vector or tuple
-        Numerical vector of relative columns widths. This not required,
-        the default would be `np.ones(ncol)` or `np.ones(design.shape[0])`.
-        Note that this is a relative sizing and the values are only
-        required to be non-negative, non-zero values, for example
-        [1,2] would would make the first column twice as wide as the
-        second column.
-    rel_heights : list or tuple
-        Numerical vector of relative row heights. This not required,
-        the default would be `np.ones(nrow)` or `np.ones(design.shape[1])`.
-        Note that this is a relative sizing and the values are only
-        required to be non-negative, non-zero values, for example
-        [1,2] would would make the first row twice as tall as the
-        second row.
-
-    Notes
-    -----
-    The `design` parameter expects specific input.
-
-    1. If the `design` is input as a numpy array, we expect it to have
-    integers only (0 to # patches -1). It is allowed to have `np.nan` values
-    if certain "squares" of the  layout are not covered by others (the
-    covering is defined by the value ordering). Note that we won't check
-    for overlap and `np.nan` is not enforced if another patches' relative
-    (min-x,min-y) and (max-x, max-y) define a box over that `np.nan`'s
-    area.
-
-    An example of a design of the numpy array form could look like
-
-    .. code-block::
-
-            my_np_design = np.array([[1,1,2],
-                                     [3,3,2],
-                                     [3,3,np.nan]])
-
-
-    2. if the `design` parameter takes in a string, we expect it to have
-    a structure such that each line (pre "\\n") contains the same number
-    of characters, and these characters must come from the first
-    (# patches =1) capital alphabetical characters or the "#" or "." sign to
-    indicate an empty square. Similar arguments w.r.t. overlap and the
-    lack of real enforcement for empty squares applies (as in #1).
-
-    An example of a design of the string form could look like
-
-    .. code-block::
-
-            my_str_design = \"\"\"
-            AAB
-            CCB
-            CC#
-            \"\"\"
-
-    or
-
-    .. code-block::
-
-            my_str_design = \"\"\"
-            AAB
-            CCB
-            CC.
-            \"\"\"
-
-
-    **Similarities to `R` cousins:**
-
-    This layout function is similar to `patchwork::plot_layout` (with a
-    special node to `design` parameter) and helps perform similar ideas to
-    `gridExtra::arrangeGrob`'s `layout_matrix` parameter, and
-    `cowplot::plot_grid`'s `rel_widths` and `rel_heights` parameters
-
-
-    """
     def __init__(self,
              ncol=None,
              nrow=None,
@@ -120,7 +18,103 @@ class layout:
              design=None
              ):
         """
-        see class docstring
+        layout class to store information about arangement of patches
+
+        Arguments
+        ---------
+        ncol : integer
+            Integer for the number of columns to arrange the the patches in.
+            The default is None (which avoids conflicts if a value for
+            `design` is provided). If `ncol` is None but `nrow` is not, then
+            `ncol` will default to the minimum number of columns to make sure
+            that all patches can be visualized.
+        nrow : integer
+            Integer for the number of rows to arrange the the patches in.
+            The default is None (which avoids conflicts if a value for
+            `design` is provided). If `nrow` is None but `ncol` is not, then
+            `nrow` will default to the minimum number of rows to make sure
+            that all patches can be visualized.
+        byrow : boolean
+            If `ncol` and/or `nrow` is included, then this boolean indicates
+            if the patches should be ordered by row (default if byrow is None
+            or when parameter is True) or by column (if byrow was False).
+        design : np.array (float based) or str
+            Specification of the location of each patch in the arrangement.
+            Can either be a float numpy array with integers between 0 and
+            the number of patches to arrange, or a text string that captures
+            similar ideas to the array approach but uses capital alphabetical
+            characters (A-Z) to indicate each figure. More information is in
+            Notes.
+        rel_widths : list, np vector or tuple
+            Numerical vector of relative columns widths. This not required,
+            the default would be `np.ones(ncol)` or `np.ones(design.shape[0])`.
+            Note that this is a relative sizing and the values are only
+            required to be non-negative, non-zero values, for example
+            [1,2] would would make the first column twice as wide as the
+            second column.
+        rel_heights : list or tuple
+            Numerical vector of relative row heights. This not required,
+            the default would be `np.ones(nrow)` or `np.ones(design.shape[1])`.
+            Note that this is a relative sizing and the values are only
+            required to be non-negative, non-zero values, for example
+            [1,2] would would make the first row twice as tall as the
+            second row.
+
+        Notes
+        -----
+        The `design` parameter expects specific input.
+
+        1. If the `design` is input as a numpy array, we expect it to have
+        integers only (0 to # patches-1). It is allowed to have `np.nan` values
+        if certain "squares" of the  layout are not covered by others (the
+        covering is defined by the value ordering). Note that we won't check
+        for overlap and `np.nan` is not enforced if another patches' relative
+        (min-x,min-y) and (max-x, max-y) define a box over that `np.nan`'s
+        area.
+
+        An example of a design of the numpy array form could look like
+
+        .. code-block::
+
+                my_np_design = np.array([[1,1,2],
+                                         [3,3,2],
+                                         [3,3,np.nan]])
+
+
+        2. if the `design` parameter takes in a string, we expect it to have
+        a structure such that each line (pre "\\n") contains the same number
+        of characters, and these characters must come from the first
+        (# patches-1) capital alphabetical characters or the "#" or "." sign to
+        indicate an empty square. Similar arguments w.r.t. overlap and the
+        lack of real enforcement for empty squares applies (as in #1).
+
+        An example of a design of the string form could look like
+
+        .. code-block::
+
+                my_str_design = \"\"\"
+                AAB
+                CCB
+                CC#
+                \"\"\"
+
+        or
+
+        .. code-block::
+
+                my_str_design = \"\"\"
+                AAB
+                CCB
+                CC.
+                \"\"\"
+
+
+        **Similarities to `R` cousins:**
+
+        This layout function is similar to `patchwork::plot_layout` (with a
+        special node to `design` parameter) and helps perform similar ideas to
+        `gridExtra::arrangeGrob`'s `layout_matrix` parameter, and
+        `cowplot::plot_grid`'s `rel_widths` and `rel_heights` parameters
         """
         if design is not None:
             if ncol is not None or nrow is not None:
@@ -317,7 +311,7 @@ class layout:
         Notes
         -----
         Yokogaki is a Japanese word that concisely describes the left to right,
-        top to bottom writting format. We'd like to thank `stack overflow`_.
+        top to bottom writing format. We'd like to thank `stack overflow`_.
         for pointing this out.
 
         .. _stack overflow:
@@ -342,7 +336,7 @@ class layout:
 
     def __hash__(self):
         """
-        Creates a 'unique' has for the object to help with identification
+        Creates a 'unique' hash for the object to help with identification
 
         Returns
         -------
@@ -366,54 +360,50 @@ class layout:
         return self.__repr__() + "\n" + out
 
     def __eq__(self, value):
-        if np.allclose(self.design,value.design,equal_nan=True) and \
+        return np.allclose(self.design,value.design,equal_nan=True) and \
             self.ncol == value.ncol and \
             self.nrow == value.nrow and \
             np.unique(self.rel_heights/value.rel_heights).shape[0] == 1 and \
-            np.unique(self.rel_widths/value.rel_widths).shape[0] == 1:
-            return True
-        else:
-            return False
+            np.unique(self.rel_widths/value.rel_widths).shape[0] == 1
+
 
 class area:
-    """
-    area class that stores information about what area a patch will fill
 
-    Arguments
-    ---------
-    x_left : float
-        scalar of where the left-most point of the patch is located (impacted
-        by the `_type` parameter)
-    y_top : float
-        scalar of where the top-most point of the patch is located (impacted
-        by the `_type` parameter)
-    width : float
-        scalar of the width of the patch (impacted by the `_type` parameter)
-    height : float
-        scalar of the height of the patch (impacted by the `_type` parameter)
-    _type : str
-        describes how the parameters are stored. Options include
-        ["design", "relative", "px"]. See Notes for more information
-        between the options.
-
-    Notes
-    -----
-    The `_type` parameter informs how to understand the other parameters:
-
-    1. "design" means that the values are w.r.t. to a design matrix
-    relative to the `layout` class, and values are relative to the rows
-    and columns units.
-
-    2. "relative" means the values are defined relative to the full size of
-    the canvas and taking values between 0-1 (inclusive).
-
-    3. "px" means that values are defined relative to pixel values
-    """
-    def __init__(self, x_left, y_top,
+    def __init__(self,
+                 x_left, y_top,
                  width, height,
                  _type):
         """
-        see class docstring
+        area class that stores information about what area a patch will fill
+
+        Arguments
+        ---------
+        x_left : float
+            scalar of where the left-most point of the patch is located (impacted
+            by the `_type` parameter)
+        y_top : float
+            scalar of where the top-most point of the patch is located (impacted
+            by the `_type` parameter)
+        width : float
+            scalar of the width of the patch (impacted by the `_type` parameter)
+        height : float
+            scalar of the height of the patch (impacted by the `_type` parameter)
+        _type : str {"design", "relative", "px"}
+            describes how the parameters are stored. See Notes for more information
+            between the options.
+
+        Notes
+        -----
+        The `_type` parameter informs how to understand the other parameters:
+
+        1. "design" means that the values are w.r.t. to a design matrix
+        relative to the `layout` class, and values are relative to the rows
+        and columns units.
+
+        2. "relative" means the values are defined relative to the full size of
+        the canvas and taking values between 0-1 (inclusive).
+
+        3. "px" means that values are defined relative to pixel values
         """
 
         # some structure check:
@@ -427,7 +417,7 @@ class area:
 
     def _check_info_wrt_type(self, x_left, y_top, width, height,_type):
         """
-        some logic checks of inputs relative to _type parameter
+        some logic checks of inputs relative to `_type` parameter
 
         Arguments
         ---------
@@ -457,7 +447,8 @@ class area:
         if _type not in ["design", "relative", "px"]:
             raise ValueError("_type parameter not an acceptable option, see"+\
                              " documentation")
-        elif _type == "design" and \
+
+        if _type == "design" and \
             not np.all([is_non_neg_int(val) for val in [x_left,y_top]] +\
                        [is_pos_int(val) for val in [width,height]]) :
             raise ValueError("with _type=\"design\", all parameters must be "+\
@@ -479,8 +470,8 @@ class area:
 
     def _design_to_relative(self, rel_widths, rel_heights):
         """
-        translates an area object with `_type`="design" to area object
-        with `_type`="relative".
+        translates an area object with `_type` = "design" to area object
+        with `_type` = "relative".
 
         Arguments
         ---------
@@ -492,7 +483,7 @@ class area:
         Returns
         -------
         area object
-            area object of `_type`="relative"
+            area object of `_type` = "relative"
         """
         rel_widths = rel_widths/np.sum(rel_widths)
         rel_heights = rel_heights/np.sum(rel_heights)
@@ -513,8 +504,8 @@ class area:
 
     def _relative_to_px(self, width_px, height_px):
         """
-        translates an area object with `_type`="relative" to area object
-        with `_type`="px".
+        translates an area object with `_type` = "relative" to area object
+        with `_type` = "px".
 
         Arguments
         ---------
@@ -526,7 +517,7 @@ class area:
         Returns
         -------
         area object
-            area object of `_type`="px"
+            area object of `_type` = "px"
         """
         return area(x_left = self.x_left * width_px,
                     y_top = self.y_top * height_px,
@@ -541,26 +532,25 @@ class area:
            rel_heights=None
            ):
         """
-
-        Translates area object to `_type`="px"
+        Translates area object to `_type` = "px"
 
         Arguments
         ---------
         width_px : float
-            width in pixels (required if _type is not "px")
+            width in pixels (required if `_type` is not "px")
         height_px : float
-            height in pixels (required if _type is not "px")
+            height in pixels (required if `_type` is not "px")
         rel_widths : np.array (vector)
             list of relative widths of each column of the layout matrix
-            (required if _type is "design")
+            (required if `_type` is "design")
         rel_heights : np.array (vector)
             list of relative heights of each row of the layout matrix
-            (required if _type is "design")
+            (required if `_type` is "design")
 
         Returns
         -------
         area object
-            area object of `_type`="px"
+            area object of `_type` = "px"
         """
         if self._type == "design":
             rel_area = self._design_to_relative(rel_widths = rel_widths,
@@ -581,8 +571,8 @@ class area:
 
         Notes
         -----
-        required since we defined __eq__ and this conflicts with the
-        standard __hash__ (I should figure out a way to fix this...)
+        required since we defined `__eq__` and this conflicts with the
+        standard `__hash__`
         """
         return hash((self.x_left, self.y_top,
                      self.width, self.height,
@@ -610,4 +600,3 @@ class area:
                       np.array([value.x_left, value.y_top,
                                 value.width, value.height])) and \
             self._type == value._type
-
