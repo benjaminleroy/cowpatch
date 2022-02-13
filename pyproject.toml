@@ -14,6 +14,7 @@ plotnine = "^0.8.0"
 matplotlib = "^3.5.1"
 numpy = "^1.21.4"
 svgutils = "^0.3.4"
+CairoSVG = "^2.5.2"
 
 [tool.poetry.dev-dependencies]
 pandas = "^1.3.5"
