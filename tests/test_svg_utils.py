@@ -1,6 +1,6 @@
 from pytest_regressions import image_regression
 import io
-import cowpatch as cow
+import cowpatch.svg_utils
 import svgutils.transform as sg
 
 import plotnine as p9
@@ -30,7 +30,7 @@ def test__save_svg_wrapper(image_regression):
         fid1.seek(0)
         sg_obj = sg.fromstring(fid1.read())
         with io.BytesIO() as fid2:
-            cow.svg_utils._save_svg_wrapper(svg=sg_obj,
+            cowpatch.svg_utils._save_svg_wrapper(svg=sg_obj,
                                         width=image_width,
                                         height=image_height,
                                         _format="png",
@@ -59,12 +59,12 @@ def test__raw_gg_to_svg(image_regression):
     image_width = 6
     image_height = 4
     inner_dpi = 96
-    svg_obj = cow.svg_utils._raw_gg_to_svg(p0,
+    svg_obj = cowpatch.svg_utils._raw_gg_to_svg(p0,
                                       width=image_width,
                                       height=image_height,
                                       dpi=inner_dpi)
     with io.BytesIO() as fid:
-        cow.svg_utils._save_svg_wrapper(svg=svg_obj,
+        cowpatch.svg_utils._save_svg_wrapper(svg=svg_obj,
                                         width=image_width,
                                         height=image_height,
                                         _format="png",
@@ -72,5 +72,3 @@ def test__raw_gg_to_svg(image_regression):
                                         filename=fid)
 
         image_regression.check(fid.getvalue(), diff_threshold=.1)
-
-
