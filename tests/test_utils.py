@@ -143,3 +143,16 @@ def test_to_inches(val, units):
                        val), \
         "converting back and forth (from _inches first) should perserve transform"
 
+
+@given(st.floats(min_value = .001, max_value=1e6),
+       st.floats(min_value = .001, max_value=1e6),
+       st.floats(min_value = .001, max_value=1e6),
+       st.floats(min_value = .001, max_value=1e6))
+def test__proposed_scaling_both(cx,cy,dx,dy):
+    scalings = cowpatch.utils._proposed_scaling_both((cx,cy),(dx,dy))
+
+    assert np.allclose([cx*scalings[0], cy*scalings[1]],
+                       [dx,dy]), \
+        "expected scaling to correctly scale current values to desired "+\
+        "values (in x and y directions individually)"
+

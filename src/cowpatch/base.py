@@ -6,59 +6,57 @@ from .utils import to_inches, to_inches, inherits_plotnine
 # TODO notes:
 # 2/7 (Ben): patch object needs annotation functionality, * and & operators
 #       to work with themes. And a lot of testing. I also think we need to
-#       think about how to deal inputs that are UNwrapped plotnine ggplot
-#       objects.
+#       think about how to deal inputs that are UNwrapped plotnine ggplot objects.
 
 class patch:
-    """
-    general object to describe a plots or arangement of plots
-
-    Arguments
-    ---------
-    *args : ggplots and patches
-    grobs : list
-        list of ggplot objects and patches. Either *args is empty or
-        grobs is None.
-
-    Notes
-    -----
-    All patch objects can be combined with other patch objects, either inside
-    other `patch` calls or using mathematical grammar (described below).
-
-    Additionally, patch objects's layouts can be described by adding a `layout`
-    object, can have figure labels and titles added using an addition of a
-    `annotation` object, and can have plots inset into it's grid with a
-    `inset` object addition.
-
-    **Mathematical Grammar**
-
-    Mirroring ideas in `R`'s `patchwork` package, the following methods can
-    be used to combine patch objects
-
-    - `__add__` (`+`) of patches will (in the default) arange a sequence of
-        patches in a matrix grid (byrow)
-    - `__or__` (`|`) of patches will (in the default) arange a sequence of
-        patches in a single row
-    - `__div__` (`/`) of patches will (in the default) arange a sequence of
-        patches in a single column
-
-    These can also be combined to make complex layout structures. In addition,
-    these structures can define depths structures. The top layout can be
-    updated with an addition of a `layout`.
-
-    Beyond combinations with other patches, the use of
-
-    - `__mul__` (`*`) with a plotnine theme object will apply that theme to
-        every plotnine object on the top layer (and `text` object - see
-        document)
-    - `__mul__` (`*`) with a plotnine theme object will apply that theme to
-        every plotnine object at any depth (and `text` object - see document)
-
-    """
     def __init__(self, *args, grobs=None):
+        """
+        general object to describe a plots or arangement of plots
+
+        Arguments
+        ---------
+        \*args : ggplots and patches
+        grobs : list
+            list of ggplot objects and patches. Either `\*args` is empty or
+            `grobs` is `None`.
+
+        Notes
+        -----
+        All patch objects can be combined with other patch objects, either inside
+        other `patch` calls or using mathematical grammar (described below).
+
+        Additionally, patch objects's layouts can be described by adding a `layout`
+        object, can have figure labels and titles added using an addition of a
+        `annotation` object, and can have plots inset into it's grid with a
+        `inset` object addition.
+
+        **Mathematical Grammar**
+
+        Mirroring ideas in `R`'s `patchwork` package, the following methods can
+        be used to combine patch objects
+
+        - `__add__` (`+`) of `patches` will (in the default) arange a sequence of
+            `patches` in a matrix grid (byrow)
+        - `__or__` (`|`) of `patches` will (in the default) arange a sequence of
+            `patches` in a single row
+        - `__div__` (`/`) of `patches` will (in the default) arange a sequence of
+            `patches` in a single column
+
+        These can also be combined to make complex layout structures. In addition,
+        these structures can define depths structures. The top layout can be
+        updated with an addition of a `layout`.
+
+        Beyond combinations with other patches, the use of
+
+        - `__mul__` (`*`) with a `plotnine` `theme` object will apply that theme to
+            every `plotnine` object on the top `layer` (and `text` object - see
+            document)
+        - `__and__` (`&`) with a plotnine theme object will apply that theme to
+            every `plotnine` object at any depth (and `text` object - see document)
+        """
         # todo put *args into a list
         args_grobs = [x for x in args]
-        if len(args_grobs) > 0
+        if len(args_grobs) > 0:
             if grobs is not None:
                 raise ValueError("cannot input a grobs list"+\
                                  " as well as individual plots")
@@ -71,7 +69,7 @@ class patch:
 
     def _layout(self):
         """
-        provide layout default else return layout
+        provide `layout` default else return `layout`
         """
         if self.layout == "patch":
             if len(self.grobs) < 4:
@@ -218,7 +216,7 @@ class patch:
         Arguments
         ---------
         filename : str
-            local string to save the file to (this can also be at a io.BytesIO)
+            local string to save the file to (this can also be at a `io.BytesIO`)
         width : float
             width of output image in inches (this should actually be associated
             with the svg...)
@@ -229,7 +227,8 @@ class patch:
             dots per square inch, default is 96 (standard)
         _format : str
             string of format (error tells options). If provided this is the
-            format used, if None, then we'll try to use the filename extension.
+            format used, if None, then we'll try to use the `filename`
+            extension.
 
         Returns
         -------

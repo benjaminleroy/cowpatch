@@ -192,3 +192,25 @@ def _transform_size_to_pt(size_string_tuple):
         raise ValueError("size_string_tuple structure of object not as "+\
                          "expected, new size type")
 
+
+
+def _proposed_scaling_both(current, desired):
+    """
+    identify a x and y scaling to make the current size into the desired size
+
+    Arguments
+    ---------
+    current : tuple
+        float tuple of current size of svg object
+    desired : tuple
+        float tuple of desired size of svg object
+
+    Returns
+    -------
+    tuple
+        float tuple of scalar constants for size change in each dimension
+    """
+    scale_x = desired[0]/current[0]
+    scale_y = desired[1]/current[1]
+
+    return scale_x, scale_y

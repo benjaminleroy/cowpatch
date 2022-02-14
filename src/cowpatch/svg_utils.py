@@ -5,7 +5,8 @@ import svgutils.transform as sg
 from PIL import Image
 import re
 
-from .utils import _transform_size_to_pt
+from .utils import _transform_size_to_pt, _proposed_scaling_both
+
 
 
 def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
@@ -88,14 +89,17 @@ def _real_size_out_svg(gg, height, width, dpi, limitsize=True):
         of the actual height and width (in inches) of the svg image that would
         be created if the above
     """
-    img = _raw_gg_to_svg(gg, height, width, dpi, limitsize=True)
+    img = _raw_gg_to_svg(gg,
+                         height=height,
+                         width=width,
+                         dpi=dpi, limitsize=limitsize)
     # TODO: transform this to getting inches right away?
     new_width, new_height = _transform_size_to_pt(img.get_size())
 
     return new_width / 72, new_height / 72 # this does it for inches...
 
 def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
-                    eps=1e-2, maxIter=2, min_size_px=10):
+                    eps=1e-2, maxIter=4, min_size_px=10):
     """
     Obtain the correct input saving size plotnine.ggplot object to actual
     obtain desired height and width (inches)
@@ -155,7 +159,6 @@ def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
                                                         width=current_width,
                                                         dpi=dpi,
                                                         limitsize=limitsize)
-
         current_width *= desired_width / actual_width
         current_height *= desired_height / actual_height
         deltas.append(abs(actual_width - desired_width) + \
@@ -227,11 +230,11 @@ def gg_to_svg(gg, width, height, dpi, limitsize=True,
                     dpi=dpi)
 
     current_size_raw = svg.get_size()
-    current_size = transform_size(current_size_raw)
-    desired_size_raw = [str(v * 72)+"pt" for v in info_dict[p_idx]["full_size"]]
-    desired_size = transform_size(desired_size_raw)
+    current_size = _transform_size_to_pt(current_size_raw)
+    desired_size_raw = (str(width * 72)+"pt", str(height * 72)+"pt")
+    desired_size = _transform_size_to_pt(desired_size_raw)
 
-    scale = proposed_scaling_both(current_size, desired_size)
+    scale = _proposed_scaling_both(current_size, desired_size)
 
     inner_root = svg.getroot()
     inner_root.moveto(x=0,y=0,scale_x=scale[0], scale_y=scale[1])
