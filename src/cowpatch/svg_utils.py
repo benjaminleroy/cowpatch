@@ -5,31 +5,8 @@ import svgutils.transform as sg
 from PIL import Image
 import re
 
-def _transform_size(size_string_tuple):
-    """
-    takes string with unit and converts it to a float w.r.t pt
+from .utils import _transform_size_to_pt
 
-    Arguments
-    ---------
-    size_string_tuple : string tuple
-        tuple of strings with size of svg image
-
-    Return
-    ------
-    tuple of floats of sizes w.r.t pt
-    """
-    value = [float(re.search(r'[0-9\.+]+', s).group())
-                for s in size_string_tuple]
-
-    if size_string_tuple[0].endswith("pt"):
-       return (value[0], value[1])
-    elif size_string_tuple[0].endswith("in"):
-        return (value[0]/72, value[1]/72)
-    elif size_string_tuple[0].endswith("px"):
-        return (value[0]*.75, value[1]*.75)
-    else:
-        raise ValueError("size_string_tuple structure of object not as "+\
-                         "expected, new size type")
 
 def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
     """
@@ -112,7 +89,8 @@ def _real_size_out_svg(gg, height, width, dpi, limitsize=True):
         be created if the above
     """
     img = _raw_gg_to_svg(gg, height, width, dpi, limitsize=True)
-    new_width, new_height = _transform_size(img.get_size())
+    # TODO: transform this to getting inches right away?
+    new_width, new_height = _transform_size_to_pt(img.get_size())
 
     return new_width / 72, new_height / 72 # this does it for inches...
 

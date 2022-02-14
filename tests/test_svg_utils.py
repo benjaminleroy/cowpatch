@@ -6,7 +6,6 @@ import svgutils.transform as sg
 import plotnine as p9
 import plotnine.data as p9_data
 
-
 def test__save_svg_wrapper(image_regression):
     """
     image regression for _save_svg_wrapper (png only)
@@ -39,8 +38,6 @@ def test__save_svg_wrapper(image_regression):
 
             image_regression.check(fid2.getvalue(), diff_threshold=.1)
 
-
-
 def test__raw_gg_to_svg(image_regression):
     """
     image regression for _raw_gg_to_svg
@@ -72,3 +69,4 @@ def test__raw_gg_to_svg(image_regression):
                                         filename=fid)
 
         image_regression.check(fid.getvalue(), diff_threshold=.1)
+

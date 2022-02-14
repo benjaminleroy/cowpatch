@@ -1,6 +1,7 @@
 import numpy as np
 import plotnine as p9
 import inspect
+import re
 
 def val_range(x):
     return (np.min(x), np.max(x))
@@ -43,13 +44,17 @@ def to_pt(value, units, dpi=96):
     ------
     length in pt
     """
+    if units not in ["pt", "cm", "mm", "in", "inches", "px"]:
+        raise ValueError("please constrain units string parameter to "+\
+                         "options listed in doc string")
+
     if units == "pt":
         return value
 
     # metric to inches
     if units == "cm":
         value = value/2.54
-        unit = "in"
+        units = "in"
 
     if units == "mm":
         value = value/25.4
@@ -72,9 +77,9 @@ def from_pt(value, units, dpi=96):
     Arguments
     ---------
     value : float
-        length in measurement units
+        length in pt
     units : str
-        unit type (e.g. "pt", "px", "in", "cm", "mm")
+        unit type (e.g. "pt", "px", "in", "cm", "mm") to convert to
     dpi : float / int
         dots per inch (conversion between inches and px)
 
@@ -82,6 +87,10 @@ def from_pt(value, units, dpi=96):
     ------
     length given units
     """
+    if units not in ["pt", "cm", "mm", "in", "inches", "px"]:
+        raise ValueError("please constrain units string parameter to "+\
+                         "options listed in doc string")
+
     if units == "pt":
         return value
 
@@ -104,13 +113,46 @@ def from_pt(value, units, dpi=96):
         value = value * 4/3
         return value
 
-
 def to_inches(value, units, dpi=96):
-    raise ValueError("TODO: impliment")
+    """
+    convert length from given units to pt
+
+    Arguments
+    ---------
+    value : float
+        length in measurement units
+    units : str
+        unit type (e.g. "pt", "px", "in", "cm", "mm")
+    dpi : float / int
+        dots per inch (conversion between inches and px)
+
+    Return
+    ------
+    length in pt
+    """
+    pt_val = to_pt(value, units, dpi)
+    return from_pt(pt_val, "in", dpi)
+
 
 def from_inches(value, units, dpi=96):
-    raise ValueError("TODO: impliment")
+    """
+    convert length from inches to given units
 
+    Arguments
+    ---------
+    value : float
+        length in inches
+    units : str
+        unit type (e.g. "pt", "px", "in", "cm", "mm") to convert to
+    dpi : float / int
+        dots per inch (conversion between inches and px)
+
+    Return
+    ------
+    length given units
+    """
+    pt_val = to_pt(value, "in", dpi)
+    return from_pt(pt_val, units, dpi)
 
 def inherits_plotnine(other):
     """
@@ -122,3 +164,31 @@ def inherits_plotnine(other):
     parent = module_tree.split('.')[0] if module_tree else None
 
     return "plotnine" == parent
+
+
+def _transform_size_to_pt(size_string_tuple):
+    """
+    takes string with unit and converts it to a float w.r.t pt
+
+    Arguments
+    ---------
+    size_string_tuple : string tuple
+        tuple of strings with size of svg image
+
+    Return
+    ------
+    tuple of floats of sizes w.r.t pt
+    """
+    value = [float(re.search(r'[0-9\.+]+', s).group())
+                for s in size_string_tuple]
+
+    if size_string_tuple[0].endswith("pt"):
+       return (value[0], value[1])
+    elif size_string_tuple[0].endswith("in"):
+        return (value[0]*72, value[1]*72)
+    elif size_string_tuple[0].endswith("px"):
+        return (value[0]*.75, value[1]*.75)
+    else:
+        raise ValueError("size_string_tuple structure of object not as "+\
+                         "expected, new size type")
+
