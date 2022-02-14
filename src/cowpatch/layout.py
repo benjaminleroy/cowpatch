@@ -5,9 +5,6 @@ import copy
 from .utils import is_pos_int, is_non_neg_int, \
                 is_proportion, is_positive, is_non_negative
 
-# TODO notes:
-# 2/7 (Ben): thes objects are decently clean, but need testing
-
 class layout:
     def __init__(self,
              ncol=None,
