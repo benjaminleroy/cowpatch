@@ -69,4 +69,3 @@ def test__raw_gg_to_svg(image_regression):
                                         filename=fid)
 
         image_regression.check(fid.getvalue(), diff_threshold=.1)
-

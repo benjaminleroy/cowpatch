@@ -130,9 +130,6 @@ def test_from_pt_bad(val, bad_unit):
         with pytest.raises(Exception) as e_info:
             cowpatch.utils.from_pt(val, bad_unit)
 
-
-
-
 @given(st.floats(min_value = -1e10,max_value = 1e10),
        st.sampled_from(["pt", "px", "in", "cm", "mm"]))
 def test_to_inches(val, units):
@@ -145,7 +142,4 @@ def test_to_inches(val, units):
     assert np.allclose(cowpatch.utils.to_inches(val_rev,units),
                        val), \
         "converting back and forth (from _inches first) should perserve transform"
-
-
-
 
