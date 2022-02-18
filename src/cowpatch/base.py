@@ -173,16 +173,16 @@ class patch:
         raise ValueError("currently not implimented &")
 
 
-    def _svg(self, width_px, height_px):
+    def _svg(self, width_pt, height_pt):
         """
         Internal function to create an svg representation of the patch
 
         Arguments
         ---------
-        width_px : float
-            desired width of svg object in pixels
-        height_px : float
-            desired height of svg object in pixels
+        width_pt : float
+            desired width of svg object in points
+        height_pt : float
+            desired height of svg object in points
 
         Returns
         -------
@@ -192,11 +192,11 @@ class patch:
 
         layout = self._layout()
 
-        areas = layout._element_locations(width_px, height_px)
+        areas = layout._element_locations(width_pt, height_pt)
         #  TODO: should figure out how to arrange the notations here ...
 
         base_image = sg.SVGFigure()
-        base_image.set_size((str(width_px)+"px", str(height_px)+"px")) # TODO: figure out if we're tracking pt vs px correct...
+        base_image.set_size((str(width_pt)+"pt", str(height_pt)+"pt")) # TODO: figure out if we're tracking pt vs px correct...
         # TODO: way to make decisions about the base image...
         base_image.append(
             sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#FFFFFF\"/>"))
@@ -204,20 +204,20 @@ class patch:
         for p_idx in np.arange(len(self.grobs)):
             inner_area = areas[p_idx]
 
-            inner_width_px = inner_area.width
-            inner_height_px = inner_area.height
+            inner_width_pt = inner_area.width
+            inner_height_pt = inner_area.height
 
             # TODO: how to deal with ggplot objects vs patch objects
             if inherits(self.grobs[p_idx], patch):
-                inner_svg = self.grobs[p_idx]._svg(width_px = inner_width_px,
-                                                   height_px = inner_height_px)
+                inner_svg = self.grobs[p_idx]._svg(width_pt = inner_width_pt,
+                                                   height_pt = inner_height_pt)
             elif inherits_plotnine(self.grobs[p_idx]):
                 inner_svg = gg_to_svg(self.grobs[p_idx],
-                                      width = to_inches(inner_width_px,
-                                                        units="px",
+                                      width = to_inches(inner_width_pt,
+                                                        units="pt",
                                                         dpi=96),
-                                      height = to_inches(inner_height_px,
-                                                        units="px",
+                                      height = to_inches(inner_height_pt,
+                                                        units="pt",
                                                         dpi=96),
                                       dpi = 96, maxIter=10)
             else:
@@ -260,8 +260,8 @@ class patch:
             saves to a file
         """
         # TODO: default width, height and dpi somewhere?
-        svg_obj = self._svg(width_px = from_inches(width, "px", dpi=dpi),
-                            height_px = from_inches(height, "px", dpi=dpi))
+        svg_obj = self._svg(width_pt = from_inches(width, "pt", dpi=dpi),
+                            height_pt = from_inches(height, "pt", dpi=dpi))
 
         _save_svg_wrapper(svg_obj,
                            filename=filename,
@@ -284,8 +284,8 @@ class patch:
         if dpi is None:
             dpi = plt.rcParams["figure.dpi"]
 
-        svg_obj = self._svg(width_px = from_inches(width, "px", dpi=dpi),
-                            height_px = from_inches(height, "px", dpi=dpi))
+        svg_obj = self._svg(width_pt = from_inches(width, "pt", dpi=dpi),
+                            height_pt = from_inches(height, "pt", dpi=dpi))
         _show_image(svg_obj,
                     width=width,
                     height=height,

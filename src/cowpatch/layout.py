@@ -250,17 +250,17 @@ class layout:
 
         return num_unique
 
-    def _element_locations(self, width_px, height_px):
+    def _element_locations(self, width_pt, height_pt):
         """
         create a list of `area` objects associated with the location of
-        each of the layout's grobs w.r.t. a given pixel width and height
+        each of the layout's grobs w.r.t. a given points width and height
 
         Arguments
         ---------
-        width_px : float
-            global width (in pixels) of the full arangement of patches
-        height_px : float
-            global height (in pixels) of the full arangement of patches
+        width_pt : float
+            global width (in points) of the full arangement of patches
+        height_pt : float
+            global height (in points) of the full arangement of patches
 
         Returns
         -------
@@ -290,10 +290,10 @@ class layout:
                                      width = inner_width,
                                      height = inner_height,
                                      _type = "design")
-            areas.append(inner_design_area.px(rel_widths=self.rel_widths,
+            areas.append(inner_design_area.pt(rel_widths=self.rel_widths,
                                               rel_heights=self.rel_heights,
-                                              width_px=width_px,
-                                              height_px=height_px))
+                                              width_pt=width_pt,
+                                              height_pt=height_pt))
 
         return areas
 
@@ -387,9 +387,9 @@ class area:
             scalar of the width of the patch (impacted by the `_type` parameter)
         height : float
             scalar of the height of the patch (impacted by the `_type` parameter)
-        _type : str {"design", "relative", "px"}
-            describes how the parameters are stored. See Notes for more information
-            between the options.
+        _type : str {"design", "relative", "pt"}
+            describes how the parameters are stored. See Notes for more
+            information between the options.
 
         Notes
         -----
@@ -402,7 +402,7 @@ class area:
         2. "relative" means the values are defined relative to the full size of
         the canvas and taking values between 0-1 (inclusive).
 
-        3. "px" means that values are defined relative to pixel values
+        3. "pt" means that values are defined relative to point values
         """
 
         # some structure check:
@@ -414,7 +414,7 @@ class area:
         self.height = height
         self._type = _type
 
-    def _check_info_wrt_type(self, x_left, y_top, width, height,_type):
+    def _check_info_wrt_type(self, x_left, y_top, width, height, _type):
         """
         some logic checks of inputs relative to `_type` parameter
 
@@ -432,9 +432,9 @@ class area:
         height : float
             scalar of the height of the patch (impacted by the `_type`
             parameter)
-        _type : str
+        _type : str {"design", "relative", "pt"}
             describes how the parameters are stored. Options include
-            ["design", "relative", "px"]. See class docstring for more info
+            ["design", "relative", "pt"]. See class docstring for more info
 
         Raises
         ------
@@ -443,7 +443,7 @@ class area:
             to the `_type` parameter
         """
 
-        if _type not in ["design", "relative", "px"]:
+        if _type not in ["design", "relative", "pt"]:
             raise ValueError("_type parameter not an acceptable option, see"+\
                              " documentation")
 
@@ -459,10 +459,10 @@ class area:
             raise ValueError("with _type=\"relative\", all parameters should"+\
                              " be between 0 and 1 (inclusive) and width and"+\
                              " height cannot be 0")
-        elif _type == "px" and \
+        elif _type == "pt" and \
             not np.all([is_non_negative(val) for val in [x_left,y_top]] +\
                        [is_positive(val) for val in [width,height]]):
-            raise ValueError("with _type=\"px\", all x_left and y_top should"+\
+            raise ValueError("with _type=\"pt\", all x_left and y_top should"+\
                              " be non-negative and width and height should"+\
                              " be strictly positive")
 
@@ -501,44 +501,44 @@ class area:
                         _type="relative")
         return rel_area
 
-    def _relative_to_px(self, width_px, height_px):
+    def _relative_to_pt(self, width_pt, height_pt):
         """
         translates an area object with `_type` = "relative" to area object
-        with `_type` = "px".
+        with `_type` = "pt".
 
         Arguments
         ---------
-        width_px : float
-            width in pixels
-        height_px : float
-            height in pixels
+        width_pt : float
+            width in points
+        height_pt : float
+            height in points
 
         Returns
         -------
         area object
-            area object of `_type` = "px"
+            area object of `_type` = "pt"
         """
-        return area(x_left = self.x_left * width_px,
-                    y_top = self.y_top * height_px,
-                    width = self.width * width_px,
-                    height = self.height * height_px,
-                    _type = "px")
+        return area(x_left = self.x_left * width_pt,
+                    y_top = self.y_top * height_pt,
+                    width = self.width * width_pt,
+                    height = self.height * height_pt,
+                    _type = "pt")
 
-    def px(self,
-           width_px=None,
-           height_px=None,
+    def pt(self,
+           width_pt=None,
+           height_pt=None,
            rel_widths=None,
            rel_heights=None
            ):
         """
-        Translates area object to `_type` = "px"
+        Translates area object to `_type` = "pt"
 
         Arguments
         ---------
-        width_px : float
-            width in pixels (required if `_type` is not "px")
-        height_px : float
-            height in pixels (required if `_type` is not "px")
+        width_pt : float
+            width in points (required if `_type` is not "pt")
+        height_pt : float
+            height in points (required if `_type` is not "pt")
         rel_widths : np.array (vector)
             list of relative widths of each column of the layout matrix
             (required if `_type` is "design")
@@ -549,16 +549,16 @@ class area:
         Returns
         -------
         area object
-            area object of `_type` = "px"
+            area object of `_type` = "pt"
         """
         if self._type == "design":
             rel_area = self._design_to_relative(rel_widths = rel_widths,
                                                 rel_heights = rel_heights)
-            return rel_area.px(width_px = width_px, height_px = height_px)
+            return rel_area.pt(width_pt = width_pt, height_pt = height_pt)
         elif self._type == "relative":
-            return self._relative_to_px(width_px = width_px,
-                                        height_px = height_px)
-        elif self._type == "px":
+            return self._relative_to_pt(width_pt = width_pt,
+                                        height_pt = height_pt)
+        elif self._type == "pt":
             return copy.deepcopy(self)
         else:
             raise ValueError("_type attributes altered to a non-acceptable"+\

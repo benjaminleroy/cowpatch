@@ -93,18 +93,18 @@ def test_layout__element_locations():
     # design 1 : np.nans in grid
     design1 = np.array([[np.nan, 0, 0],
                    [1,1, np.nan]])
-    width_px1 = 300
-    height_px1 = 200
+    width_pt1 = 300
+    height_pt1 = 200
 
     layout1 = cow.layout(design = design1)
-    areas1 = layout1._element_locations(width_px=width_px1,
-                                        height_px=height_px1)
+    areas1 = layout1._element_locations(width_pt=width_pt1,
+                                        height_pt=height_pt1)
     areas1_e = [cow.area(x_left=100, y_top=0,
                     width=200,height=100,
-                    _type="px"),
+                    _type="pt"),
                cow.area(x_left=0, y_top=100,
                     width=200,height=100,
-                    _type="px")]
+                    _type="pt")]
 
     assert np.all([areas1[l_idx] == areas1_e[l_idx] for l_idx in [0,1]]), \
         "error in expected areas returned from simple layout (1)," +\
@@ -117,38 +117,38 @@ def test_layout__element_locations():
 
     rel_heights2 = np.array([1,2,1])
     rel_widths2 = np.array([1,1,2,3])
-    width_px2 = 280
-    height_px2 = 140
+    width_pt2 = 280
+    height_pt2 = 140
 
     layout2 = cow.layout(design = design2,
                          rel_heights = rel_heights2,
                          rel_widths = rel_widths2)
-    areas2 = layout2._element_locations(width_px=width_px2,
-                                        height_px=height_px2)
+    areas2 = layout2._element_locations(width_pt=width_pt2,
+                                        height_pt=height_pt2)
 
     loc1_p_e = cow.area(x_left=0,
                 y_top=0,
                 width=2/7 * 280,
                 height=3/4 * 140,
-                _type="px")
+                _type="pt")
 
     loc2_p_e = cow.area(x_left=0,
                 y_top=3/4 * 140,
                 width=2/7 * 280,
                 height=1/4 * 140,
-                _type="px")
+                _type="pt")
 
     loc3_p_e = cow.area(x_left=2/7 * 280,
                 y_top=0,
                 width=5/7 * 280,
                 height=1/4 * 140,
-                _type="px")
+                _type="pt")
 
     loc4_p_e = cow.area(x_left=2/7 * 280,
                 y_top=1/4 * 140,
                 width=5/7 * 280,
                 height=3/4 * 140,
-                _type="px")
+                _type="pt")
     area2_e = [loc1_p_e, loc2_p_e, loc3_p_e, loc4_p_e]
 
     assert np.all([areas2[l_idx] == area2_e[l_idx] for l_idx in [0,1,2,3]]), \
@@ -213,8 +213,8 @@ def test_layout__element_locations():
                                        [0,0,0,2,2,2],
                                        [0,0,0,2,2,2]]))
 
-    areas1 = l1._element_locations(width_px=200,
-                                   height_px=90)
+    areas1 = l1._element_locations(width_pt=200,
+                                   height_pt=90)
 
     assert np.allclose(areas1[0].width, 100) and \
         np.allclose(areas1[0].height, 90) and \
@@ -247,8 +247,8 @@ def test_area():
 
     rel_heights = np.array([1,2,1])
     rel_widths = np.array([1,1,2,3])
-    width_px = 280
-    height_px = 140
+    width_pt = 280
+    height_pt = 140
 
     loc1 = cow.area(x_left=0,
                 y_top=0,
@@ -324,92 +324,92 @@ def test_area():
         "transform of design to relative represent for static example failed (4)"
 
 
-    # convert to pixel (2 ways!) -----------
+    # convert to points (2 ways!) -----------
 
-    # direct to .px
-    loc1_p1 = loc1.px(rel_widths=rel_widths,
+    # direct to .pt
+    loc1_p1 = loc1.pt(rel_widths=rel_widths,
                       rel_heights=rel_heights,
-                      width_px=width_px,
-                      height_px=height_px)
-    loc2_p1 = loc2.px(rel_widths=rel_widths,
+                      width_pt=width_pt,
+                      height_pt=height_pt)
+    loc2_p1 = loc2.pt(rel_widths=rel_widths,
                       rel_heights=rel_heights,
-                      width_px=width_px,
-                      height_px=height_px)
-    loc3_p1 = loc3.px(rel_widths=rel_widths,
+                      width_pt=width_pt,
+                      height_pt=height_pt)
+    loc3_p1 = loc3.pt(rel_widths=rel_widths,
                       rel_heights=rel_heights,
-                      width_px=width_px,
-                      height_px=height_px)
-    loc4_p1 = loc4.px(rel_widths=rel_widths,
+                      width_pt=width_pt,
+                      height_pt=height_pt)
+    loc4_p1 = loc4.pt(rel_widths=rel_widths,
                       rel_heights=rel_heights,
-                      width_px=width_px,
-                      height_px=height_px)
+                      width_pt=width_pt,
+                      height_pt=height_pt)
 
     # through internals
-    loc1_p2 = loc1_r._relative_to_px(width_px=width_px,
-                                      height_px=height_px)
-    loc2_p2 = loc2_r._relative_to_px(width_px=width_px,
-                                      height_px=height_px)
-    loc3_p2 = loc3_r._relative_to_px(width_px=width_px,
-                                      height_px=height_px)
-    loc4_p2 = loc4_r._relative_to_px(width_px=width_px,
-                                      height_px=height_px)
+    loc1_p2 = loc1_r._relative_to_pt(width_pt=width_pt,
+                                      height_pt=height_pt)
+    loc2_p2 = loc2_r._relative_to_pt(width_pt=width_pt,
+                                      height_pt=height_pt)
+    loc3_p2 = loc3_r._relative_to_pt(width_pt=width_pt,
+                                      height_pt=height_pt)
+    loc4_p2 = loc4_r._relative_to_pt(width_pt=width_pt,
+                                      height_pt=height_pt)
 
     # expected
     loc1_p_e = cow.area(x_left=0,
                 y_top=0,
                 width=2/7 * 280,
                 height=3/4 * 140,
-                _type="px")
+                _type="pt")
 
     loc2_p_e = cow.area(x_left=0,
                 y_top=3/4 * 140,
                 width=2/7 * 280,
                 height=1/4 * 140,
-                _type="px")
+                _type="pt")
 
     loc3_p_e = cow.area(x_left=2/7 * 280,
                 y_top=0,
                 width=5/7 * 280,
                 height=1/4 * 140,
-                _type="px")
+                _type="pt")
 
     loc4_p_e = cow.area(x_left=2/7 * 280,
                 y_top=1/4 * 140,
                 width=5/7 * 280,
                 height=3/4 * 140,
-                _type="px")
+                _type="pt")
 
-    # .px
+    # .pt
     assert loc1_p1 == loc1_p_e, \
-        "transform of design to px (.px) represent for static example failed (1)"
+        "transform of design to pt (.pt) represent for static example failed (1)"
 
     assert loc2_p1 == loc2_p_e, \
-        "transform of design to px (.px) represent for static example failed (2)"
+        "transform of design to pt (.pt) represent for static example failed (2)"
 
     assert loc3_p1 == loc3_p_e, \
-        "transform of design to px (.px) represent for static example failed (3)"
+        "transform of design to pt (.pt) represent for static example failed (3)"
 
     assert loc4_p1 == loc4_p_e, \
-        "transform of design to px (.px) represent for static example failed (4)"
+        "transform of design to pt (.pt) represent for static example failed (4)"
 
-    #  relative to px
+    #  relative to pt
     assert loc1_p2 == loc1_p_e, \
-        "transform of relative to px represent for static example failed (1)"
+        "transform of relative to pt represent for static example failed (1)"
 
     assert loc2_p2 == loc2_p_e, \
-        "transform of relative to px represent for static example failed (2)"
+        "transform of relative to pt represent for static example failed (2)"
 
     assert loc3_p2 == loc3_p_e, \
-        "transform of relative to px represent for static example failed (3)"
+        "transform of relative to pt represent for static example failed (3)"
 
     assert loc4_p2 == loc4_p_e, \
-        "transform of relative to px represent for static example failed (4)"
+        "transform of relative to pt represent for static example failed (4)"
 
     # errors for bad parameter input ------------
 
     # RELATIVE #
 
-    # relative: px accidentally described as _type
+    # relative: pt accidentally described as _type
     with pytest.raises(Exception) as e_info:
         loc_relative_error = cow.area(x_left=0,
                     y_top=0,
@@ -451,9 +451,9 @@ def test_area():
 
     ### probably should catch this oversight, but could be a really large
     ### matrix...
-    # # design: px accidentally described as _type
+    # # design: pt accidentally described as _type
     # with pytest.raises(Exception) as e_info:
-    #     loc_design_error_px = cow.area(x_left=0,
+    #     loc_design_error_pt = cow.area(x_left=0,
     #             y_top=0,
     #             width=2/7 * 280,
     #             height=3/4 * 140,
@@ -498,36 +498,36 @@ def test_area():
                 height=1/2,
                 _type="design")
 
-    # PX #
+    # PT #
 
-    # px: 0 width
+    # pt: 0 width
     with pytest.raises(Exception) as e_info:
-        loc_px_error_0_width = cow.area(x_left=0,
+        loc_pt_error_0_width = cow.area(x_left=0,
                 y_top=0,
                 width=0,
                 height=3* 280,
-                _type="px")
-    # px: 0 height
+                _type="pt")
+    # pt: 0 height
     with pytest.raises(Exception) as e_info:
-        loc_px_error_0_width = cow.area(x_left=0,
+        loc_pt_error_0_width = cow.area(x_left=0,
                 y_top=0,
                 width=1* 280,
                 height=0,
-                _type="px")
+                _type="pt")
 
 
-    # px: neg x_left
+    # pt: neg x_left
     with pytest.raises(Exception) as e_info:
-        loc_px_error_neg_x = cow.area(x_left=-1* 280,
+        loc_pt_error_neg_x = cow.area(x_left=-1* 280,
                 y_top=0,
                 width=2* 280,
                 height=3* 280,
-                _type="px")
-    # px: 0 height
+                _type="pt")
+    # pt: 0 height
     with pytest.raises(Exception) as e_info:
-        loc_px_error_neg_y = cow.area(x_left=0,
+        loc_pt_error_neg_y = cow.area(x_left=0,
                 y_top=-1* 280,
                 width=1/2* 280,
                 height=1/2* 280,
-                _type="px")
+                _type="pt")
 
