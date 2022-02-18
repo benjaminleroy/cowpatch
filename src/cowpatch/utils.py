@@ -25,6 +25,9 @@ def is_proportion(x):
 def is_non_negative(x):
     return x >= 0
 
+def inherits(object, _class):
+    return issubclass(type(object),_class)
+
 
 # TODO: I'm not 100% sure these conversions do the right thing (especially w.r.t to dpi notation...)
 def to_pt(value, units, dpi=96):
