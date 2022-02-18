@@ -4,10 +4,10 @@ import cairosvg
 import svgutils.transform as sg
 from PIL import Image
 import re
+from IPython.display import SVG, display
+import IPython
 
 from .utils import _transform_size_to_pt, _proposed_scaling_both
-
-
 
 def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
     """
@@ -361,3 +361,42 @@ def _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None):
                                          output_height = height * 96 * scale)
             img_png = Image.open(io.BytesIO(fid.getvalue()))
             img_png.save(filename)
+
+def _show_image(svg, width, height, dpi = 300):
+    """
+    display svg object as a png
+
+    Arguments
+    ---------
+    svg: svgutils.transform.SVGFigure
+        svg object to save
+    width : float
+        width of output image in inches (this should actually be associated
+        with the svg...)
+    height : float
+        height of svg in inches (this should actually be associated
+        with the svg...)
+
+    Returns
+    -------
+    None
+        shows svg object as a png (with provided width + height + dpi)
+    """
+
+    ipython_info = IPython.get_ipython()
+
+    if ipython_info is None or ipython_info.config.get("IPKernelApp") is None:
+        # base python or ipython in the terminal will just show png ----------
+        fid = io.BytesIO()
+        save_svg_wrapper(svg, filename = fid,
+                          width = width,
+                          height = height,
+                          dpi = dpi,
+                          format = "png")
+        img_png = Image.open(io.BytesIO(fid.getvalue()))
+
+        img_png.show()
+    else:
+        # jupyter notebook ------
+        base_image_string = svg.to_str()
+        IPython.display.display(IPython.display.SVG(data = base_image_string))

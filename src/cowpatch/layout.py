@@ -3,7 +3,8 @@ import numpy as np
 import warnings
 import copy
 from .utils import is_pos_int, is_non_neg_int, \
-                is_proportion, is_positive, is_non_negative
+                is_proportion, is_positive, is_non_negative, \
+                inherits
 
 class layout:
     def __init__(self,
@@ -285,10 +286,10 @@ class layout:
             inner_height = inner_y_bottom - inner_y_top + 1
 
             inner_design_area = area(x_left = inner_x_left,
-                              y_top = inner_y_top,
-                              width = inner_width,
-                              height = inner_height,
-                              _type = "design")
+                                     y_top = inner_y_top,
+                                     width = inner_width,
+                                     height = inner_height,
+                                     _type = "design")
             areas.append(inner_design_area.px(rel_widths=self.rel_widths,
                                               rel_heights=self.rel_heights,
                                               width_px=width_px,
@@ -357,7 +358,8 @@ class layout:
         return self.__repr__() + "\n" + out
 
     def __eq__(self, value):
-        return np.allclose(self.design,value.design,equal_nan=True) and \
+        return inherits(value, layout) and \
+            np.allclose(self.design,value.design,equal_nan=True) and \
             self.ncol == value.ncol and \
             self.nrow == value.nrow and \
             np.unique(self.rel_heights/value.rel_heights).shape[0] == 1 and \

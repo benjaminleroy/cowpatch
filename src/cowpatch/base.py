@@ -1,12 +1,18 @@
 import numpy as np
 import plotnine as p9
-from .svg_utils import gg_to_svg, _save_svg_wrapper
-from .utils import to_inches, to_inches, inherits_plotnine
+import matplotlib.pyplot as plt
+import svgutils.transform as sg
 
+from .svg_utils import gg_to_svg, _save_svg_wrapper, _show_image
+from .utils import to_inches, from_inches, inherits_plotnine, inherits
+from .layout import layout
+
+import pdb
 # TODO notes:
 # 2/7 (Ben): patch object needs annotation functionality, * and & operators
 #       to work with themes. And a lot of testing. I also think we need to
 #       think about how to deal inputs that are UNwrapped plotnine ggplot objects.
+
 
 class patch:
     def __init__(self, *args, grobs=None):
@@ -84,7 +90,7 @@ class patch:
             return self.layout
 
     def _check_layout(self):
-        if self.layout().num_items != len(self.grobs):
+        if self._layout().num_items != len(self.grobs):
             raise AttributeError("layout's number of patches does not "+\
                                  "matches number of patches in arangement")
 
@@ -128,9 +134,9 @@ class patch:
 
     def __add__(self, other):
         # check proper usage -------
-        if not inherits(other, patch) or \
+        if not (inherits(other, patch) or \
             inherits(other, layout) or \
-            inherits(other, annotation):
+            inherits(other, annotation)):
             if inherits(other,p9.theme):
                 raise ValueError("cannot directly add a theme to a patch" +\
                                  " object unless a wrapper, try \"&\" or \"*\"")
@@ -153,10 +159,13 @@ class patch:
                 return patch(grobs=[self.grobs]+[other])
         elif inherits(other, layout):
             # combine with layout -------------
-            self.layout = layout
+            self.layout = other
         elif inherits(other, annotation):
             raise ValueError("currently not implimented addition with annotation")
-            pass
+
+        return self
+
+
 
     def __mul__(self, other):
         raise ValueError("currently not implimented *")
@@ -187,7 +196,7 @@ class patch:
         #  TODO: should figure out how to arrange the notations here ...
 
         base_image = sg.SVGFigure()
-        base_image.set_size((full_width_px, full_height_px)) # TODO: figure out if we're tracking pt vs px correct...
+        base_image.set_size((str(width_px)+"px", str(height_px)+"px")) # TODO: figure out if we're tracking pt vs px correct...
         # TODO: way to make decisions about the base image...
         base_image.append(
             sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#FFFFFF\"/>"))
@@ -198,8 +207,23 @@ class patch:
             inner_width_px = inner_area.width
             inner_height_px = inner_area.height
 
-            inner_svg = self.grobs[p_idx]._svg(width_px = inner_width_px,
-                                               height_px = inner_height_px)
+            # TODO: how to deal with ggplot objects vs patch objects
+            if inherits(self.grobs[p_idx], patch):
+                inner_svg = self.grobs[p_idx]._svg(width_px = inner_width_px,
+                                                   height_px = inner_height_px)
+            elif inherits_plotnine(self.grobs[p_idx]):
+                inner_svg = gg_to_svg(self.grobs[p_idx],
+                                      width = to_inches(inner_width_px,
+                                                        units="px",
+                                                        dpi=96),
+                                      height = to_inches(inner_height_px,
+                                                        units="px",
+                                                        dpi=96),
+                                      dpi = 96, maxIter=10)
+            else:
+                raise ValueError("grob idx %i is not a patch object nor"+\
+                                 "a ggplot object" % p_idx)
+
 
             inner_root = inner_svg.getroot()
 
@@ -237,7 +261,7 @@ class patch:
         """
         # TODO: default width, height and dpi somewhere?
         svg_obj = self._svg(width_px = from_inches(width, "px", dpi=dpi),
-                            height_px = from_inches(width, "px", dpi=dpi))
+                            height_px = from_inches(height, "px", dpi=dpi))
 
         _save_svg_wrapper(svg_obj,
                            filename=filename,
@@ -246,3 +270,23 @@ class patch:
                            dpi=dpi,
                            _format=_format)
 
+    def show(self, width = None, height = None, dpi = None):
+        """
+        show base inside an interactive shell
+        """
+
+        if (width is None and height is not None) or \
+            (height is None and width is not None):
+            raise ValueError("please provide width and height or leave as "+\
+                             "matplotlib default")
+        if width is None and height is None:
+            width, height = plt.rcParams['figure.figsize']
+        if dpi is None:
+            dpi = plt.rcParams["figure.dpi"]
+
+        svg_obj = self._svg(width_px = from_inches(width, "px", dpi=dpi),
+                            height_px = from_inches(height, "px", dpi=dpi))
+        _show_image(svg_obj,
+                    width=width,
+                    height=height,
+                    dpi=dpi)

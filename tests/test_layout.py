@@ -188,6 +188,47 @@ def test_layout__yokogaki_ordering():
     assert np.all(yorder2 == np.array([0,2,3,1])), \
         "yokogaki ordering with second simple example failed (2)"
 
+def test_layout__eq__():
+    """
+    test layout equal for things not equal... (basic test)
+    """
+    design1 = np.array([[np.nan, 0, 0],
+                       [1,2, np.nan]])
+    design3 = """
+    #AA
+    BB#
+    """
+
+    l1 = cow.layout(design = design1)
+    l3 = cow.layout(design = design3)
+
+    assert l1 != l3, \
+        "two different layouts shouldn't be equal to each other (l1, l3)"
+
+    assert l1 != "example string", \
+        "layout doesn't equal a string..."
+
+def test_layout__element_locations():
+    l1 = cow.layout(design = np.array([[0,0,0,1,1,1],
+                                       [0,0,0,2,2,2],
+                                       [0,0,0,2,2,2]]))
+
+    areas1 = l1._element_locations(width_px=200,
+                                   height_px=90)
+
+    assert np.allclose(areas1[0].width, 100) and \
+        np.allclose(areas1[0].height, 90) and \
+        np.allclose(areas1[1].width, 100) and \
+        np.allclose(areas1[1].height, 30) and \
+        np.allclose(areas1[2].width, 100) and \
+        np.allclose(areas1[2].height, 60), \
+        "areas relative to layout incorrectly sized"
+
+
+
+
+
+
 def test_area():
     """
     test of area (static example)

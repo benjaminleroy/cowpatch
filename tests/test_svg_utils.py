@@ -2,7 +2,6 @@ from pytest_regressions import image_regression
 import pytest
 import numpy as np
 
-
 import io
 import cowpatch.svg_utils
 import cowpatch.utils
@@ -150,7 +149,7 @@ def test_gg_to_svg__size():
 
 def test_gg_to_svg__image(image_regression):
     """
-    makes sure the visualization stays the desired size and type (static)
+    makes sure the visualization stays the desired size and type
     """
     p3_no_legend = p9.ggplot(p9_data.mpg) +\
         p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
