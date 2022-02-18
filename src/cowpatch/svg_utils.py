@@ -7,7 +7,8 @@ import re
 from IPython.display import SVG, display
 import IPython
 
-from .utils import _transform_size_to_pt, _proposed_scaling_both
+from .utils import _transform_size_to_pt, _proposed_scaling_both, \
+                    to_inches, from_inches
 
 def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
     """
@@ -96,7 +97,7 @@ def _real_size_out_svg(gg, height, width, dpi, limitsize=True):
     # TODO: transform this to getting inches right away?
     new_width, new_height = _transform_size_to_pt(img.get_size())
 
-    return new_width / 72, new_height / 72 # this does it for inches...
+    return to_inches(new_width, "pt", dpi), to_inches(new_height, "pt", dpi)
 
 def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
                     eps=1e-2, maxIter=4, min_size_px=10):
@@ -231,7 +232,8 @@ def gg_to_svg(gg, width, height, dpi, limitsize=True,
 
     current_size_raw = svg.get_size()
     current_size = _transform_size_to_pt(current_size_raw)
-    desired_size_raw = (str(width * 72)+"pt", str(height * 72)+"pt")
+    desired_size_raw = (str(from_inches(width, "pt",dpi))+"pt",
+                        str(from_inches(height, "pt",dpi))+"pt")
     desired_size = _transform_size_to_pt(desired_size_raw)
 
     scale = _proposed_scaling_both(current_size, desired_size)
