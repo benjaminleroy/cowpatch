@@ -1,13 +1,31 @@
 ```{include} ../README.md
 ```
 
-```{toctree}
-:maxdepth: 1
-:hidden:
 
-example.ipynb
+```{toctree}
+:maxdepth: 2
+:hidden:
+:caption: General
+
+self
+getting_started.ipynb
+examples/examples_index.rst
+autoapi/index
+```
+
+```{toctree}
+:maxdepth: 2
+:hidden:
+:caption: Logistics
+
 changelog.md
 contributing.md
 conduct.md
-autoapi/index
+
+```
+```{toctree}
+:maxdepth: 2
+:hidden:
+:caption: Code
+View on Github <https://github.com/benjaminleroy/cowpatch>
 ```

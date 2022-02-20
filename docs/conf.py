@@ -35,4 +35,12 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 #
 html_theme = "sphinx_rtd_theme"
 
-autoclass_content = 'both'
+autoapi_python_class_content = "init"
+
+
+
+# html_theme_options = {
+#     "external_links": [
+#     ("Github", "https://github.com/benjaminleroy/cowpatch")]
+# }
+
