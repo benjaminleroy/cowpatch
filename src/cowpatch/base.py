@@ -5,7 +5,7 @@ import svgutils.transform as sg
 
 from .svg_utils import gg_to_svg, _save_svg_wrapper, _show_image
 from .utils import to_inches, from_inches, inherits_plotnine, inherits
-from .layout import layout
+from .layout_elements import layout
 
 import pdb
 # TODO notes:

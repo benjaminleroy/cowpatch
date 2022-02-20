@@ -47,9 +47,9 @@ class text:
             element text added to or initialized with the text object. Can
             be None, a p9.theme.elements.element_text or a p9.themes.themeable
 
-        Details
-        -------
-        updates is place
+        Notes
+        -----
+        updates i place
         """
         if element_text is None:
             element_text = None
@@ -80,8 +80,8 @@ class text:
         other : plotnine.themes.elements.element_text or theme
             theme or element_text to define the attributes of the text.
 
-        Details
-        -------
+        Notes
+        -----
         Note the function use the ``text`` attribute - NOT the ``plot_title``
         attribute if a theme is provided.
         """

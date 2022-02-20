@@ -5,7 +5,6 @@ import copy
 from .utils import is_pos_int, is_non_neg_int, \
                 is_proportion, is_positive, is_non_negative, \
                 inherits
-import pdb
 
 class layout:
     def __init__(self,
@@ -81,11 +80,11 @@ class layout:
 
 
         2. if the `design` parameter takes in a string, we expect it to have
-        a structure such that each line (pre "\\n") contains the same number
+        a structure such that each line (pre "\\\\n") contains the same number
         of characters, and these characters must come from the first
-        (# patches-1) capital alphabetical characters or the "#" or "." sign to
+        (number of patches) capital alphabetical characters or the "\#" or "." sign to
         indicate an empty square. Similar arguments w.r.t. overlap and the
-        lack of real enforcement for empty squares applies (as in #1).
+        lack of real enforcement for empty squares applies (as in 1.).
 
         An example of a design of the string form could look like
 
@@ -94,7 +93,7 @@ class layout:
                 my_str_design = \"\"\"
                 AAB
                 CCB
-                CC#
+                CC\#
                 \"\"\"
 
         or
@@ -110,10 +109,10 @@ class layout:
 
         **Similarities to `R` cousins:**
 
-        This layout function is similar to `patchwork::plot_layout` (with a
+        This layout function is similar to `patchwork\:\:plot_layout` (with a
         special node to `design` parameter) and helps perform similar ideas to
-        `gridExtra::arrangeGrob`'s `layout_matrix` parameter, and
-        `cowplot::plot_grid`'s `rel_widths` and `rel_heights` parameters
+        `gridExtra\:\:arrangeGrob`'s `layout_matrix` parameter, and
+        `cowplot\:\:plot_grid`'s `rel_widths` and `rel_heights` parameters
         """
         if design is not None:
             if ncol is not None or nrow is not None:
@@ -261,7 +260,7 @@ class layout:
     def _assess_mat(self, design):
         """
         Assesses if the design matrix includes at least 1 box for patches
-        indexed 0 to (# patches - 1). This doesn't actually assume to know
+        indexed 0 to (number of patches - 1). This doesn't actually assume to know
         the number of patches.
 
         Arguments
@@ -278,7 +277,7 @@ class layout:
         ------
         ValueError
             if design matrix doesn't include at least at least 1 box for all
-            indices between 0 to (# patches - 1)
+            indices between 0 to (number of patches - 1)
         """
         if design is None:
             return None # to identify later that we don't have a design matrix
@@ -298,7 +297,20 @@ class layout:
 
     def _rel_structure(self, num_grobs=None):
         """
-        provide rel_structure if missing
+        provide rel_structure (rel_widths, rel_heights) if missing
+
+        Arguments
+        ---------
+        num_grobs : int
+            if not None, then this value will be used to understand the number
+            of grobs to be laid out
+
+        Returns
+        -------
+        rel_widths : np.array vector
+            a vector of relative widths of the columns of the layout design
+        rel_heights : np.array vector
+            a vector of relative heights of the rows of the layout design
         """
         if num_grobs is None:
             if not (self.ncol is not None and \
@@ -342,6 +354,9 @@ class layout:
             global width (in points) of the full arangement of patches
         height_pt : float
             global height (in points) of the full arangement of patches
+        num_grobs : integer
+            if not None, then this value will be used to understand the number
+            of grobs to be laid out
 
         Returns
         -------
@@ -395,6 +410,12 @@ class layout:
         """
         calculates the yokogaki (left to right, top to bottom) ordering
         the the patches
+
+        Arguments
+        ---------
+        num_grobs : integer
+            if not None, then this value will be used to understand the number
+            of grobs to be laid out
 
         Returns
         -------
@@ -494,6 +515,19 @@ class layout:
         return self.__repr__() + "\n" + out
 
     def __eq__(self, value):
+        """
+        checks if object is equal to another object (value)
+
+        Arguments
+        ---------
+        value : object
+            another object (that major or may not be of the layout class)
+
+        Returns
+        -------
+        boolean
+            if current object and other object (value) are equal
+        """
         # if value is not a layout...
         if not inherits(value, layout):
             return False
