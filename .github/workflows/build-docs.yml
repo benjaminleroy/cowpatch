@@ -33,7 +33,7 @@ jobs:
         poetry run make clean
         poetry run make html
         cp -r _build/* ../gh-pages/
-        touch gh-pages/docs/.nojekyll
+        touch gh-pages/html/.nojekyll
     # Step 7: deploy documentation webpage
     - name: Deploy documentation
       if: ${{ github.event_name == 'push' }}
