@@ -1,0 +1,40 @@
+name: build sphinx to gh-pages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    # Step 1. Set up operating system
+    runs-on: ubuntu-latest
+    steps:
+    # Step 2. Set up Python 3.9
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    # Step 3. Check-out repository so we can access its contents
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+    # Step 4. Install poetry
+    - uses: snok/install-poetry@v1
+    # Step 5. Install our package
+    - name: Install package
+      run: |
+        poetry update
+        poetry install
+    # Step 6. build and deploy documentation page
+    - name: Run build script for docs website
+      uses: sphinx-notes/pages@v2
+      with:
+        documentation_path: '.docs/'
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages

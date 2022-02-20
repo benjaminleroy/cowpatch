@@ -17,7 +17,6 @@ Beyond that, please provide
 * Your operating system name and version.
 * Any details about your local setup that might be helpful in troubleshooting.
 
-
 ### Fix Bugs
 
 Look through the GitHub issues for bugs. Anything tagged with "bug" and "help
@@ -35,6 +34,15 @@ You can never have enough documentation! Please feel free to contribute to any
 part of the documentation, such as the official docs, docstrings, or even 
 on the web in blog posts, articles, and such.
 
+We'll be explaining this section to describe how we automate this process (and
+highlight the easy of contributing to documentation) soon. We're taking "pages"
+from [Anne Gentle](https://www.docslikecode.com/about/) who has writes
+[books](https://www.docslikecode.com) on
+good continuous integration style documentation and gives
+[talks](https://www.youtube.com/watch?v=vM4vw2L-mG0&list=PL2k86RlAekM99X06brRLLp8Is1Jexw5wd&index=14)
+on things like simple github based documentation pages. An additional useful
+resource to what types of docs do we need might be writethedocs.org's [guide](https://www.writethedocs.org/guide/).
+
 ### Write Additional Tests
 
 Generally speaking, the more tests the better. Additionally, given this was
@@ -50,6 +58,8 @@ package [documentation](https://pytest-regressions.readthedocs.io/) don't
 capture how to use the tool clearly enough please see the `test/` folder's
 tests.
 
+Given this is a "statistical package" (in some sense), we are also leveraging
+the [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/) python package.
 
 ### Submit Feedback
 
