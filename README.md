@@ -10,7 +10,7 @@ A package for combining/aranging multiple python ggplot visuals from [`plotnine`
 ## Installation
 
 Currently this project is under development and is not on
-(pypi)[https://pypi.org/]. As such, to install this package please do the
+[pypi](https://pypi.org/). As such, to install this package please do the
 following:
 
 1. clone repository to your local computer (this assumes you have `git`
