@@ -143,3 +143,6 @@ dmypy.json
 
 # coverage
 htmlcov
+
+# notes folder
+notes/*
