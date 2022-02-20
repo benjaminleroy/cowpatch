@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cowpatch.layout_elements &mdash; cowpatch  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../../../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="cowpatch.svg_utils" href="../svg_utils/index.html" />
+    <link rel="prev" title="cowpatch.base" href="../base/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> cowpatch
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../base/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.utils</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../wrappers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.wrappers</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/benjaminleroy/cowpatch">View on Github</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cowpatch</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/cowpatch/layout_elements/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cowpatch.layout_elements">
+<span id="cowpatch-layout-elements"></span><h1><a class="reference internal" href="#module-cowpatch.layout_elements" title="cowpatch.layout_elements"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a><a class="headerlink" href="#module-cowpatch.layout_elements" title="Permalink to this headline"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline"></a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.layout_elements.layout" title="cowpatch.layout_elements.layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout</span></code></a></p></td>
+<td><p>layout class to store information about arangement of patches</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.layout_elements.area" title="cowpatch.layout_elements.area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">area</span></code></a></p></td>
+<td><p>area class that stores information about what area a patch will fill</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cowpatch.layout_elements.</span></span><span class="sig-name descname"><span class="pre">layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byrow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_widths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_heights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout" title="Permalink to this definition"></a></dt>
+<dd><p>layout class to store information about arangement of patches</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ncol</strong> (<em>integer</em>) – Integer for the number of columns to arrange the the patches in.
+The default is None (which avoids conflicts if a value for
+<cite>design</cite> is provided). If <cite>ncol</cite> is None but <cite>nrow</cite> is not, then
+<cite>ncol</cite> will default to the minimum number of columns to make sure
+that all patches can be visualized.</p></li>
+<li><p><strong>nrow</strong> (<em>integer</em>) – Integer for the number of rows to arrange the the patches in.
+The default is None (which avoids conflicts if a value for
+<cite>design</cite> is provided). If <cite>nrow</cite> is None but <cite>ncol</cite> is not, then
+<cite>nrow</cite> will default to the minimum number of rows to make sure
+that all patches can be visualized.</p></li>
+<li><p><strong>byrow</strong> (<em>boolean</em>) – If <cite>ncol</cite> and/or <cite>nrow</cite> is included, then this boolean indicates
+if the patches should be ordered by row (default if byrow is None
+or when parameter is True) or by column (if byrow was False).</p></li>
+<li><p><strong>design</strong> (<em>np.array</em><em> (</em><em>float based</em><em>) or </em><em>str</em>) – Specification of the location of each patch in the arrangement.
+Can either be a float numpy array with integers between 0 and
+the number of patches to arrange, or a text string that captures
+similar ideas to the array approach but uses capital alphabetical
+characters (A-Z) to indicate each figure. More information is in
+Notes.</p></li>
+<li><p><strong>rel_widths</strong> (<em>list</em><em>, </em><em>np vector</em><em> or </em><em>tuple</em>) – Numerical vector of relative columns widths. This not required,
+the default would be <cite>np.ones(ncol)</cite> or <cite>np.ones(design.shape[0])</cite>.
+Note that this is a relative sizing and the values are only
+required to be non-negative, non-zero values, for example
+[1,2] would would make the first column twice as wide as the
+second column.</p></li>
+<li><p><strong>rel_heights</strong> (<em>list</em><em> or </em><em>tuple</em>) – Numerical vector of relative row heights. This not required,
+the default would be <cite>np.ones(nrow)</cite> or <cite>np.ones(design.shape[1])</cite>.
+Note that this is a relative sizing and the values are only
+required to be non-negative, non-zero values, for example
+[1,2] would would make the first row twice as tall as the
+second row.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <cite>design</cite> parameter expects specific input.</p>
+<p>1. If the <cite>design</cite> is input as a numpy array, we expect it to have
+integers only (0 to # patches-1). It is allowed to have <cite>np.nan</cite> values
+if certain “squares” of the  layout are not covered by others (the
+covering is defined by the value ordering). Note that we won’t check
+for overlap and <cite>np.nan</cite> is not enforced if another patches’ relative
+(min-x,min-y) and (max-x, max-y) define a box over that <cite>np.nan</cite>’s
+area.</p>
+<p>An example of a design of the numpy array form could look like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_np_design</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>2. if the <cite>design</cite> parameter takes in a string, we expect it to have
+a structure such that each line (pre “\n”) contains the same number
+of characters, and these characters must come from the first
+(number of patches) capital alphabetical characters or the “#” or “.” sign to
+indicate an empty square. Similar arguments w.r.t. overlap and the
+lack of real enforcement for empty squares applies (as in 1.).</p>
+<p>An example of a design of the string form could look like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_str_design</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">AAB</span>
+<span class="s2">CCB</span>
+<span class="s2">CC\#</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_str_design</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">AAB</span>
+<span class="s2">CCB</span>
+<span class="s2">CC.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p><strong>Similarities to `R` cousins:</strong></p>
+<p>This layout function is similar to <cite>patchwork::plot_layout</cite> (with a
+special node to <cite>design</cite> parameter) and helps perform similar ideas to
+<cite>gridExtra::arrangeGrob</cite>’s <cite>layout_matrix</cite> parameter, and
+<cite>cowplot::plot_grid</cite>’s <cite>rel_widths</cite> and <cite>rel_heights</cite> parameters</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout.design">
+<span class="sig-name descname"><span class="pre">design</span></span><a class="headerlink" href="#cowpatch.layout_elements.layout.design" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout._design_string_to_mat">
+<span class="sig-name descname"><span class="pre">_design_string_to_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout._design_string_to_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout._design_string_to_mat" title="Permalink to this definition"></a></dt>
+<dd><p>Internal function to convert design string into a matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>design</strong> (<em>str</em>) – design in a string format</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>design</strong> – design in np.array format</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array integer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout.get_design">
+<span class="sig-name descname"><span class="pre">get_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_grobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout.get_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout.get_design" title="Permalink to this definition"></a></dt>
+<dd><p>create a design matrix if not explicit design has been provided</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout._assess_mat">
+<span class="sig-name descname"><span class="pre">_assess_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout._assess_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout._assess_mat" title="Permalink to this definition"></a></dt>
+<dd><p>Assesses if the design matrix includes at least 1 box for patches
+indexed 0 to (number of patches - 1). This doesn’t actually assume to know
+the number of patches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>design</strong> (<em>np.array</em><em> (</em><em>integer</em><em>)</em>) – design in numpy array format</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of patches expected in the overall matrix.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if design matrix doesn’t include at least at least 1 box for all
+indices between 0 to (number of patches - 1)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout._rel_structure">
+<span class="sig-name descname"><span class="pre">_rel_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_grobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout._rel_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout._rel_structure" title="Permalink to this definition"></a></dt>
+<dd><p>provide rel_structure (rel_widths, rel_heights) if missing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_grobs</strong> (<em>int</em>) – if not None, then this value will be used to understand the number
+of grobs to be laid out</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>rel_widths</strong> (<em>np.array vector</em>) – a vector of relative widths of the columns of the layout design</p></li>
+<li><p><strong>rel_heights</strong> (<em>np.array vector</em>) – a vector of relative heights of the rows of the layout design</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout._element_locations">
+<span class="sig-name descname"><span class="pre">_element_locations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_grobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout._element_locations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout._element_locations" title="Permalink to this definition"></a></dt>
+<dd><p>create a list of <cite>area</cite> objects associated with the location of
+each of the layout’s grobs w.r.t. a given points width and height</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width_pt</strong> (<em>float</em>) – global width (in points) of the full arangement of patches</p></li>
+<li><p><strong>height_pt</strong> (<em>float</em>) – global height (in points) of the full arangement of patches</p></li>
+<li><p><strong>num_grobs</strong> (<em>integer</em>) – if not None, then this value will be used to understand the number
+of grobs to be laid out</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of <cite>area</cite> objects describing the location for each of the
+layout’s grobs (in the order of the index in the self.design)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout._yokogaki_ordering">
+<span class="sig-name descname"><span class="pre">_yokogaki_ordering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_grobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout._yokogaki_ordering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout._yokogaki_ordering" title="Permalink to this definition"></a></dt>
+<dd><p>calculates the yokogaki (left to right, top to bottom) ordering
+the the patches</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_grobs</strong> (<em>integer</em>) – if not None, then this value will be used to understand the number
+of grobs to be laid out</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy array (vector) of integer index of plots in yokogaki ordering</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Yokogaki is a Japanese word that concisely describes the left to right,
+top to bottom writing format. We’d like to thank <a class="reference external" href="https://english.stackexchange.com/questions/81520/is-there-a-word-for-left-to-right-and-top-to-bottom">stack overflow</a>.
+for pointing this out.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout.__hash__">
+<span class="sig-name descname"><span class="pre">__hash__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout.__hash__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout.__hash__" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a ‘unique’ hash for the object to help with identification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>hash integer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout.__repr__" title="Permalink to this definition"></a></dt>
+<dd><p>Return repr(self).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout.__str__" title="Permalink to this definition"></a></dt>
+<dd><p>Return str(self).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.layout.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#layout.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.layout.__eq__" title="Permalink to this definition"></a></dt>
+<dd><p>checks if object is equal to another object (value)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>object</em>) – another object (that major or may not be of the layout class)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if current object and other object (value) are equal</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cowpatch.layout_elements.</span></span><span class="sig-name descname"><span class="pre">area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area" title="Permalink to this definition"></a></dt>
+<dd><p>area class that stores information about what area a patch will fill</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_left</strong> (<em>float</em>) – scalar of where the left-most point of the patch is located (impacted
+by the <cite>_type</cite> parameter)</p></li>
+<li><p><strong>y_top</strong> (<em>float</em>) – scalar of where the top-most point of the patch is located (impacted
+by the <cite>_type</cite> parameter)</p></li>
+<li><p><strong>width</strong> (<em>float</em>) – scalar of the width of the patch (impacted by the <cite>_type</cite> parameter)</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – scalar of the height of the patch (impacted by the <cite>_type</cite> parameter)</p></li>
+<li><p><strong>_type</strong> (<em>str {&quot;design&quot;</em><em>, </em><em>&quot;relative&quot;</em><em>, </em><em>&quot;pt&quot;}</em>) – describes how the parameters are stored. See Notes for more
+information between the options.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <cite>_type</cite> parameter informs how to understand the other parameters:</p>
+<p>1. “design” means that the values are w.r.t. to a design matrix
+relative to the <cite>layout</cite> class, and values are relative to the rows
+and columns units.</p>
+<p>2. “relative” means the values are defined relative to the full size of
+the canvas and taking values between 0-1 (inclusive).</p>
+<ol class="arabic simple" start="3">
+<li><p>“pt” means that values are defined relative to point values</p></li>
+</ol>
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area._check_info_wrt_type">
+<span class="sig-name descname"><span class="pre">_check_info_wrt_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area._check_info_wrt_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area._check_info_wrt_type" title="Permalink to this definition"></a></dt>
+<dd><p>some logic checks of inputs relative to <cite>_type</cite> parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_left</strong> (<em>float</em>) – scalar of where the left-most point of the patch is located
+(impacted by the <cite>_type</cite> parameter)</p></li>
+<li><p><strong>y_top</strong> (<em>float</em>) – scalar of where the top-most point of the patch is located
+(impacted by the <cite>_type</cite> parameter)</p></li>
+<li><p><strong>width</strong> (<em>float</em>) – scalar of the width of the patch (impacted by the <cite>_type</cite>
+parameter)</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – scalar of the height of the patch (impacted by the <cite>_type</cite>
+parameter)</p></li>
+<li><p><strong>_type</strong> (<em>str {&quot;design&quot;</em><em>, </em><em>&quot;relative&quot;</em><em>, </em><em>&quot;pt&quot;}</em>) – describes how the parameters are stored. Options include
+[“design”, “relative”, “pt”]. See class docstring for more info</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if any of the first four parameters don’t make sense with respect
+to the <cite>_type</cite> parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area._design_to_relative">
+<span class="sig-name descname"><span class="pre">_design_to_relative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_widths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_heights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area._design_to_relative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area._design_to_relative" title="Permalink to this definition"></a></dt>
+<dd><p>translates an area object with <cite>_type</cite> = “design” to area object
+with <cite>_type</cite> = “relative”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rel_widths</strong> (<em>np.array</em><em> (</em><em>vector</em><em>)</em>) – list of relative widths of each column of the layout matrix</p></li>
+<li><p><strong>rel_heights</strong> (<em>np.array</em><em> (</em><em>vector</em><em>)</em>) – list of relative heights of each row of the layout matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>area object of <cite>_type</cite> = “relative”</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>area object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area._relative_to_pt">
+<span class="sig-name descname"><span class="pre">_relative_to_pt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_pt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area._relative_to_pt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area._relative_to_pt" title="Permalink to this definition"></a></dt>
+<dd><p>translates an area object with <cite>_type</cite> = “relative” to area object
+with <cite>_type</cite> = “pt”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width_pt</strong> (<em>float</em>) – width in points</p></li>
+<li><p><strong>height_pt</strong> (<em>float</em>) – height in points</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>area object of <cite>_type</cite> = “pt”</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>area object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area.pt">
+<span class="sig-name descname"><span class="pre">pt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_pt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_pt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_widths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_heights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area.pt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area.pt" title="Permalink to this definition"></a></dt>
+<dd><p>Translates area object to <cite>_type</cite> = “pt”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width_pt</strong> (<em>float</em>) – width in points (required if <cite>_type</cite> is not “pt”)</p></li>
+<li><p><strong>height_pt</strong> (<em>float</em>) – height in points (required if <cite>_type</cite> is not “pt”)</p></li>
+<li><p><strong>rel_widths</strong> (<em>np.array</em><em> (</em><em>vector</em><em>)</em>) – list of relative widths of each column of the layout matrix
+(required if <cite>_type</cite> is “design”)</p></li>
+<li><p><strong>rel_heights</strong> (<em>np.array</em><em> (</em><em>vector</em><em>)</em>) – list of relative heights of each row of the layout matrix
+(required if <cite>_type</cite> is “design”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>area object of <cite>_type</cite> = “pt”</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>area object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area._hash">
+<span class="sig-name descname"><span class="pre">_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area._hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area._hash" title="Permalink to this definition"></a></dt>
+<dd><p>replacement function for <cite>__hash__</cite> due to equality conflicts</p>
+<p class="rubric">Notes</p>
+<p>required since we defined <cite>__eq__</cite> and this conflicts with the
+standard <cite>__hash__</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area.__repr__" title="Permalink to this definition"></a></dt>
+<dd><p>Return repr(self).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area.__str__" title="Permalink to this definition"></a></dt>
+<dd><p>Return str(self).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.layout_elements.area.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/layout_elements.html#area.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.layout_elements.area.__eq__" title="Permalink to this definition"></a></dt>
+<dd><p>Return self==value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../base/index.html" class="btn btn-neutral float-left" title="cowpatch.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../svg_utils/index.html" class="btn btn-neutral float-right" title="cowpatch.svg_utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Benjamin LeRoy, Mallory Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

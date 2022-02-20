@@ -1,0 +1,142 @@
+:py:mod:`cowpatch.utils`
+========================
+
+.. py:module:: cowpatch.utils
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cowpatch.utils.val_range
+   cowpatch.utils.is_int
+   cowpatch.utils.is_positive
+   cowpatch.utils.is_non_neg_int
+   cowpatch.utils.is_pos_int
+   cowpatch.utils.is_proportion
+   cowpatch.utils.is_non_negative
+   cowpatch.utils.inherits
+   cowpatch.utils.to_pt
+   cowpatch.utils.from_pt
+   cowpatch.utils.to_inches
+   cowpatch.utils.from_inches
+   cowpatch.utils.inherits_plotnine
+   cowpatch.utils._transform_size_to_pt
+   cowpatch.utils._proposed_scaling_both
+
+
+
+.. py:function:: val_range(x)
+
+
+.. py:function:: is_int(x)
+
+
+.. py:function:: is_positive(x)
+
+
+.. py:function:: is_non_neg_int(x)
+
+
+.. py:function:: is_pos_int(x)
+
+
+.. py:function:: is_proportion(x)
+
+
+.. py:function:: is_non_negative(x)
+
+
+.. py:function:: inherits(object, _class)
+
+
+.. py:function:: to_pt(value, units, dpi=96)
+
+   convert length from given units to pt
+
+   :param value: length in measurement units
+   :type value: float
+   :param units: unit type (e.g. "pt", "px", "in", "cm", "mm")
+   :type units: str
+   :param dpi: dots per inch (conversion between inches and px)
+   :type dpi: float / int
+
+   :rtype: length in pt
+
+
+.. py:function:: from_pt(value, units, dpi=96)
+
+   convert length from pt to given units
+
+   :param value: length in pt
+   :type value: float
+   :param units: unit type (e.g. "pt", "px", "in", "cm", "mm") to convert to
+   :type units: str
+   :param dpi: dots per inch (conversion between inches and px)
+   :type dpi: float / int
+
+   :rtype: length given units
+
+
+.. py:function:: to_inches(value, units, dpi=96)
+
+   convert length from given units to pt
+
+   :param value: length in measurement units
+   :type value: float
+   :param units: unit type (e.g. "pt", "px", "in", "cm", "mm")
+   :type units: str
+   :param dpi: dots per inch (conversion between inches and px)
+   :type dpi: float / int
+
+   :rtype: length in pt
+
+
+.. py:function:: from_inches(value, units, dpi=96)
+
+   convert length from inches to given units
+
+   :param value: length in inches
+   :type value: float
+   :param units: unit type (e.g. "pt", "px", "in", "cm", "mm") to convert to
+   :type units: str
+   :param dpi: dots per inch (conversion between inches and px)
+   :type dpi: float / int
+
+   :rtype: length given units
+
+
+.. py:function:: inherits_plotnine(other)
+
+   checks if object is a plotnine one (but really only checks if comes
+   from plotnine package...)
+
+
+.. py:function:: _transform_size_to_pt(size_string_tuple)
+
+   takes string with unit and converts it to a float w.r.t pt
+
+   :param size_string_tuple: tuple of strings with size of svg image
+   :type size_string_tuple: string tuple
+
+   :rtype: tuple of floats of sizes w.r.t pt
+
+
+.. py:function:: _proposed_scaling_both(current, desired)
+
+   identify a x and y scaling to make the current size into the desired size
+
+   :param current: float tuple of current size of svg object
+   :type current: tuple
+   :param desired: float tuple of desired size of svg object
+   :type desired: tuple
+
+   :returns: float tuple of scalar constants for size change in each dimension
+   :rtype: tuple
+
+

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cowpatch.utils &mdash; cowpatch  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cowpatch
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">cowpatch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/benjaminleroy/cowpatch">View on Github</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cowpatch</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cowpatch.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cowpatch.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">plotnine</span> <span class="k">as</span> <span class="nn">p9</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<div class="viewcode-block" id="val_range"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.val_range">[docs]</a><span class="k">def</span> <span class="nf">val_range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="is_int"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.is_int">[docs]</a><span class="k">def</span> <span class="nf">is_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="is_positive"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.is_positive">[docs]</a><span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="is_non_neg_int"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.is_non_neg_int">[docs]</a><span class="k">def</span> <span class="nf">is_non_neg_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">is_non_negative</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="is_pos_int"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.is_pos_int">[docs]</a><span class="k">def</span> <span class="nf">is_pos_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">is_positive</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_proportion"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.is_proportion">[docs]</a><span class="k">def</span> <span class="nf">is_proportion</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="is_non_negative"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.is_non_negative">[docs]</a><span class="k">def</span> <span class="nf">is_non_negative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="inherits"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.inherits">[docs]</a><span class="k">def</span> <span class="nf">inherits</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">_class</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">object</span><span class="p">),</span><span class="n">_class</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: I&#39;m not 100% sure these conversions do the right thing (especially w.r.t to dpi notation...)</span>
+<div class="viewcode-block" id="to_pt"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.to_pt">[docs]</a><span class="k">def</span> <span class="nf">to_pt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert length from given units to pt</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    value : float</span>
+<span class="sd">        length in measurement units</span>
+<span class="sd">    units : str</span>
+<span class="sd">        unit type (e.g. &quot;pt&quot;, &quot;px&quot;, &quot;in&quot;, &quot;cm&quot;, &quot;mm&quot;)</span>
+<span class="sd">    dpi : float / int</span>
+<span class="sd">        dots per inch (conversion between inches and px)</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    length in pt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="s2">&quot;cm&quot;</span><span class="p">,</span> <span class="s2">&quot;mm&quot;</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="s2">&quot;inches&quot;</span><span class="p">,</span> <span class="s2">&quot;px&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;please constrain units string parameter to &quot;</span><span class="o">+</span>\
+                         <span class="s2">&quot;options listed in doc string&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;pt&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="c1"># metric to inches</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;cm&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">/</span><span class="mf">2.54</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;in&quot;</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;mm&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">/</span><span class="mf">25.4</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;in&#39;</span>
+
+    <span class="c1"># inches to pixels</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;in&quot;</span> <span class="ow">or</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;inches&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">dpi</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span>
+
+    <span class="c1"># pixel to pt</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;px&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="mf">.75</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="from_pt"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.from_pt">[docs]</a><span class="k">def</span> <span class="nf">from_pt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert length from pt to given units</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    value : float</span>
+<span class="sd">        length in pt</span>
+<span class="sd">    units : str</span>
+<span class="sd">        unit type (e.g. &quot;pt&quot;, &quot;px&quot;, &quot;in&quot;, &quot;cm&quot;, &quot;mm&quot;) to convert to</span>
+<span class="sd">    dpi : float / int</span>
+<span class="sd">        dots per inch (conversion between inches and px)</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    length given units</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="s2">&quot;cm&quot;</span><span class="p">,</span> <span class="s2">&quot;mm&quot;</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="s2">&quot;inches&quot;</span><span class="p">,</span> <span class="s2">&quot;px&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;please constrain units string parameter to &quot;</span><span class="o">+</span>\
+                         <span class="s2">&quot;options listed in doc string&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;pt&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="c1"># metric to inches</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;cm&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="mf">2.54</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;in&quot;</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;mm&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="mf">25.4</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;in&#39;</span>
+
+    <span class="c1"># inches to pixels</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;in&quot;</span> <span class="ow">or</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;inches&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">/</span> <span class="n">dpi</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span>
+
+    <span class="c1"># pt to px</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;px&quot;</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="mi">4</span><span class="o">/</span><span class="mi">3</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="to_inches"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.to_inches">[docs]</a><span class="k">def</span> <span class="nf">to_inches</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert length from given units to pt</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    value : float</span>
+<span class="sd">        length in measurement units</span>
+<span class="sd">    units : str</span>
+<span class="sd">        unit type (e.g. &quot;pt&quot;, &quot;px&quot;, &quot;in&quot;, &quot;cm&quot;, &quot;mm&quot;)</span>
+<span class="sd">    dpi : float / int</span>
+<span class="sd">        dots per inch (conversion between inches and px)</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    length in pt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pt_val</span> <span class="o">=</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">from_pt</span><span class="p">(</span><span class="n">pt_val</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_inches"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.from_inches">[docs]</a><span class="k">def</span> <span class="nf">from_inches</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert length from inches to given units</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    value : float</span>
+<span class="sd">        length in inches</span>
+<span class="sd">    units : str</span>
+<span class="sd">        unit type (e.g. &quot;pt&quot;, &quot;px&quot;, &quot;in&quot;, &quot;cm&quot;, &quot;mm&quot;) to convert to</span>
+<span class="sd">    dpi : float / int</span>
+<span class="sd">        dots per inch (conversion between inches and px)</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    length given units</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pt_val</span> <span class="o">=</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">from_pt</span><span class="p">(</span><span class="n">pt_val</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="inherits_plotnine"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.inherits_plotnine">[docs]</a><span class="k">def</span> <span class="nf">inherits_plotnine</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    checks if object is a plotnine one (but really only checks if comes</span>
+<span class="sd">    from plotnine package...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># https://stackoverflow.com/questions/14570802/python-check-if-object-is-instance-of-any-class-from-a-certain-module</span>
+    <span class="n">module_tree</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">module_tree</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="s2">&quot;plotnine&quot;</span> <span class="o">==</span> <span class="n">parent</span></div>
+
+
+<div class="viewcode-block" id="_transform_size_to_pt"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils._transform_size_to_pt">[docs]</a><span class="k">def</span> <span class="nf">_transform_size_to_pt</span><span class="p">(</span><span class="n">size_string_tuple</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    takes string with unit and converts it to a float w.r.t pt</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    size_string_tuple : string tuple</span>
+<span class="sd">        tuple of strings with size of svg image</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    tuple of floats of sizes w.r.t pt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9\.+]+&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">())</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">size_string_tuple</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">size_string_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;pt&quot;</span><span class="p">):</span>
+       <span class="k">return</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">size_string_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;in&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">72</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">size_string_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;px&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">.75</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">.75</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;size_string_tuple structure of object not as &quot;</span><span class="o">+</span>\
+                         <span class="s2">&quot;expected, new size type&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_proposed_scaling_both"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils._proposed_scaling_both">[docs]</a><span class="k">def</span> <span class="nf">_proposed_scaling_both</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">desired</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    identify a x and y scaling to make the current size into the desired size</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    current : tuple</span>
+<span class="sd">        float tuple of current size of svg object</span>
+<span class="sd">    desired : tuple</span>
+<span class="sd">        float tuple of desired size of svg object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        float tuple of scalar constants for size change in each dimension</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scale_x</span> <span class="o">=</span> <span class="n">desired</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">current</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">scale_y</span> <span class="o">=</span> <span class="n">desired</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">current</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">scale_x</span><span class="p">,</span> <span class="n">scale_y</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Benjamin LeRoy, Mallory Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cowpatch.text_elements &mdash; cowpatch  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cowpatch
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">cowpatch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/benjaminleroy/cowpatch">View on Github</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cowpatch</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cowpatch.text_elements</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cowpatch.text_elements</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">plotnine</span> <span class="k">as</span> <span class="nn">p9</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="text"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text">[docs]</a><span class="k">class</span> <span class="nc">text</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">element_text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        create a new text object</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        label : string</span>
+<span class="sd">            text label with desirable format (e.g. sympy, etc.)</span>
+<span class="sd">        element_text : plotnine.themes.elements.element_text</span>
+<span class="sd">            element object from plotnine, can also be added later</span>
+<span class="sd">        theme : plotnine.theme object</span>
+<span class="sd">            theme object from plotnine, can be associated later</span>
+<span class="sd">            should only provide a theme or element_text (as a theme</span>
+<span class="sd">            contains an element_text)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This class leverages matplotlib to create the text (given that</span>
+<span class="sd">        matplotlib can create path-style objects for text if the individual</span>
+<span class="sd">        is worried that the svg text visually won&#39;t be preserved - this is also</span>
+<span class="sd">        annoying that this is the default).</span>
+
+<span class="sd">        Note the function use the ``text`` attribute - NOT the</span>
+<span class="sd">        ``plot_title`` attribute if a theme is provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+
+        <span class="k">if</span> <span class="n">element_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">theme</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;please provide only a theme or element_text, &quot;</span><span class="o">+</span>\
+                             <span class="s2">&quot;not both&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">element_text</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># prep initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clean_element_text</span><span class="p">(</span><span class="n">element_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="n">theme</span>
+
+<div class="viewcode-block" id="text._clean_element_text"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text._clean_element_text">[docs]</a>    <span class="k">def</span> <span class="nf">_clean_element_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        cleans element_text to make sure any element_text() is a</span>
+<span class="sd">        p9.themes.themeable, not just a p9.theme.elements.element_text</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        element_text : p9&#39;s element_text</span>
+<span class="sd">            element text added to or initialized with the text object. Can</span>
+<span class="sd">            be None, a p9.theme.elements.element_text or a p9.themes.themeable</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        updates i place</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">element_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">element_text</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element_text</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">themes</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">element_text</span><span class="p">):</span>
+            <span class="n">et_themeable</span> <span class="o">=</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="n">element_text</span>
+                                    <span class="p">)</span><span class="o">.</span><span class="n">themeables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+            <span class="n">element_text</span> <span class="o">=</span> <span class="n">et_themeable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">element_text</span> <span class="o">=</span> <span class="n">element_text</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">element_text</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">element_text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">element_text</span> <span class="o">=</span> <span class="n">element_text</span>
+
+
+        <span class="k">return</span> <span class="kc">None</span> <span class="c1"># just a reminder</span></div>
+
+<div class="viewcode-block" id="text.__add__"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        add element_text or theme to update format</span>
+
+<span class="sd">        TODO: make this work w.r.t patchwork approaches (edge cases #8)</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        other : plotnine.themes.elements.element_text or theme</span>
+<span class="sd">            theme or element_text to define the attributes of the text.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Note the function use the ``text`` attribute - NOT the ``plot_title``</span>
+<span class="sd">        attribute if a theme is provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">themes</span><span class="o">.</span><span class="n">themeable</span><span class="o">.</span><span class="n">element_text</span><span class="p">)</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;text objects are only allowed to be combined &quot;</span><span class="o">+</span>\
+                             <span class="s2">&quot;with element_text objects.&quot;</span><span class="p">)</span>
+        <span class="c1"># need to update theme or element_text...</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">themes</span><span class="o">.</span><span class="n">themeable</span><span class="o">.</span><span class="n">element_text</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clean_element_text</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+            <span class="c1"># update theme if it already exists</span>
+            <span class="c1"># (if not we&#39;ll update it when it&#39;s required)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="o">+=</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_text</span><span class="o">.</span><span class="n">theme_element</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="n">other</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">add_theme</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+                <span class="n">new_element_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme</span><span class="o">.</span><span class="n">themeables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_clean_element_text</span><span class="p">(</span><span class="n">new_element_text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="text._provide_complete_theme"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text._provide_complete_theme">[docs]</a>    <span class="k">def</span> <span class="nf">_provide_complete_theme</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It should be here that the current global theme is accessed, and thing are completed...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">current_theme</span> <span class="o">=</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme_get</span><span class="p">()</span>
+            <span class="c1"># and update with our element_text</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># problem here... (need to update themeable.get(&quot;text&quot;) instead)</span>
+                <span class="n">current_theme</span> <span class="o">+=</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">element_text</span><span class="o">.</span><span class="n">theme_element</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_theme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme</span>
+
+        <span class="k">return</span> <span class="n">current_theme</span></div>
+
+<div class="viewcode-block" id="text._inner_prep"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text._inner_prep">[docs]</a>    <span class="k">def</span> <span class="nf">_inner_prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal function to create matplotlib figure with text and</span>
+<span class="sd">        provide a bounding box for the location in the plot</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig : matplotlib.figure.Figure</span>
+<span class="sd">            figure with text at (0,0), no axes</span>
+<span class="sd">        bbox : matplotlib.transforms.Bbox</span>
+<span class="sd">            bbox location of text in figure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># apply theme/element_text correctly ------</span>
+
+        <span class="c1"># mirrors code in p9.ggplot.draw_title() and</span>
+        <span class="c1">#  p9.themeable.plot_title.apply_figure()</span>
+        <span class="c1"># code references:</span>
+        <span class="c1"># - https://github.com/has2k1/plotnine/blob/9fbb5f77c8a8fb8c522eb88d4274cd2fa4f8dd88/plotnine/ggplot.py#L545</span>
+        <span class="c1"># - https://github.com/has2k1/plotnine/blob/6c82cdc20d6f81c96772da73fc07a672a0a0a6ef/plotnine/themes/themeable.py#L361</span>
+        <span class="c1">#</span>
+
+        <span class="c1"># collect desirable theme and properties --------</span>
+        <span class="n">theme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_provide_complete_theme</span><span class="p">()</span>
+
+        <span class="n">text_themeable</span> <span class="o">=</span> <span class="n">theme</span><span class="o">.</span><span class="n">themeables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">text_themeable</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+
+        <span class="c1"># create text and apply ----------</span>
+        <span class="c1"># https://stackoverflow.com/questions/24581194/matplotlib-text-bounding-box-dimensions</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="mi">96</span><span class="p">)</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;margin&#39;</span><span class="p">]</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+            <span class="n">txt</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="n">properties</span><span class="p">)</span>
+
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">())</span>
+
+        <span class="c1"># remove background structure from mpl ----------</span>
+        <span class="c1"># help from: https://stackoverflow.com/questions/21687571/matplotlib-remove-patches-from-figure</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+        <span class="c1"># bbox aids in cutting all but the desired image</span>
+
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">bbox</span></div>
+
+
+<div class="viewcode-block" id="text._create_svg_object"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text._create_svg_object">[docs]</a>    <span class="k">def</span> <span class="nf">_create_svg_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal to create svg object (with text in correct location</span>
+<span class="sd">        and correct image size)</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        width : float</span>
+<span class="sd">            width of desired output (in inches)</span>
+<span class="sd">        height : float</span>
+<span class="sd">            height of desired output (in inches)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        svg_obj : svgutils.transform.SVGFigure</span>
+<span class="sd">            svg representation of text with correct format and image size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_prep</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">)</span>
+
+
+        <span class="c1"># get original matplotlib image ------------</span>
+        <span class="n">fid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">bbox_inches</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">)</span>
+        <span class="n">fid</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">image_string</span> <span class="o">=</span> <span class="n">fid</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">image_string</span><span class="p">)</span>
+        <span class="n">img_size</span> <span class="o">=</span> <span class="n">transform_size</span><span class="p">((</span><span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">))</span>
+        <span class="c1"># location correction for alignment and margins -------</span>
+
+        <span class="n">current_theme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_provide_complete_theme</span><span class="p">()</span>
+        <span class="n">ha_str</span> <span class="o">=</span> <span class="n">current_theme</span><span class="o">.</span><span class="n">themeables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ha&quot;</span><span class="p">)</span>
+        <span class="n">va_str</span> <span class="o">=</span> <span class="n">current_theme</span><span class="o">.</span><span class="n">themeables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;va&quot;</span><span class="p">)</span>
+        <span class="n">margin_dict</span> <span class="o">=</span> <span class="n">current_theme</span><span class="o">.</span><span class="n">themeables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;margin&quot;</span><span class="p">)</span>
+        <span class="n">margin_dict_pt</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span> <span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]),</span>
+                          <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">],</span> <span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]),</span>
+                          <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">],</span> <span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]),</span>
+                          <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">],</span> <span class="n">margin_dict</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">])}</span>
+
+
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="s1">&#39;px&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="s1">&#39;px&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">ha_str</span> <span class="o">==</span> <span class="s2">&quot;center&quot;</span><span class="p">:</span>
+            <span class="n">x_shift</span> <span class="o">=</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="s2">&quot;px&quot;</span><span class="p">)</span> <span class="o">/</span><span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">ha_str</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+            <span class="n">x_shift</span> <span class="o">=</span> <span class="n">width</span> <span class="o">-</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="s2">&quot;px&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># ha_str == &quot;left&quot;</span>
+            <span class="n">x_shift</span> <span class="o">=</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">]</span>
+
+
+        <span class="k">if</span> <span class="n">va_str</span> <span class="o">==</span> <span class="s2">&quot;center&quot;</span><span class="p">:</span>
+            <span class="n">y_shift</span> <span class="o">=</span> <span class="n">height</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="s2">&quot;px&quot;</span><span class="p">)</span> <span class="o">/</span><span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">va_str</span> <span class="o">==</span> <span class="s2">&quot;bottom&quot;</span><span class="p">:</span>
+            <span class="n">y_shift</span> <span class="o">=</span> <span class="n">height</span> <span class="o">-</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="s2">&quot;px&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># va_str = &quot;top&quot;</span>
+            <span class="n">y_shift</span> <span class="o">=</span> <span class="n">margin_dict_pt</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span>
+
+        <span class="c1"># prep translated and smaller canvas image ----------</span>
+        <span class="c1"># note that bbox coordinates are with respect to a bottom left axis</span>
+        <span class="c1"># (aka cartesian)</span>
+        <span class="c1"># and then we need to convert it to svg&#39;s top left axis</span>
+        <span class="n">svg_bb_top_left_corner</span> <span class="o">=</span> <span class="p">(</span><span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span>
+                                        <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span><span class="p">),</span> <span class="c1"># x_min</span>
+                                  <span class="n">img_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">to_pt</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span>
+                                        <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span><span class="p">))</span> <span class="c1"># height - y_max</span>
+
+        <span class="n">new_image_size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">width</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                          <span class="nb">str</span><span class="p">(</span><span class="n">height</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span>
+
+        <span class="c1"># need to declare the viewBox for some reason...</span>
+        <span class="n">new_image_size_string_val</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                                        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">new_image_size</span><span class="p">]</span>
+
+        <span class="n">new_viewBox</span> <span class="o">=</span> <span class="s2">&quot;0 0 </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">new_image_size_string_val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="n">new_image_size_string_val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">img_root</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="n">img_root</span><span class="o">.</span><span class="n">moveto</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">svg_bb_top_left_corner</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x_shift</span><span class="p">,</span>
+                        <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">svg_bb_top_left_corner</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_shift</span><span class="p">)</span>
+        <span class="n">img_root_str</span> <span class="o">=</span> <span class="n">img_root</span><span class="o">.</span><span class="n">tostr</span><span class="p">()</span>
+
+
+        <span class="n">new_image</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">SVGFigure</span><span class="p">()</span>
+        <span class="n">new_image</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">new_image_size</span><span class="p">)</span>
+        <span class="n">new_image</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;viewBox&quot;</span><span class="p">,</span> <span class="n">new_viewBox</span><span class="p">)</span>
+
+
+        <span class="c1"># remove patch (lxml.etree) ----------</span>
+        <span class="c1"># img_root2_lxml = etree.fromstring(img_root_str)</span>
+        <span class="c1"># parent = img_root2_lxml.findall(&quot;.//{http://www.w3.org/2000/svg}g[@id=\&quot;patch_1\&quot;]&quot;)[0]</span>
+        <span class="c1"># to_remove = parent.getchildren()[0]</span>
+        <span class="c1"># parent.remove(to_remove)</span>
+        <span class="c1"># img_root2_str = etree.tostring(img_root2_lxml)</span>
+        <span class="c1"># img2 = sg.fromstring(img_root2_str.decode(&quot;utf-8&quot;))</span>
+
+        <span class="c1"># remove path (xml.etree.ElementTree) ---------</span>
+        <span class="n">img_root2_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">img_root_str</span><span class="p">)</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">img_root2_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//{http://www.w3.org/2000/svg}g[@id=</span><span class="se">\&quot;</span><span class="s2">patch_1</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">to_remove</span> <span class="o">=</span>  <span class="n">img_root2_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//{http://www.w3.org/2000/svg}path&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">to_remove</span><span class="p">)</span>
+        <span class="n">img_root2_xml_str</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">img_root2_xml</span><span class="p">)</span>
+        <span class="n">img2</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">img_root2_xml_str</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+        <span class="n">new_image</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img2</span><span class="p">)</span>
+
+
+        <span class="c1"># closing plot</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">new_image</span></div>
+
+
+<div class="viewcode-block" id="text.save"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save text object as image in minimal size object</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">        width : float</span>
+<span class="sd">            in inches (if None, then tight (w.r.t. to margins))</span>
+<span class="sd">        height : float</span>
+<span class="sd">            in inches (if None, then tight (w.r.t. to margins))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">svg_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_svg_object</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+
+        <span class="n">svg_obj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> <span class="c1"># do we need this?</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Benjamin LeRoy, Mallory Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

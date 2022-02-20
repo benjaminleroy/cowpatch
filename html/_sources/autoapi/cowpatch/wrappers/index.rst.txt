@@ -1,0 +1,104 @@
+:py:mod:`cowpatch.wrappers`
+===========================
+
+.. py:module:: cowpatch.wrappers
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cowpatch.wrappers.wrapper_plotnine
+   cowpatch.wrappers.wrapper_matplotlib
+   cowpatch.wrappers.wrapper_seaborn
+
+
+
+
+.. py:class:: wrapper_plotnine(gg)
+
+   Bases: :py:obj:`cowpatch.base.patch`
+
+   wrapper for plotnine objects
+
+   :param gg:
+   :type gg: plotnine ggplot object
+
+   .. rubric:: Notes
+
+   You can still use the plotnine ggplot "+" to this object to continue to
+   update this object. This wrapper creates a special patch object that
+   can be combined with other patch objects.
+
+   .. py:method:: _svg(self, width_px, height_px)
+
+      convert plot to svg objecct
+
+      :param width_px: desired width of svg object in pixels
+      :type width_px: float
+      :param height_px: desired height of svg object in pixels
+      :type height_px: float
+
+      :returns: **svg_object**
+      :rtype: svgutils.transforms object
+
+
+   .. py:method:: __add__(self, other)
+
+
+
+.. py:class:: wrapper_matplotlib(fig, axes)
+
+   Bases: :py:obj:`cowpatch.base.patch`
+
+   wrapper for matplotlib objects
+
+   :param fig:
+   :type fig: matplotlib figure object
+   :param axes:
+   :type axes: matplotlib axes object
+
+   .. rubric:: Notes
+
+   You can still update the plot using `object.fig.(function)` and
+   `object.fig.(function)`. This wrapper creates a special patch object that
+   can be combined with other patch objects.
+
+   .. py:method:: _svg(self, width_px, height_px)
+
+      Internal function to create an svg representation of the patch
+
+      :param width_pt: desired width of svg object in points
+      :type width_pt: float
+      :param height_pt: desired height of svg object in points
+      :type height_pt: float
+
+      :returns: **svg_object**
+      :rtype: svgutils.transforms object
+
+
+
+.. py:class:: wrapper_seaborn(fig, axes)
+
+   Bases: :py:obj:`wrapper_matplotlib`
+
+   wrapper for seaborn objects
+
+   :param fig:
+   :type fig: matplotlib figure object
+   :param axes:
+   :type axes: matplotlib axes object
+
+   .. rubric:: Notes
+
+   This is the same as the `wrapper_matplotlib` function.
+
+   You can still update the plot using `object.fig.(function)` and
+   `object.fig.(function)`. This wrapper creates a special patch object that
+   can be combined with other patch objects.
+
+

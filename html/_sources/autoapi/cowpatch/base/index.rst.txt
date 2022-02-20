@@ -1,0 +1,141 @@
+:py:mod:`cowpatch.base`
+=======================
+
+.. py:module:: cowpatch.base
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cowpatch.base.patch
+
+
+
+
+.. py:class:: patch(*args, grobs=None)
+
+   general object to describe a plots or arangement of plots
+
+   :param \*args:
+   :type \*args: ggplots and patches
+   :param grobs: list of ggplot objects and patches. Either `\*args` is empty or
+                 `grobs` is `None`.
+   :type grobs: list
+
+   .. rubric:: Notes
+
+   All patch objects can be combined with other patch objects, either inside
+   other `patch` calls or using mathematical grammar (described below).
+
+   Additionally, patch objects's layouts can be described by adding a `layout`
+   object, can have figure labels and titles added using an addition of a
+   `annotation` object, and can have plots inset into it's grid with a
+   `inset` object addition.
+
+   **Mathematical Grammar**
+
+   Mirroring ideas in `R`'s `patchwork` package, the following methods can
+   be used to combine patch objects
+
+   - `__add__` (`+`) of `patches` will (in the default) arange a sequence of
+       `patches` in a matrix grid (byrow)
+   - `__or__` (`|`) of `patches` will (in the default) arange a sequence of
+       `patches` in a single row
+   - `__div__` (`/`) of `patches` will (in the default) arange a sequence of
+       `patches` in a single column
+
+   These can also be combined to make complex layout structures. In addition,
+   these structures can define depths structures. The top layout can be
+   updated with an addition of a `layout`.
+
+   Beyond combinations with other patches, the use of
+
+   - `__mul__` (`*`) with a `plotnine` `theme` object will apply that theme to
+       every `plotnine` object on the top `layer` (and `text` object - see
+       document)
+   - `__and__` (`&`) with a plotnine theme object will apply that theme to
+       every `plotnine` object at any depth (and `text` object - see document)
+
+   .. py:method:: layout(self)
+      :property:
+
+      provide `__layout` default else return `__layout`
+
+      .. rubric:: Notes
+
+      This allows for the different structure of `__add__` to not be built
+      until use of the `layout` is actually needed.
+
+
+   .. py:method:: _check_layout(self)
+
+      checks layout if design matrix is fulled defined
+
+
+   .. py:method:: __or__(self, other)
+
+
+   .. py:method:: __div__(self, other)
+
+
+   .. py:method:: __add__(self, other)
+
+
+   .. py:method:: __mul__(self, other)
+
+
+   .. py:method:: __and__(self, other)
+
+
+   .. py:method:: _svg(self, width_pt, height_pt)
+
+      Internal function to create an svg representation of the patch
+
+      :param width_pt: desired width of svg object in points
+      :type width_pt: float
+      :param height_pt: desired height of svg object in points
+      :type height_pt: float
+
+      :returns: **svg_object**
+      :rtype: svgutils.transforms object
+
+
+   .. py:method:: save(self, filename, width, height, dpi=96, _format=None)
+
+      save patch to file
+
+      :param filename: local string to save the file to (this can also be at a `io.BytesIO`)
+      :type filename: str
+      :param width: width of output image in inches (this should actually be associated
+                    with the svg...)
+      :type width: float
+      :param height: height of svg in inches (this should actually be associated
+                     with the svg...)
+      :type height: float
+      :param dpi: dots per square inch, default is 96 (standard)
+      :type dpi: int or float
+      :param _format: string of format (error tells options). If provided this is the
+                      format used, if None, then we'll try to use the `filename`
+                      extension.
+      :type _format: str
+
+      :returns: saves to a file
+      :rtype: None
+
+
+   .. py:method:: show(self, width=None, height=None, dpi=None)
+
+      show base inside an interactive shell
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
+
+
+

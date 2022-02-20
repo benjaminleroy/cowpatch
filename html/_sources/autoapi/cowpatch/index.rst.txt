@@ -1,0 +1,692 @@
+:py:mod:`cowpatch`
+==================
+
+.. py:module:: cowpatch
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   base/index.rst
+   layout_elements/index.rst
+   svg_utils/index.rst
+   text_elements/index.rst
+   utils/index.rst
+   wrappers/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cowpatch.layout
+   cowpatch.area
+   cowpatch.patch
+   cowpatch.text
+   cowpatch.wrapper_plotnine
+   cowpatch.wrapper_matplotlib
+   cowpatch.wrapper_seaborn
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cowpatch.__version__
+
+
+.. py:data:: __version__
+   
+
+   
+
+.. py:class:: layout(ncol=None, nrow=None, byrow=None, rel_widths=None, rel_heights=None, design=None)
+
+   layout class to store information about arangement of patches
+
+   :param ncol: Integer for the number of columns to arrange the the patches in.
+                The default is None (which avoids conflicts if a value for
+                `design` is provided). If `ncol` is None but `nrow` is not, then
+                `ncol` will default to the minimum number of columns to make sure
+                that all patches can be visualized.
+   :type ncol: integer
+   :param nrow: Integer for the number of rows to arrange the the patches in.
+                The default is None (which avoids conflicts if a value for
+                `design` is provided). If `nrow` is None but `ncol` is not, then
+                `nrow` will default to the minimum number of rows to make sure
+                that all patches can be visualized.
+   :type nrow: integer
+   :param byrow: If `ncol` and/or `nrow` is included, then this boolean indicates
+                 if the patches should be ordered by row (default if byrow is None
+                 or when parameter is True) or by column (if byrow was False).
+   :type byrow: boolean
+   :param design: Specification of the location of each patch in the arrangement.
+                  Can either be a float numpy array with integers between 0 and
+                  the number of patches to arrange, or a text string that captures
+                  similar ideas to the array approach but uses capital alphabetical
+                  characters (A-Z) to indicate each figure. More information is in
+                  Notes.
+   :type design: np.array (float based) or str
+   :param rel_widths: Numerical vector of relative columns widths. This not required,
+                      the default would be `np.ones(ncol)` or `np.ones(design.shape[0])`.
+                      Note that this is a relative sizing and the values are only
+                      required to be non-negative, non-zero values, for example
+                      [1,2] would would make the first column twice as wide as the
+                      second column.
+   :type rel_widths: list, np vector or tuple
+   :param rel_heights: Numerical vector of relative row heights. This not required,
+                       the default would be `np.ones(nrow)` or `np.ones(design.shape[1])`.
+                       Note that this is a relative sizing and the values are only
+                       required to be non-negative, non-zero values, for example
+                       [1,2] would would make the first row twice as tall as the
+                       second row.
+   :type rel_heights: list or tuple
+
+   .. rubric:: Notes
+
+   The `design` parameter expects specific input.
+
+   1. If the `design` is input as a numpy array, we expect it to have
+   integers only (0 to # patches-1). It is allowed to have `np.nan` values
+   if certain "squares" of the  layout are not covered by others (the
+   covering is defined by the value ordering). Note that we won't check
+   for overlap and `np.nan` is not enforced if another patches' relative
+   (min-x,min-y) and (max-x, max-y) define a box over that `np.nan`'s
+   area.
+
+   An example of a design of the numpy array form could look like
+
+   .. code-block::
+
+           my_np_design = np.array([[1,1,2],
+                                    [3,3,2],
+                                    [3,3,np.nan]])
+
+   2. if the `design` parameter takes in a string, we expect it to have
+   a structure such that each line (pre "\\n") contains the same number
+   of characters, and these characters must come from the first
+   (number of patches) capital alphabetical characters or the "\#" or "." sign to
+   indicate an empty square. Similar arguments w.r.t. overlap and the
+   lack of real enforcement for empty squares applies (as in 1.).
+
+   An example of a design of the string form could look like
+
+   .. code-block::
+
+           my_str_design = """
+           AAB
+           CCB
+           CC\#
+           """
+
+   or
+
+   .. code-block::
+
+           my_str_design = """
+           AAB
+           CCB
+           CC.
+           """
+
+
+   **Similarities to `R` cousins:**
+
+   This layout function is similar to `patchwork\:\:plot_layout` (with a
+   special node to `design` parameter) and helps perform similar ideas to
+   `gridExtra\:\:arrangeGrob`'s `layout_matrix` parameter, and
+   `cowplot\:\:plot_grid`'s `rel_widths` and `rel_heights` parameters
+
+   .. py:attribute:: design
+      
+
+      
+
+   .. py:method:: _design_string_to_mat(self, design)
+
+      Internal function to convert design string into a matrix
+
+      :param design: design in a string format
+      :type design: str
+
+      :returns: **design** -- design in np.array format
+      :rtype: np.array integer
+
+
+   .. py:method:: get_design(self, num_grobs=None)
+
+      create a design matrix if not explicit design has been provided
+
+
+   .. py:method:: _assess_mat(self, design)
+
+      Assesses if the design matrix includes at least 1 box for patches
+      indexed 0 to (number of patches - 1). This doesn't actually assume to know
+      the number of patches.
+
+      :param design: design in numpy array format
+      :type design: np.array (integer)
+
+      :returns: number of patches expected in the overall matrix.
+      :rtype: int
+
+      :raises ValueError: if design matrix doesn't include at least at least 1 box for all
+          indices between 0 to (number of patches - 1)
+
+
+   .. py:method:: _rel_structure(self, num_grobs=None)
+
+      provide rel_structure (rel_widths, rel_heights) if missing
+
+      :param num_grobs: if not None, then this value will be used to understand the number
+                        of grobs to be laid out
+      :type num_grobs: int
+
+      :returns: * **rel_widths** (*np.array vector*) -- a vector of relative widths of the columns of the layout design
+                * **rel_heights** (*np.array vector*) -- a vector of relative heights of the rows of the layout design
+
+
+   .. py:method:: _element_locations(self, width_pt, height_pt, num_grobs=None)
+
+      create a list of `area` objects associated with the location of
+      each of the layout's grobs w.r.t. a given points width and height
+
+      :param width_pt: global width (in points) of the full arangement of patches
+      :type width_pt: float
+      :param height_pt: global height (in points) of the full arangement of patches
+      :type height_pt: float
+      :param num_grobs: if not None, then this value will be used to understand the number
+                        of grobs to be laid out
+      :type num_grobs: integer
+
+      :returns: list of `area` objects describing the location for each of the
+                layout's grobs (in the order of the index in the self.design)
+      :rtype: list
+
+
+   .. py:method:: _yokogaki_ordering(self, num_grobs=None)
+
+      calculates the yokogaki (left to right, top to bottom) ordering
+      the the patches
+
+      :param num_grobs: if not None, then this value will be used to understand the number
+                        of grobs to be laid out
+      :type num_grobs: integer
+
+      :rtype: numpy array (vector) of integer index of plots in yokogaki ordering
+
+      .. rubric:: Notes
+
+      Yokogaki is a Japanese word that concisely describes the left to right,
+      top to bottom writing format. We'd like to thank `stack overflow`_.
+      for pointing this out.
+
+      .. _stack overflow:
+          https://english.stackexchange.com/questions/81520/is-there-a-word-for-left-to-right-and-top-to-bottom
+
+
+   .. py:method:: __hash__(self)
+
+      Creates a 'unique' hash for the object to help with identification
+
+      :rtype: hash integer
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
+
+
+   .. py:method:: __str__(self)
+
+      Return str(self).
+
+
+   .. py:method:: __eq__(self, value)
+
+      checks if object is equal to another object (value)
+
+      :param value: another object (that major or may not be of the layout class)
+      :type value: object
+
+      :returns: if current object and other object (value) are equal
+      :rtype: boolean
+
+
+
+.. py:class:: area(x_left, y_top, width, height, _type)
+
+   area class that stores information about what area a patch will fill
+
+   :param x_left: scalar of where the left-most point of the patch is located (impacted
+                  by the `_type` parameter)
+   :type x_left: float
+   :param y_top: scalar of where the top-most point of the patch is located (impacted
+                 by the `_type` parameter)
+   :type y_top: float
+   :param width: scalar of the width of the patch (impacted by the `_type` parameter)
+   :type width: float
+   :param height: scalar of the height of the patch (impacted by the `_type` parameter)
+   :type height: float
+   :param _type: describes how the parameters are stored. See Notes for more
+                 information between the options.
+   :type _type: str {"design", "relative", "pt"}
+
+   .. rubric:: Notes
+
+   The `_type` parameter informs how to understand the other parameters:
+
+   1. "design" means that the values are w.r.t. to a design matrix
+   relative to the `layout` class, and values are relative to the rows
+   and columns units.
+
+   2. "relative" means the values are defined relative to the full size of
+   the canvas and taking values between 0-1 (inclusive).
+
+   3. "pt" means that values are defined relative to point values
+
+   .. py:method:: _check_info_wrt_type(self, x_left, y_top, width, height, _type)
+
+      some logic checks of inputs relative to `_type` parameter
+
+      :param x_left: scalar of where the left-most point of the patch is located
+                     (impacted by the `_type` parameter)
+      :type x_left: float
+      :param y_top: scalar of where the top-most point of the patch is located
+                    (impacted by the `_type` parameter)
+      :type y_top: float
+      :param width: scalar of the width of the patch (impacted by the `_type`
+                    parameter)
+      :type width: float
+      :param height: scalar of the height of the patch (impacted by the `_type`
+                     parameter)
+      :type height: float
+      :param _type: describes how the parameters are stored. Options include
+                    ["design", "relative", "pt"]. See class docstring for more info
+      :type _type: str {"design", "relative", "pt"}
+
+      :raises ValueError: if any of the first four parameters don't make sense with respect
+          to the `_type` parameter
+
+
+   .. py:method:: _design_to_relative(self, rel_widths, rel_heights)
+
+      translates an area object with `_type` = "design" to area object
+      with `_type` = "relative".
+
+      :param rel_widths: list of relative widths of each column of the layout matrix
+      :type rel_widths: np.array (vector)
+      :param rel_heights: list of relative heights of each row of the layout matrix
+      :type rel_heights: np.array (vector)
+
+      :returns: area object of `_type` = "relative"
+      :rtype: area object
+
+
+   .. py:method:: _relative_to_pt(self, width_pt, height_pt)
+
+      translates an area object with `_type` = "relative" to area object
+      with `_type` = "pt".
+
+      :param width_pt: width in points
+      :type width_pt: float
+      :param height_pt: height in points
+      :type height_pt: float
+
+      :returns: area object of `_type` = "pt"
+      :rtype: area object
+
+
+   .. py:method:: pt(self, width_pt=None, height_pt=None, rel_widths=None, rel_heights=None)
+
+      Translates area object to `_type` = "pt"
+
+      :param width_pt: width in points (required if `_type` is not "pt")
+      :type width_pt: float
+      :param height_pt: height in points (required if `_type` is not "pt")
+      :type height_pt: float
+      :param rel_widths: list of relative widths of each column of the layout matrix
+                         (required if `_type` is "design")
+      :type rel_widths: np.array (vector)
+      :param rel_heights: list of relative heights of each row of the layout matrix
+                          (required if `_type` is "design")
+      :type rel_heights: np.array (vector)
+
+      :returns: area object of `_type` = "pt"
+      :rtype: area object
+
+
+   .. py:method:: _hash(self)
+
+      replacement function for `__hash__` due to equality conflicts
+
+      .. rubric:: Notes
+
+      required since we defined `__eq__` and this conflicts with the
+      standard `__hash__`
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
+
+
+   .. py:method:: __str__(self)
+
+      Return str(self).
+
+
+   .. py:method:: __eq__(self, value)
+
+      Return self==value.
+
+
+
+.. py:class:: patch(*args, grobs=None)
+
+   general object to describe a plots or arangement of plots
+
+   :param \*args:
+   :type \*args: ggplots and patches
+   :param grobs: list of ggplot objects and patches. Either `\*args` is empty or
+                 `grobs` is `None`.
+   :type grobs: list
+
+   .. rubric:: Notes
+
+   All patch objects can be combined with other patch objects, either inside
+   other `patch` calls or using mathematical grammar (described below).
+
+   Additionally, patch objects's layouts can be described by adding a `layout`
+   object, can have figure labels and titles added using an addition of a
+   `annotation` object, and can have plots inset into it's grid with a
+   `inset` object addition.
+
+   **Mathematical Grammar**
+
+   Mirroring ideas in `R`'s `patchwork` package, the following methods can
+   be used to combine patch objects
+
+   - `__add__` (`+`) of `patches` will (in the default) arange a sequence of
+       `patches` in a matrix grid (byrow)
+   - `__or__` (`|`) of `patches` will (in the default) arange a sequence of
+       `patches` in a single row
+   - `__div__` (`/`) of `patches` will (in the default) arange a sequence of
+       `patches` in a single column
+
+   These can also be combined to make complex layout structures. In addition,
+   these structures can define depths structures. The top layout can be
+   updated with an addition of a `layout`.
+
+   Beyond combinations with other patches, the use of
+
+   - `__mul__` (`*`) with a `plotnine` `theme` object will apply that theme to
+       every `plotnine` object on the top `layer` (and `text` object - see
+       document)
+   - `__and__` (`&`) with a plotnine theme object will apply that theme to
+       every `plotnine` object at any depth (and `text` object - see document)
+
+   .. py:method:: layout(self)
+      :property:
+
+      provide `__layout` default else return `__layout`
+
+      .. rubric:: Notes
+
+      This allows for the different structure of `__add__` to not be built
+      until use of the `layout` is actually needed.
+
+
+   .. py:method:: _check_layout(self)
+
+      checks layout if design matrix is fulled defined
+
+
+   .. py:method:: __or__(self, other)
+
+
+   .. py:method:: __div__(self, other)
+
+
+   .. py:method:: __add__(self, other)
+
+
+   .. py:method:: __mul__(self, other)
+
+
+   .. py:method:: __and__(self, other)
+
+
+   .. py:method:: _svg(self, width_pt, height_pt)
+
+      Internal function to create an svg representation of the patch
+
+      :param width_pt: desired width of svg object in points
+      :type width_pt: float
+      :param height_pt: desired height of svg object in points
+      :type height_pt: float
+
+      :returns: **svg_object**
+      :rtype: svgutils.transforms object
+
+
+   .. py:method:: save(self, filename, width, height, dpi=96, _format=None)
+
+      save patch to file
+
+      :param filename: local string to save the file to (this can also be at a `io.BytesIO`)
+      :type filename: str
+      :param width: width of output image in inches (this should actually be associated
+                    with the svg...)
+      :type width: float
+      :param height: height of svg in inches (this should actually be associated
+                     with the svg...)
+      :type height: float
+      :param dpi: dots per square inch, default is 96 (standard)
+      :type dpi: int or float
+      :param _format: string of format (error tells options). If provided this is the
+                      format used, if None, then we'll try to use the `filename`
+                      extension.
+      :type _format: str
+
+      :returns: saves to a file
+      :rtype: None
+
+
+   .. py:method:: show(self, width=None, height=None, dpi=None)
+
+      show base inside an interactive shell
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
+
+
+
+.. py:class:: text(label, element_text=None, theme=None)
+
+   create a new text object
+
+   :param label: text label with desirable format (e.g. sympy, etc.)
+   :type label: string
+   :param element_text: element object from plotnine, can also be added later
+   :type element_text: plotnine.themes.elements.element_text
+   :param theme: theme object from plotnine, can be associated later
+                 should only provide a theme or element_text (as a theme
+                 contains an element_text)
+   :type theme: plotnine.theme object
+
+   .. rubric:: Notes
+
+   This class leverages matplotlib to create the text (given that
+   matplotlib can create path-style objects for text if the individual
+   is worried that the svg text visually won't be preserved - this is also
+   annoying that this is the default).
+
+   Note the function use the ``text`` attribute - NOT the
+   ``plot_title`` attribute if a theme is provided.
+
+   .. py:method:: _clean_element_text(self, element_text)
+
+      cleans element_text to make sure any element_text() is a
+      p9.themes.themeable, not just a p9.theme.elements.element_text
+
+      :param element_text: element text added to or initialized with the text object. Can
+                           be None, a p9.theme.elements.element_text or a p9.themes.themeable
+      :type element_text: p9's element_text
+
+      .. rubric:: Notes
+
+      updates i place
+
+
+   .. py:method:: __add__(self, other)
+
+      add element_text or theme to update format
+
+      TODO: make this work w.r.t patchwork approaches (edge cases #8)
+
+      :param other: theme or element_text to define the attributes of the text.
+      :type other: plotnine.themes.elements.element_text or theme
+
+      .. rubric:: Notes
+
+      Note the function use the ``text`` attribute - NOT the ``plot_title``
+      attribute if a theme is provided.
+
+
+   .. py:method:: _provide_complete_theme(self)
+
+      It should be here that the current global theme is accessed, and thing are completed...
+
+
+   .. py:method:: _inner_prep(self)
+
+      Internal function to create matplotlib figure with text and
+      provide a bounding box for the location in the plot
+
+      :returns: * **fig** (*matplotlib.figure.Figure*) -- figure with text at (0,0), no axes
+                * **bbox** (*matplotlib.transforms.Bbox*) -- bbox location of text in figure
+
+
+   .. py:method:: _create_svg_object(self, width=None, height=None)
+
+      Internal to create svg object (with text in correct location
+      and correct image size)
+
+      :param width: width of desired output (in inches)
+      :type width: float
+      :param height: height of desired output (in inches)
+      :type height: float
+
+      :returns: **svg_obj** -- svg representation of text with correct format and image size
+      :rtype: svgutils.transform.SVGFigure
+
+
+   .. py:method:: save(self, filename, width=None, height=None)
+
+      save text object as image in minimal size object
+
+      :param filename:
+      :type filename: str
+      :param width: in inches (if None, then tight (w.r.t. to margins))
+      :type width: float
+      :param height: in inches (if None, then tight (w.r.t. to margins))
+      :type height: float
+
+
+
+.. py:class:: wrapper_plotnine(gg)
+
+   Bases: :py:obj:`cowpatch.base.patch`
+
+   wrapper for plotnine objects
+
+   :param gg:
+   :type gg: plotnine ggplot object
+
+   .. rubric:: Notes
+
+   You can still use the plotnine ggplot "+" to this object to continue to
+   update this object. This wrapper creates a special patch object that
+   can be combined with other patch objects.
+
+   .. py:method:: _svg(self, width_px, height_px)
+
+      convert plot to svg objecct
+
+      :param width_px: desired width of svg object in pixels
+      :type width_px: float
+      :param height_px: desired height of svg object in pixels
+      :type height_px: float
+
+      :returns: **svg_object**
+      :rtype: svgutils.transforms object
+
+
+   .. py:method:: __add__(self, other)
+
+
+
+.. py:class:: wrapper_matplotlib(fig, axes)
+
+   Bases: :py:obj:`cowpatch.base.patch`
+
+   wrapper for matplotlib objects
+
+   :param fig:
+   :type fig: matplotlib figure object
+   :param axes:
+   :type axes: matplotlib axes object
+
+   .. rubric:: Notes
+
+   You can still update the plot using `object.fig.(function)` and
+   `object.fig.(function)`. This wrapper creates a special patch object that
+   can be combined with other patch objects.
+
+   .. py:method:: _svg(self, width_px, height_px)
+
+      Internal function to create an svg representation of the patch
+
+      :param width_pt: desired width of svg object in points
+      :type width_pt: float
+      :param height_pt: desired height of svg object in points
+      :type height_pt: float
+
+      :returns: **svg_object**
+      :rtype: svgutils.transforms object
+
+
+
+.. py:class:: wrapper_seaborn(fig, axes)
+
+   Bases: :py:obj:`wrapper_matplotlib`
+
+   wrapper for seaborn objects
+
+   :param fig:
+   :type fig: matplotlib figure object
+   :param axes:
+   :type axes: matplotlib axes object
+
+   .. rubric:: Notes
+
+   This is the same as the `wrapper_matplotlib` function.
+
+   You can still update the plot using `object.fig.(function)` and
+   `object.fig.(function)`. This wrapper creates a special patch object that
+   can be combined with other patch objects.
+
+

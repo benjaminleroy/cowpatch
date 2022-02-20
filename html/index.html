@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cowpatch &mdash; cowpatch  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> cowpatch
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cowpatch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/benjaminleroy/cowpatch">View on Github</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">cowpatch</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>cowpatch</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="cowpatch">
+<h1>cowpatch<a class="headerlink" href="#cowpatch" title="Permalink to this headline"></a></h1>
+<p><a class="reference external" href="https://github.com/benjaminleroy/cowpatch/actions/workflows/ci.yml"><img alt="test and codecov" src="https://github.com/benjaminleroy/cowpatch/actions/workflows/ci.yml/badge.svg" /></a>
+<a class="reference external" href="https://codecov.io/gh/benjaminleroy/cowpatch"><img alt="codecov" src="https://codecov.io/gh/benjaminleroy/cowpatch/branch/main/graph/badge.svg?token=QM5G5WV7AE" /></a>
+<a class="reference external" href="https://www.codefactor.io/repository/github/benjaminleroy/cowpatch"><img alt="CodeFactor" src="https://www.codefactor.io/repository/github/benjaminleroy/cowpatch/badge" /></a></p>
+<p>A package for combining/aranging multiple python ggplot visuals from <a class="reference external" href="https://plotnine.readthedocs.io/en/stable/"><code class="docutils literal notranslate"><span class="pre">plotnine</span></code></a>, with allowances to also combined figures from <a class="reference external" href="https://matplotlib.org/"><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></a> and <a class="reference external" href="https://seaborn.pydata.org/"><code class="docutils literal notranslate"><span class="pre">seaborn</span></code></a>. Internally, we leverage SVG objects and descriptions to accomplish it’s goals.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<p>Currently this project is under development and is not on
+(pypi)[https://pypi.org/]. As such, to install this package please do the
+following:</p>
+<ol class="simple">
+<li><p>clone repository to your local computer (this assumes you have <code class="docutils literal notranslate"><span class="pre">git</span></code>
+installed):</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/benjaminleroy/cowpatch.git
+</pre></div>
+</div>
+<ol class="simple">
+<li><p>install <code class="docutils literal notranslate"><span class="pre">poetry</span></code> if you don’t have it already</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install poetry
+</pre></div>
+</div>
+<ol class="simple">
+<li><p>then install the package (you need to be in the <code class="docutils literal notranslate"><span class="pre">cowpatch</span></code> root folder)</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ poetry install
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cowpatch</span> <span class="k">as</span> <span class="nn">cow</span>
+<span class="kn">import</span> <span class="nn">plotnine</span> <span class="k">as</span> <span class="nn">p9</span>
+<span class="kn">import</span> <span class="nn">plotnine.data</span> <span class="k">as</span> <span class="nn">p9_data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># creation of some some ggplot objects</span>
+<span class="n">g0</span> <span class="o">=</span> <span class="n">p9</span><span class="o">.</span><span class="n">ggplot</span><span class="p">(</span><span class="n">p9_data</span><span class="o">.</span><span class="n">mpg</span><span class="p">)</span> <span class="o">+</span>\
+    <span class="n">p9</span><span class="o">.</span><span class="n">geom_bar</span><span class="p">(</span><span class="n">p9</span><span class="o">.</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;hwy&quot;</span><span class="p">))</span> <span class="o">+</span>\
+    <span class="n">p9</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Plot 0&#39;</span><span class="p">)</span>
+
+<span class="n">g1</span> <span class="o">=</span> <span class="n">p9</span><span class="o">.</span><span class="n">ggplot</span><span class="p">(</span><span class="n">p9_data</span><span class="o">.</span><span class="n">mpg</span><span class="p">)</span> <span class="o">+</span>\
+    <span class="n">p9</span><span class="o">.</span><span class="n">geom_point</span><span class="p">(</span><span class="n">p9</span><span class="o">.</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;hwy&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;displ&quot;</span><span class="p">))</span> <span class="o">+</span>\
+    <span class="n">p9</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Plot 1&#39;</span><span class="p">)</span>
+
+<span class="n">g2</span> <span class="o">=</span> <span class="n">p9</span><span class="o">.</span><span class="n">ggplot</span><span class="p">(</span><span class="n">p9_data</span><span class="o">.</span><span class="n">mpg</span><span class="p">)</span> <span class="o">+</span>\
+    <span class="n">p9</span><span class="o">.</span><span class="n">geom_point</span><span class="p">(</span><span class="n">p9</span><span class="o">.</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;hwy&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;displ&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;class&quot;</span><span class="p">))</span> <span class="o">+</span>\
+    <span class="n">p9</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Plot 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vis_patch</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">)</span>
+<span class="n">vis_patch</span> <span class="o">+=</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">design</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]),</span>
+                        <span class="n">rel_heights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">vis_patch</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">width</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+<!-- TODO: make sure this updates when we correct the image size problem
+and when we auto-select the size-->
+<p><img alt="cowpatch example" src="_images/readme.svg" /></p>
+<p>Please see additional documentation pages like “Getting-Started” and the
+individual pages on different plot arrangement strategies.</p>
+</section>
+<section id="package-logistics">
+<h2>Package Logistics<a class="headerlink" href="#package-logistics" title="Permalink to this headline"></a></h2>
+<section id="background-and-history">
+<h3>Background and history<a class="headerlink" href="#background-and-history" title="Permalink to this headline"></a></h3>
+<p>This package’s name is a merging of the names of <code class="docutils literal notranslate"><span class="pre">R</span></code> packages’ <code class="docutils literal notranslate"><span class="pre">cowplot</span></code> and <code class="docutils literal notranslate"><span class="pre">patchwork</span></code>. It attempts to provide similar plot arrangement and combination tools as <code class="docutils literal notranslate"><span class="pre">gridExtra</span></code>, <code class="docutils literal notranslate"><span class="pre">cowplot</span></code> and <code class="docutils literal notranslate"><span class="pre">patchwork</span></code> for the <code class="docutils literal notranslate"><span class="pre">plotnine</span></code>’s <code class="docutils literal notranslate"><span class="pre">ggplot</span></code> objects.</p>
+<p>This package is not directly related to any of a-fore-mentioned plots but naturally stands on the shoulders of the contributions each of the packages made.</p>
+<p>The approach of this package to leverage a SVG backend may make the actually the actual package a bit more “hacky” then some may like, but we hope it can still be of use to the community and should naturally avoid certain drawbacks in individual package development.</p>
+</section>
+<section id="contributing">
+<h3>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline"></a></h3>
+<p>Interested in contributing? Check out the contributing guidelines. Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.</p>
+</section>
+<section id="license">
+<h3>License<a class="headerlink" href="#license" title="Permalink to this headline"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">cowpatch</span></code> was created by <a class="reference external" href="https://benjaminleroy.github.io/">Benjamin LeRoy</a> (<a class="reference external" href="https://github.com/benjaminleroy">benjaminleroy</a>) and Mallory Wang (<a class="reference external" href="https://github.com/wangmallory">wangmallory</a>). It is licensed under the terms of the MIT license.</p>
+</section>
+<section id="credits">
+<h3>Credits<a class="headerlink" href="#credits" title="Permalink to this headline"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">cowpatch</span></code> was created with <a class="reference external" href="https://cookiecutter.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">cookiecutter</span></code></a> and the <code class="docutils literal notranslate"><span class="pre">py-pkgs-cookiecutter</span></code> <a class="reference external" href="https://github.com/py-pkgs/py-pkgs-cookiecutter">template</a>, the documentation leverages <a class="reference external" href="https://www.sphinx-doc.org/en/master/"><code class="docutils literal notranslate"><span class="pre">sphinx</span></code></a>, and underlying testing leverages <a class="reference external" href="https://docs.pytest.org/en/7.0.x/"><code class="docutils literal notranslate"><span class="pre">pytest</span></code></a>, <a class="reference external" href="https://hypothesis.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">hypothesis</span></code></a> and <a class="reference external" href="https://pytest-regressions.readthedocs.io/en/latest/overview.html"><code class="docutils literal notranslate"><span class="pre">pytest-regression</span></code></a>. See the full list of package dependencies on <a class="reference external" href="https://github.com/benjaminleroy/cowpatch/blob/main/pyproject.toml">Github</a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Benjamin LeRoy, Mallory Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+:py:mod:`cowpatch.text_elements`
+================================
+
+.. py:module:: cowpatch.text_elements
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cowpatch.text_elements.text
+
+
+
+
+.. py:class:: text(label, element_text=None, theme=None)
+
+   create a new text object
+
+   :param label: text label with desirable format (e.g. sympy, etc.)
+   :type label: string
+   :param element_text: element object from plotnine, can also be added later
+   :type element_text: plotnine.themes.elements.element_text
+   :param theme: theme object from plotnine, can be associated later
+                 should only provide a theme or element_text (as a theme
+                 contains an element_text)
+   :type theme: plotnine.theme object
+
+   .. rubric:: Notes
+
+   This class leverages matplotlib to create the text (given that
+   matplotlib can create path-style objects for text if the individual
+   is worried that the svg text visually won't be preserved - this is also
+   annoying that this is the default).
+
+   Note the function use the ``text`` attribute - NOT the
+   ``plot_title`` attribute if a theme is provided.
+
+   .. py:method:: _clean_element_text(self, element_text)
+
+      cleans element_text to make sure any element_text() is a
+      p9.themes.themeable, not just a p9.theme.elements.element_text
+
+      :param element_text: element text added to or initialized with the text object. Can
+                           be None, a p9.theme.elements.element_text or a p9.themes.themeable
+      :type element_text: p9's element_text
+
+      .. rubric:: Notes
+
+      updates i place
+
+
+   .. py:method:: __add__(self, other)
+
+      add element_text or theme to update format
+
+      TODO: make this work w.r.t patchwork approaches (edge cases #8)
+
+      :param other: theme or element_text to define the attributes of the text.
+      :type other: plotnine.themes.elements.element_text or theme
+
+      .. rubric:: Notes
+
+      Note the function use the ``text`` attribute - NOT the ``plot_title``
+      attribute if a theme is provided.
+
+
+   .. py:method:: _provide_complete_theme(self)
+
+      It should be here that the current global theme is accessed, and thing are completed...
+
+
+   .. py:method:: _inner_prep(self)
+
+      Internal function to create matplotlib figure with text and
+      provide a bounding box for the location in the plot
+
+      :returns: * **fig** (*matplotlib.figure.Figure*) -- figure with text at (0,0), no axes
+                * **bbox** (*matplotlib.transforms.Bbox*) -- bbox location of text in figure
+
+
+   .. py:method:: _create_svg_object(self, width=None, height=None)
+
+      Internal to create svg object (with text in correct location
+      and correct image size)
+
+      :param width: width of desired output (in inches)
+      :type width: float
+      :param height: height of desired output (in inches)
+      :type height: float
+
+      :returns: **svg_obj** -- svg representation of text with correct format and image size
+      :rtype: svgutils.transform.SVGFigure
+
+
+   .. py:method:: save(self, filename, width=None, height=None)
+
+      save text object as image in minimal size object
+
+      :param filename:
+      :type filename: str
+      :param width: in inches (if None, then tight (w.r.t. to margins))
+      :type width: float
+      :param height: in inches (if None, then tight (w.r.t. to margins))
+      :type height: float
+
+
+
