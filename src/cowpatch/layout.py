@@ -5,6 +5,7 @@ import copy
 from .utils import is_pos_int, is_non_neg_int, \
                 is_proportion, is_positive, is_non_negative, \
                 inherits
+import pdb
 
 class layout:
     def __init__(self,
@@ -133,9 +134,6 @@ class layout:
                 design = self._design_string_to_mat(design)
                 nrow, ncol = design.shape
 
-        # TODO: check here that all integers 0-max are included...
-        # TODO: also track this number
-
         if ncol is None:
             if rel_widths is not None:
                 if isinstance(rel_widths, np.ndarray):
@@ -154,31 +152,37 @@ class layout:
                     nrow = len(rel_heights)
                     rel_heights= np.array(rel_heights)
 
-        # this probably could be run a different way (and is there no
-        # square default?)
         if rel_widths is None and rel_heights is None:
             assert not (ncol is None and nrow is None), \
                 "need some parameters to not be none in design initialization"
 
-        if rel_widths is None:
+        if rel_widths is None and ncol is not None:
             rel_widths = np.ones(ncol)
-        if rel_heights is None:
+        if rel_heights is None and nrow is not None:
             rel_heights = np.ones(nrow)
 
-        if design is None:
-            if byrow is None or byrow:
-                order_str = "C"
-            else:
-                order_str = "F"
-            design = np.arange(ncol*nrow,dtype = int).reshape((nrow, ncol),
-                                                            order = order_str)
+        if rel_heights is not None:
+            rel_heights = np.array(rel_heights)
+        if rel_widths is not None:
+            rel_widths = np.array(rel_widths)
+        # if design is None:
+        #     if byrow is None or byrow:
+        #         order_str = "C"
+        #     else:
+        #         order_str = "F"
+        #     design = np.arange(ncol*nrow,dtype = int).reshape((nrow, ncol),
+        #                                                     order = order_str)
+
+        if design is not None:
+            byrow = None
 
         self.ncol = ncol
         self.nrow = nrow
-        self.design = design
-        self.rel_widths = np.array(rel_widths)
-        self.rel_heights = np.array(rel_heights)
-        self.num_items = self._assess_mat(design)
+        self.__design = design
+        self.byrow = byrow
+        self.rel_widths = rel_widths
+        self.rel_heights = rel_heights
+        self.num_grobs = self._assess_mat(design)
 
     def _design_string_to_mat(self, design):
         """
@@ -215,6 +219,45 @@ class layout:
 
         return design
 
+    def get_design(self, num_grobs=None):
+        """
+        create a design matrix if not explicit design has been provided
+        """
+
+        if self.__design is not None:
+            return self.__design
+
+        if num_grobs is None:
+            if self.num_grobs is None:
+                raise ValueError("unclear number of grobs in layout...")
+            else:
+                num_grobs = self.num_grobs
+
+        if self.byrow is None or self.byrow:
+            order_str = "C"
+        else:
+            order_str = "F"
+
+        # if only ncol or nrow is defined...
+        ncol = self.ncol
+        nrow = self.nrow
+        if ncol is None:
+            ncol = int(np.ceil(num_grobs / nrow))
+        if nrow is None:
+            nrow = int(np.ceil(num_grobs / ncol))
+
+        inner_design = np.arange(ncol*nrow,
+                                  dtype = float).reshape((nrow, ncol),
+                                                        order = order_str)
+        inner_design[inner_design >= num_grobs] = np.nan
+
+        _ = self._assess_mat(inner_design) # should pass since we just built it...
+
+        return inner_design
+
+    # property
+    design = property(get_design)
+
     def _assess_mat(self, design):
         """
         Assesses if the design matrix includes at least 1 box for patches
@@ -237,6 +280,9 @@ class layout:
             if design matrix doesn't include at least at least 1 box for all
             indices between 0 to (# patches - 1)
         """
+        if design is None:
+            return None # to identify later that we don't have a design matrix
+
         unique_vals = np.unique(design)
         unique_vals = np.sort(
             unique_vals[np.logical_not(np.isnan(unique_vals))])
@@ -250,7 +296,42 @@ class layout:
 
         return num_unique
 
-    def _element_locations(self, width_pt, height_pt):
+    def _rel_structure(self, num_grobs=None):
+        """
+        provide rel_structure if missing
+        """
+        if num_grobs is None:
+            if not (self.ncol is not None and \
+                    self.nrow is not None) and \
+               not (self.rel_widths is not None and \
+                    self.rel_heights is not None):
+                raise ValueError("unclear number of grobs in layout -> "+\
+                                "unable to identify relative width and height")
+
+        rel_widths = self.rel_widths
+        rel_heights = self.rel_heights
+        ncol = self.ncol
+        nrow = self.nrow
+
+        if rel_widths is not None and ncol is None:
+            ncol = rel_widths.shape[0]
+        if rel_heights is not None and nrow is None:
+            nrow = rel_heights.shape[0]
+
+        if ncol is None:
+                ncol = int(np.ceil(num_grobs/nrow))
+        if rel_widths is None:
+            rel_widths = np.ones(ncol)
+
+
+        if nrow is None:
+            nrow = int(np.ceil(num_grobs/ncol))
+        if rel_heights is None:
+            rel_heights = np.ones(nrow)
+
+        return rel_widths, rel_heights
+
+    def _element_locations(self, width_pt, height_pt, num_grobs=None):
         """
         create a list of `area` objects associated with the location of
         each of the layout's grobs w.r.t. a given points width and height
@@ -268,10 +349,22 @@ class layout:
             list of `area` objects describing the location for each of the
             layout's grobs (in the order of the index in the self.design)
         """
+
+        if self.num_grobs is None and num_grobs is None:
+            raise ValueError("unclear number of grobs in layout...")
+        if self.num_grobs is not None:
+            if num_grobs is not None and num_grobs != self.num_grobs:
+                warnings.warn("_element_locations overrides num_grobs "+\
+                              "with self.num_grobs")
+            num_grobs = self.num_grobs
+
+        rel_widths, rel_heights = self._rel_structure(num_grobs=num_grobs)
+
+
         areas = []
 
-        for p_idx in np.arange(self.num_items):
-            dmat_logic = self.design == p_idx
+        for p_idx in np.arange(num_grobs):
+            dmat_logic = self.get_design(num_grobs=num_grobs) == p_idx
             r_logic = dmat_logic.sum(axis=1) > 0
             c_logic = dmat_logic.sum(axis=0) > 0
 
@@ -290,14 +383,15 @@ class layout:
                                      width = inner_width,
                                      height = inner_height,
                                      _type = "design")
-            areas.append(inner_design_area.pt(rel_widths=self.rel_widths,
-                                              rel_heights=self.rel_heights,
+
+            areas.append(inner_design_area.pt(rel_widths=rel_widths,
+                                              rel_heights=rel_heights,
                                               width_pt=width_pt,
                                               height_pt=height_pt))
 
         return areas
 
-    def _yokogaki_ordering(self):
+    def _yokogaki_ordering(self, num_grobs=None):
         """
         calculates the yokogaki (left to right, top to bottom) ordering
         the the patches
@@ -315,10 +409,19 @@ class layout:
         .. _stack overflow:
             https://english.stackexchange.com/questions/81520/is-there-a-word-for-left-to-right-and-top-to-bottom
         """
+        if self.num_grobs is None and num_grobs is None:
+            raise ValueError("unclear number of grobs in layout...")
+        if self.num_grobs is not None:
+            if num_grobs is not None and num_grobs != self.num_grobs:
+                warnings.warn("_element_locations overrides num_grobs "+\
+                              "with self.num_grobs")
+            num_grobs = self.num_grobs
+
         areas = self._element_locations(1,1) # basically getting relative positions (doesn't matter) - nor does it matter about rel_height and width, but ah well
         all_x_left = np.array([a.x_left for a in areas])
         all_y_top = np.array([a.y_top for a in areas])
-        index_list = np.arange(self.num_items)
+
+        index_list = np.arange(num_grobs)
 
         yokogaki_ordering = []
         # remember y_tops are w.r.t top axis
@@ -340,26 +443,72 @@ class layout:
         -------
         hash integer
         """
-        info_list = list(self.design.ravel()) + \
-            list(self.rel_widths) + list(self.rel_heights) +\
-            [self.ncol, self.nrow, self.num_items]
+        if self.num_grobs is None:
+            design_list = [None]
+        else:
+            design_list = list(self.design.ravel())
+
+        rw_list = [None]
+        if self.rel_widths is not None:
+            rw_list = list(self.rel_widths)
+
+        rh_list = [None]
+        if self.rel_heights is not None:
+            rh_list = list(self.rel_heights)
+
+        info_list = design_list + \
+            rw_list + rh_list +\
+            [self.ncol, self.nrow, self.num_grobs]
         return abs(hash(tuple(info_list)))
 
     def __repr__(self):
         return "<layout (%d)>" % self.__hash__()
 
     def __str__(self):
-        out = "design (%i, %i):\n\n"% (self.nrow, self.ncol) +\
-            self.design.__str__() +\
+        nrow_str = str(self.nrow)
+        if self.nrow is None:
+            nrow_str = "unk"
+        ncol_str = str(self.ncol)
+        if self.ncol is None:
+            ncol_str = "unk"
+
+        if self.num_grobs is None:
+            design_str = "*unk*"
+        else:
+            design_str = self.design.__str__()
+
+        rw_str = "unk"
+        if self.rel_widths is not None:
+            rw_str = self.rel_widths.__str__()
+
+        rh_str = "unk"
+        if self.rel_heights is not None:
+            rh_str = self.rel_heights.__str__()
+
+        out = "design (%s, %s):\n\n"% (nrow_str, ncol_str) +\
+            design_str +\
             "\n\nwidths:\n" +\
-            self.rel_widths.__str__() +\
+            rw_str +\
             "\nheights:\n" +\
-            self.rel_heights.__str__()
+            rh_str
         return self.__repr__() + "\n" + out
 
     def __eq__(self, value):
-        return inherits(value, layout) and \
-            np.allclose(self.design,value.design,equal_nan=True) and \
+        # if value is not a layout...
+        if not inherits(value, layout):
+            return False
+
+        # if __design hasn't been specified on 1 but is on another
+        if (self.__design is None and value.__design is not None) or\
+            (self.__design is not None and value.__design is None):
+            return False
+
+        # accounting for lack of __design specification
+        design_logic = True
+        if self.__design is not None:
+            design_logic = np.allclose(self.design,value.design,equal_nan=True)
+
+        return design_logic and \
             self.ncol == value.ncol and \
             self.nrow == value.nrow and \
             np.unique(self.rel_heights/value.rel_heights).shape[0] == 1 and \
@@ -367,7 +516,6 @@ class layout:
 
 
 class area:
-
     def __init__(self,
                  x_left, y_top,
                  width, height,

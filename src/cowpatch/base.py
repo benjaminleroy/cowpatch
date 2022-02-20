@@ -71,26 +71,37 @@ class patch:
         else:
             self.grobs = grobs
 
-        self.layout = "patch" # this is different than None...
+        self.__layout = "patch" # this is different than None...
 
-    def _layout(self):
+    @property
+    def layout(self):
         """
-        provide `layout` default else return `layout`
+        provide `__layout` default else return `__layout`
+
+        Notes
+        -----
+        This allows for the different structure of `__add__` to not be built
+        until use of the `layout` is actually needed.
         """
-        if self.layout == "patch":
+        if self.__layout == "patch":
             if len(self.grobs) < 4:
                 return layout(nrow = len(self.grobs), ncol = 1)
             else:
                 num_grobs = len(self.grobs)
                 nrow = int(np.ceil(np.sqrt(num_grobs)))
-                design = list(np.arange(num_grobs)) +\
-                    [np.nan] * (nrow**2 - num_grobs)
-                return layout(design = design)
+                ncol = int(np.ceil(len(self.grobs) / nrow))
+
+                return layout(nrow=nrow, ncol=ncol) # TODO: check if this is allowed (to require design to fill in np.nans itself.)
         else:
-            return self.layout
+            return self.__layout
+
 
     def _check_layout(self):
-        if self._layout().num_items != len(self.grobs):
+        """
+        checks layout if design matrix is fulled defined
+        """
+        if self.layout.num_grobs is not None:
+           if self.layout.num_grobs != len(self.grobs):
             raise AttributeError("layout's number of patches does not "+\
                                  "matches number of patches in arangement")
 
@@ -104,7 +115,7 @@ class patch:
         if self.layout is None:
             # only for wrappers!
             return patch(grobs=[self, other]) + layout(ncol=2,nrow=1)
-        elif self.layout == layout(design == np.array([[0]])):
+        elif self.layout == layout(design = np.array([[0]])):
             # current self is [inner]
             return patch(grobs=self.grobs+[other]) + layout(ncol=2,nrow=1)
         elif self.layout.nrow == 1:
@@ -123,7 +134,7 @@ class patch:
         if self.layout is None:
             # only for wrappers!
             return patch(grobs=[self, other]) + layout(ncol=1,nrow=2)
-        elif self.layout == layout(design == np.array([[0]])):
+        elif self.layout == layout(design = np.array([[0]])):
             # current self is [inner]
             return patch(grobs=self.grobs+[other]) + layout(ncol=1,nrow=2)
         elif self.layout.nrow == 1:
@@ -143,13 +154,12 @@ class patch:
             raise ValueError("only can connect specific general patch items"+\
                              " with \"/\".")
 
-
         if inherits(other, patch):
             # combine with other patch -------
             if self.layout is None:
                 # only for wrappers!
                 return patch(grobs=[self, other])
-            elif self.layout == layout(design == np.array([[0]])):
+            elif self.layout == layout(design = np.array([[0]])):
                 # current self is [inner]
                 return patch(grobs=self.grobs+[other])
             elif self.layout.nrow == 1:
@@ -159,19 +169,17 @@ class patch:
                 return patch(grobs=[self.grobs]+[other])
         elif inherits(other, layout):
             # combine with layout -------------
-            self.layout = other
+            self.__layout = other
         elif inherits(other, annotation):
             raise ValueError("currently not implimented addition with annotation")
 
         return self
 
-
-
     def __mul__(self, other):
         raise ValueError("currently not implimented *")
+
     def __and__(self, other):
         raise ValueError("currently not implimented &")
-
 
     def _svg(self, width_pt, height_pt):
         """
@@ -190,12 +198,15 @@ class patch:
         """
         self._check_layout()
 
-        layout = self._layout()
+        layout = self.layout
 
-        areas = layout._element_locations(width_pt, height_pt)
+        areas = layout._element_locations(width_pt=width_pt,
+                                          height_pt=height_pt,
+                                          num_grobs=len(self.grobs))
         #  TODO: should figure out how to arrange the notations here ...
 
         base_image = sg.SVGFigure()
+        print(width_pt, height_pt)
         base_image.set_size((str(width_pt)+"pt", str(height_pt)+"pt")) # TODO: figure out if we're tracking pt vs px correct...
         # TODO: way to make decisions about the base image...
         base_image.append(
@@ -206,6 +217,8 @@ class patch:
 
             inner_width_pt = inner_area.width
             inner_height_pt = inner_area.height
+            pritn(p_idx)
+            print(inner_width_pt, inner_height_pt)
 
             # TODO: how to deal with ggplot objects vs patch objects
             if inherits(self.grobs[p_idx], patch):
@@ -290,3 +303,8 @@ class patch:
                     width=width,
                     height=height,
                     dpi=dpi)
+
+    def __repr__(self):
+        self.show()
+        return "<patch (%d)>" % self.__hash__()
+

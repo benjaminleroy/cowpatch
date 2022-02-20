@@ -390,11 +390,11 @@ def _show_image(svg, width, height, dpi = 300):
     if ipython_info is None or ipython_info.config.get("IPKernelApp") is None:
         # base python or ipython in the terminal will just show png ----------
         fid = io.BytesIO()
-        save_svg_wrapper(svg, filename = fid,
+        _save_svg_wrapper(svg, filename = fid,
                           width = width,
                           height = height,
                           dpi = dpi,
-                          format = "png")
+                          _format = "png")
         img_png = Image.open(io.BytesIO(fid.getvalue()))
 
         img_png.show()

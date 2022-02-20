@@ -46,6 +46,7 @@ def test_layout():
     l5 = cow.layout(ncol = ncol3, nrow = nrow3)
     l6 = cow.layout(ncol = ncol3, nrow = nrow3, byrow = False)
 
+    # we also don't want to auto this design (last row need not be complete...)
     l5_1 = cow.layout(design = np.array([[1,2,3],
                                          [4,5,6],
                                          [7,8,9],
@@ -56,10 +57,28 @@ def test_layout():
                                          [3,7,11],
                                          [4,8,12]]) - 1)
 
-    assert l5 == l5_1, \
-        "expect default ncol/nrow and byrow (byrow = True) failed to preform"
-    assert l6 == l6_1, \
-        "expect default ncol/nrow with bycol (byrow = False) failed to preform"
+    assert l5 != l5_1, \
+        "expect default ncol/nrow and byrow (byrow = True) to *not* be "+\
+        "equalivant to a fulled defined design matrix"
+    assert l6 != l6_1, \
+        "expect default ncol/nrow with bycol (byrow = False) to *not* be "+\
+        "equalivant to a fulled defined design matrix"
+
+    assert l5._layout__design is None and \
+        l6._layout__design is None, \
+        "if only ncol and nrows are defined, design matrix shouldn't be full"
+
+    # nrow or ncol = None
+    # these need to be promises as we don't know the other dimensions
+
+    l7 = cow.layout(ncol = 3)
+    l8 = cow.layout(nrow = 4)
+
+    assert l7._layout__design is None and \
+        l8._layout__design is None, \
+        "if only ncol (exculsive) or nrows are defined, design matrix "+\
+        "shouldn't be full"
+
 
 
     # error testing -----
@@ -209,6 +228,9 @@ def test_layout__eq__():
         "layout doesn't equal a string..."
 
 def test_layout__element_locations():
+    """
+    test assumes default relative widths and heights
+    """
     l1 = cow.layout(design = np.array([[0,0,0,1,1,1],
                                        [0,0,0,2,2,2],
                                        [0,0,0,2,2,2]]))
@@ -218,13 +240,241 @@ def test_layout__element_locations():
 
     assert np.allclose(areas1[0].width, 100) and \
         np.allclose(areas1[0].height, 90) and \
-        np.allclose(areas1[1].width, 100) and \
+        np.allclose(areas1[0].x_left, 0) and \
+        np.allclose(areas1[0].y_top, 0) and \
+            np.allclose(areas1[1].width, 100) and \
         np.allclose(areas1[1].height, 30) and \
-        np.allclose(areas1[2].width, 100) and \
-        np.allclose(areas1[2].height, 60), \
-        "areas relative to layout incorrectly sized"
+        np.allclose(areas1[1].x_left, 100) and \
+        np.allclose(areas1[1].y_top, 0) and \
+            np.allclose(areas1[2].width, 100) and \
+        np.allclose(areas1[2].height, 60) and \
+        np.allclose(areas1[2].x_left, 100) and \
+        np.allclose(areas1[2].y_top, 30), \
+        "areas relative to layout incorrectly sized (design input)"
+
+    # only nrow input (full column) -------
+    l2 = cow.layout(nrow = 3)
+
+    areas2 = l2._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 3)
+
+    assert np.allclose(areas2[0].width, 200) and \
+        np.allclose(areas2[0].height, 30) and \
+        np.allclose(areas2[0].x_left, 0) and \
+        np.allclose(areas2[0].y_top, 0) and \
+            np.allclose(areas2[1].width, 200) and \
+        np.allclose(areas2[1].height, 30) and \
+        np.allclose(areas2[1].x_left, 0) and \
+        np.allclose(areas2[1].y_top, 30) and \
+            np.allclose(areas2[2].width, 200) and \
+        np.allclose(areas2[2].height, 30) and \
+        np.allclose(areas2[2].x_left, 0) and \
+        np.allclose(areas2[2].y_top, 60),\
+        "areas relative to layout incorrectly sized (nrow=3)"
+
+    # only nrow input (non-full column) -------
+
+    areas2_4 = l2._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 4)
+
+    assert np.allclose(areas2_4[0].width, 100) and \
+        np.allclose(areas2_4[0].height, 30) and \
+        np.allclose(areas2_4[0].x_left, 0) and \
+        np.allclose(areas2_4[0].y_top, 0) and \
+            np.allclose(areas2_4[1].width, 100) and \
+        np.allclose(areas2_4[1].height, 30) and \
+        np.allclose(areas2_4[1].x_left, 100) and \
+        np.allclose(areas2_4[1].y_top, 0) and \
+            np.allclose(areas2_4[2].width, 100) and \
+        np.allclose(areas2_4[2].height, 30) and \
+        np.allclose(areas2_4[2].x_left, 0) and \
+        np.allclose(areas2_4[2].y_top, 30) and \
+            np.allclose(areas2_4[3].width, 100) and \
+        np.allclose(areas2_4[3].height, 30) and \
+        np.allclose(areas2_4[3].x_left, 100) and \
+        np.allclose(areas2_4[3].y_top, 30), \
+        "areas relative to layout incorrectly sized (nrow=3, grobs = 4)"
 
 
+    areas2_5 = l2._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 5)
+
+    assert np.allclose(areas2_5[0].width, 100) and \
+        np.allclose(areas2_5[0].height, 30) and \
+        np.allclose(areas2_5[0].x_left, 0) and \
+        np.allclose(areas2_5[0].y_top, 0) and \
+            np.allclose(areas2_5[1].width, 100) and \
+        np.allclose(areas2_5[1].height, 30) and \
+        np.allclose(areas2_5[1].x_left, 100) and \
+        np.allclose(areas2_5[1].y_top, 0) and \
+            np.allclose(areas2_5[2].width, 100) and \
+        np.allclose(areas2_5[2].height, 30) and \
+        np.allclose(areas2_5[2].x_left, 0) and \
+        np.allclose(areas2_5[2].y_top, 30) and \
+            np.allclose(areas2_5[3].width, 100) and \
+        np.allclose(areas2_5[3].height, 30) and \
+        np.allclose(areas2_5[3].x_left, 100) and \
+        np.allclose(areas2_5[3].y_top, 30) and \
+            np.allclose(areas2_5[4].width, 100) and \
+        np.allclose(areas2_5[4].height, 30) and \
+        np.allclose(areas2_5[4].x_left, 0) and \
+        np.allclose(areas2_5[4].y_top, 60), \
+        "areas relative to layout incorrectly sized (nrow=3, grobs = 5)"
+
+
+
+    # bycol ---
+    l2_bc = cow.layout(nrow = 3,byrow=False)
+    areas2_4_bc = l2_bc._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 4)
+
+    assert np.allclose(areas2_4_bc[0].width, 100) and \
+        np.allclose(areas2_4_bc[0].height, 30) and \
+        np.allclose(areas2_4_bc[0].x_left, 0) and \
+        np.allclose(areas2_4_bc[0].y_top, 0) and \
+            np.allclose(areas2_4_bc[1].width, 100) and \
+        np.allclose(areas2_4_bc[1].height, 30) and \
+        np.allclose(areas2_4_bc[1].x_left, 0) and \
+        np.allclose(areas2_4_bc[1].y_top, 30) and \
+            np.allclose(areas2_4_bc[2].width, 100) and \
+        np.allclose(areas2_4_bc[2].height, 30) and \
+        np.allclose(areas2_4_bc[2].x_left, 0) and \
+        np.allclose(areas2_4_bc[2].y_top, 60) and \
+            np.allclose(areas2_4_bc[3].width, 100) and \
+        np.allclose(areas2_4_bc[3].height, 30) and \
+        np.allclose(areas2_4_bc[3].x_left, 100) and \
+        np.allclose(areas2_4_bc[3].y_top, 0), \
+        "areas relative to layout incorrectly sized (nrow=3, grobs = 4, bycol)"
+
+
+    # only nrow input (full column) -------
+    l3 = cow.layout(ncol = 4)
+
+    areas3 = l3._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 4)
+
+    assert np.allclose(areas3[0].width, 50) and \
+        np.allclose(areas3[0].height, 90) and \
+        np.allclose(areas3[0].x_left, 0) and \
+        np.allclose(areas3[0].y_top, 0) and \
+            np.allclose(areas3[1].width, 50) and \
+        np.allclose(areas3[1].height, 90) and \
+        np.allclose(areas3[1].x_left, 50) and \
+        np.allclose(areas3[1].y_top, 0) and \
+            np.allclose(areas3[2].width, 50) and \
+        np.allclose(areas3[2].height, 90) and \
+        np.allclose(areas3[2].x_left, 100) and \
+        np.allclose(areas3[2].y_top, 0) and \
+            np.allclose(areas3[3].width, 50) and \
+        np.allclose(areas3[3].height, 90) and \
+        np.allclose(areas3[3].x_left, 150) and \
+        np.allclose(areas3[3].y_top, 0), \
+        "areas relative to layout incorrectly sized (ncol=4, grobs=4)"
+
+    areas3_5 = l3._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 5)
+
+    assert np.allclose(areas3_5[0].width, 50) and \
+        np.allclose(areas3_5[0].height, 45) and \
+        np.allclose(areas3_5[0].x_left, 0) and \
+        np.allclose(areas3_5[0].y_top, 0) and \
+            np.allclose(areas3_5[1].width, 50) and \
+        np.allclose(areas3_5[1].height, 45) and \
+        np.allclose(areas3_5[1].x_left, 50) and \
+        np.allclose(areas3_5[1].y_top, 0) and \
+            np.allclose(areas3_5[2].width, 50) and \
+        np.allclose(areas3_5[2].height, 45) and \
+        np.allclose(areas3_5[2].x_left, 100) and \
+        np.allclose(areas3_5[2].y_top, 0) and \
+            np.allclose(areas3_5[3].width, 50) and \
+        np.allclose(areas3_5[3].height, 45) and \
+        np.allclose(areas3_5[3].x_left, 150) and \
+        np.allclose(areas3_5[3].y_top, 0) and \
+            np.allclose(areas3_5[4].width, 50) and \
+        np.allclose(areas3_5[4].height, 45) and \
+        np.allclose(areas3_5[4].x_left, 0) and \
+        np.allclose(areas3_5[4].y_top, 45), \
+        "areas relative to layout incorrectly sized (ncol=4, grobs=5)"
+
+    areas3_6 = l3._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 6)
+
+    assert np.allclose(areas3_6[0].width, 50) and \
+        np.allclose(areas3_6[0].height, 45) and \
+        np.allclose(areas3_6[0].x_left, 0) and \
+        np.allclose(areas3_6[0].y_top, 0) and \
+            np.allclose(areas3_6[1].width, 50) and \
+        np.allclose(areas3_6[1].height, 45) and \
+        np.allclose(areas3_6[1].x_left, 50) and \
+        np.allclose(areas3_6[1].y_top, 0) and \
+            np.allclose(areas3_6[2].width, 50) and \
+        np.allclose(areas3_6[2].height, 45) and \
+        np.allclose(areas3_6[2].x_left, 100) and \
+        np.allclose(areas3_6[2].y_top, 0) and \
+            np.allclose(areas3_6[3].width, 50) and \
+        np.allclose(areas3_6[3].height, 45) and \
+        np.allclose(areas3_6[3].x_left, 150) and \
+        np.allclose(areas3_6[3].y_top, 0) and \
+            np.allclose(areas3_6[4].width, 50) and \
+        np.allclose(areas3_6[4].height, 45) and \
+        np.allclose(areas3_6[4].x_left, 0) and \
+        np.allclose(areas3_6[4].y_top, 45) and \
+            np.allclose(areas3_6[5].width, 50) and \
+        np.allclose(areas3_6[5].height, 45) and \
+        np.allclose(areas3_6[5].x_left, 50) and \
+        np.allclose(areas3_6[5].y_top, 45), \
+        "areas relative to layout incorrectly sized (ncol=4, grobs=6)"
+
+
+    l3_bc = cow.layout(ncol = 4, byrow = False)
+
+    areas3_5_bc = l3_bc._element_locations(width_pt=200,
+                                   height_pt=90, num_grobs = 5)
+
+    assert np.allclose(areas3_5_bc[0].width, 50) and \
+        np.allclose(areas3_5_bc[0].height, 45) and \
+        np.allclose(areas3_5_bc[0].x_left, 0) and \
+        np.allclose(areas3_5_bc[0].y_top, 0) and \
+            np.allclose(areas3_5_bc[1].width, 50) and \
+        np.allclose(areas3_5_bc[1].height, 45) and \
+        np.allclose(areas3_5_bc[1].x_left, 0) and \
+        np.allclose(areas3_5_bc[1].y_top, 45) and \
+            np.allclose(areas3_5_bc[2].width, 50) and \
+        np.allclose(areas3_5_bc[2].height, 45) and \
+        np.allclose(areas3_5_bc[2].x_left, 50) and \
+        np.allclose(areas3_5_bc[2].y_top, 0) and \
+            np.allclose(areas3_5_bc[3].width, 50) and \
+        np.allclose(areas3_5_bc[3].height, 45) and \
+        np.allclose(areas3_5_bc[3].x_left, 50) and \
+        np.allclose(areas3_5_bc[3].y_top, 45) and \
+            np.allclose(areas3_5_bc[4].width, 50) and \
+        np.allclose(areas3_5_bc[4].height, 45) and \
+        np.allclose(areas3_5_bc[4].x_left, 100) and \
+        np.allclose(areas3_5_bc[4].y_top, 0), \
+        "areas relative to layout incorrectly sized (ncol=4, grobs=5, bycol)"
+
+
+    # TODO: too many grobs? (in patch or layout??)
+
+
+def test_layout__str__():
+    """
+    make sure that print(layout_obj) works correctly
+    """
+    print(cow.layout(design = np.array([[0,0,0,1,1,1],
+                                               [0,0,0,2,2,2],
+                                               [0,0,0,2,2,2]])))
+    print(cow.layout(design = """
+                                     AB
+                                     AC
+                                     AC
+                                     """))
+    print(cow.layout(ncol=3))
+    print(cow.layout(nrow=2))
+    print(cow.layout(nrow=2,ncol=3))
+    print(cow.layout(nrow=1, rel_widths = [1,1,2]))
+    print(cow.layout(nrow=2, rel_widths = [1,2],
+                            rel_heights = [1,2]))
 
 
 
