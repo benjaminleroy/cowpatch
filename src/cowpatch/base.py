@@ -217,7 +217,7 @@ class patch:
 
             inner_width_pt = inner_area.width
             inner_height_pt = inner_area.height
-            pritn(p_idx)
+            print(p_idx)
             print(inner_width_pt, inner_height_pt)
 
             # TODO: how to deal with ggplot objects vs patch objects
