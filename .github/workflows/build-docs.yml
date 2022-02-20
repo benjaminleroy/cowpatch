@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  ci:
+  build-docs:
     # Step 1. Set up operating system
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +32,7 @@ jobs:
     - name: Run build script for docs website
       uses: sphinx-notes/pages@v2
       with:
-        documentation_path: '.docs/'
+        documentation_path: './docs/'
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
