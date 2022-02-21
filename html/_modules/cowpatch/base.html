@@ -293,8 +293,11 @@
         <span class="c1">#  TODO: should figure out how to arrange the notations here ...</span>
 
         <span class="n">base_image</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">SVGFigure</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">)</span>
-        <span class="n">base_image</span><span class="o">.</span><span class="n">set_size</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">width_pt</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">height_pt</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">))</span> <span class="c1"># TODO: figure out if we&#39;re tracking pt vs px correct...</span>
+        <span class="n">base_image</span><span class="o">.</span><span class="n">set_size</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">width_pt</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">height_pt</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">))</span>
+        <span class="c1"># add a view box... (set_size doesn&#39;t correctly update this...)</span>
+        <span class="c1"># maybe should have used px instead of px....</span>
+        <span class="n">base_image</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;viewBox&quot;</span><span class="p">,</span> <span class="s2">&quot;0 0 </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">width_pt</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">height_pt</span><span class="p">)))</span>
+
         <span class="c1"># TODO: way to make decisions about the base image...</span>
         <span class="n">base_image</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="n">sg</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="s2">&quot;&lt;rect width=</span><span class="se">\&quot;</span><span class="s2">100%</span><span class="se">\&quot;</span><span class="s2"> height=</span><span class="se">\&quot;</span><span class="s2">100%</span><span class="se">\&quot;</span><span class="s2"> fill=</span><span class="se">\&quot;</span><span class="s2">#FFFFFF</span><span class="se">\&quot;</span><span class="s2">/&gt;&quot;</span><span class="p">))</span>
@@ -304,8 +307,6 @@
 
             <span class="n">inner_width_pt</span> <span class="o">=</span> <span class="n">inner_area</span><span class="o">.</span><span class="n">width</span>
             <span class="n">inner_height_pt</span> <span class="o">=</span> <span class="n">inner_area</span><span class="o">.</span><span class="n">height</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">p_idx</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">inner_width_pt</span><span class="p">,</span> <span class="n">inner_height_pt</span><span class="p">)</span>
 
             <span class="c1"># TODO: how to deal with ggplot objects vs patch objects</span>
             <span class="k">if</span> <span class="n">inherits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">],</span> <span class="n">patch</span><span class="p">):</span>
