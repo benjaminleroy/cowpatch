@@ -163,6 +163,32 @@ def test_patch_plus_layout(image_regression):
 
         image_regression.check(fid2.getvalue(), diff_threshold=.1)
 
+
+def test_patch_nesting(image_regression):
+    """
+    check that nesting does work as expected
+    """
+    g0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.labs(title = 'Plot 0')
+
+    g1 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+        p9.labs(title = 'Plot 1')
+
+    g2 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+        p9.labs(title = 'Plot 2')
+
+    vis_left = cow.patch(g1,g2) + cow.layout(ncol = 1, rel_heights = [1,2])
+    vis_patch = cow.patch(g0, vis_left) + cow.layout(nrow = 1)
+    with io.BytesIO() as fid2:
+        vis_patch.save(filename=fid2, width=12, height=7,
+                       dpi=96, _format="png")
+
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+
 def test_patch__and__(image_regression):
     # creation of some some ggplot objects
     g0 = p9.ggplot(p9_data.mpg) +\
