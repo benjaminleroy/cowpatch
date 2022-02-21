@@ -15,20 +15,17 @@ following:
 
 1. clone repository to your local computer (this assumes you have `git`
 installed):
-
-```bash
-$ git clone https://github.com/benjaminleroy/cowpatch.git
-```
-
+    ```bash
+    $ git clone https://github.com/benjaminleroy/cowpatch.git
+    ```
 2. install `poetry` if you don't have it already
-```bash
-$ pip install poetry
-```
-
+    ```bash
+    $ pip install poetry
+    ```
 3. then install the package (you need to be in the `cowpatch` root folder)
-```bash
-$ poetry install
-```
+    ```bash
+    $ poetry install
+    ```
 
 ## Usage
 
