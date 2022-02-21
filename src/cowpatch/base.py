@@ -207,7 +207,11 @@ class patch:
 
         base_image = sg.SVGFigure()
         print(width_pt, height_pt)
-        base_image.set_size((str(width_pt)+"pt", str(height_pt)+"pt")) # TODO: figure out if we're tracking pt vs px correct...
+        base_image.set_size((str(width_pt)+"pt", str(height_pt)+"pt"))
+        # add a view box... (set_size doesn't correctly update this...)
+        # maybe should have used px instead of px....
+        base_image.root.set("viewBox", "0 0 %s %s" % (str(width_pt), str(height_pt)))
+
         # TODO: way to make decisions about the base image...
         base_image.append(
             sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#FFFFFF\"/>"))
@@ -233,6 +237,7 @@ class patch:
                                                         units="pt",
                                                         dpi=96),
                                       dpi = 96, maxIter=10)
+                print("gg size:", inner_svg.get_size())
             else:
                 raise ValueError("grob idx %i is not a patch object nor"+\
                                  "a ggplot object" % p_idx)

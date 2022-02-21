@@ -47,7 +47,7 @@ def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
         gg.save(fid, format= "svg", height = height, width = width,
             dpi=dpi, units = "in", limitsize = limitsize, verbose = False)
     except ValueError:
-        rasie(ValueError, "No ggplot SVG backend")
+        raise(ValueError, "No ggplot SVG backend")
     fid.seek(0)
     img = sg.fromstring(fid.read())
 
