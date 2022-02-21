@@ -175,6 +175,16 @@ class layout:
         if design is not None:
             byrow = None
 
+        # ncol/nrow and rel_widths/rel_heights correct alignment
+        if ncol is not None and rel_widths is not None:
+            if ncol != rel_widths.shape[0]:
+                raise ValueError("ncol (potentially from the design) and "+\
+                                 "rel_widths disagree on size of layout")
+        if nrow is not None and rel_heights is not None:
+            if nrow != rel_heights.shape[0]:
+                raise ValueError("nrow (potentially from the design) and "+\
+                                 "rel_heights disagree on size of layout")
+
         self.ncol = ncol
         self.nrow = nrow
         self.__design = design
@@ -213,8 +223,11 @@ class layout:
         ncol = int(ncol_lengths)
         nrow = len(re.findall("\n", design)) + 1
 
-        design = np.array([[ ord(val)-65 if val != "#" else np.nan for val in r]
-                            for r in row_info])
+        design = np.array([[ ord(val)-65
+                            if not np.any([val == x for x in ["#","."]])
+                            else np.nan
+                            for val in r]
+                                for r in row_info])
 
         return design
 

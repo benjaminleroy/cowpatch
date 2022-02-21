@@ -24,20 +24,42 @@ def test_layout():
               """
     #^ what if this is tabbed?
 
+    design5 = ".AA\nBB."
+    design6 = """
+    .AA
+    BB.
+    """
+    design7 = """
+              .AA
+              BB.
+              """
+
     l1 = cow.layout(design = design1)
     l2 = cow.layout(design = design2)
     l3 = cow.layout(design = design3)
     l4 = cow.layout(design = design4)
+    l4 = cow.layout(design = design4)
+    l5 = cow.layout(design = design5)
+    l6 = cow.layout(design = design6)
+    l7 = cow.layout(design = design7)
 
 
     assert l2 == l1, \
-        "expect string and matrix layout structure to create same matrix"
+        "expect string (#) and matrix layout structure to create same matrix"
     assert l2 == l3, \
-        "expect string inputs in different formats to be the same " +\
+        "expect string (#) inputs in different formats to be the same " +\
         "(trailing and leading extra rows)"
     assert l2 == l4, \
-        "expect string inputs in different formats to be the same (tabbed +"+\
-        "and trailing and leading extra rows)"
+        "expect string (#) inputs in different formats to be the same "+\
+        "(tabbed + and trailing and leading extra rows)"
+    assert l5 == l1, \
+        "expect string (.) and matrix layout structure to create same matrix"
+    assert l5 == l6, \
+        "expect string (.) inputs in different formats to be the same " +\
+        "(trailing and leading extra rows)"
+    assert l5 == l7, \
+        "expect string (#) inputs in different formats to be the same "+\
+        "(tabbed + and trailing and leading extra rows)"
 
     # nrow + ncol (byrow checks of defaults) ----
     ncol3 = 3
@@ -227,7 +249,7 @@ def test_layout__eq__():
     assert l1 != "example string", \
         "layout doesn't equal a string..."
 
-def test_layout__element_locations():
+def test_layout__element_locations2():
     """
     test assumes default relative widths and heights
     """
@@ -456,7 +478,6 @@ def test_layout__element_locations():
 
     # TODO: too many grobs? (in patch or layout??)
 
-
 def test_layout__str__():
     """
     make sure that print(layout_obj) works correctly
@@ -477,6 +498,61 @@ def test_layout__str__():
                             rel_heights = [1,2]))
 
 
+def test_layout_design_versus_relative_sizing():
+    """
+    this also examines such problems with empty spaces.
+    """
+    with pytest.raises(Exception) as e_info:
+        mylayout = cow.layout(design = """
+                                            A#BB
+                                            ACC#
+                                            """,
+                                     rel_heights = [1,2],
+                                     rel_widths = [3,1,1])
+        # relative widths need to be length 4...
+
+    with pytest.raises(Exception) as e_info:
+        mylayout = cow.layout(design = """
+                                            A#BB
+                                            ACC#
+                                            ACC#
+                                            """,
+                                     rel_heights = [1,2],
+                                     rel_widths = [3,1,1,1])
+        # relative heights need to be length 3...
+
+    with pytest.raises(Exception) as e_info:
+        mylayout = cow.layout(design = """
+                                            A.BB
+                                            ACC.
+                                            """,
+                                     rel_heights = [1,2],
+                                     rel_widths = [3,1,1])
+        # relative widths need to be length 4...
+    with pytest.raises(Exception) as e_info:
+        mylayout = cow.layout(design = """
+                                            A.BB
+                                            ACC.
+                                            ACC.
+                                            """,
+                                     rel_heights = [1,2],
+                                     rel_widths = [3,1,1,1])
+        # relative heights need to be length 3...
+
+
+    with pytest.raises(Exception) as e_info:
+        mylayout = cow.layout(design =np.array([[0,np.nan,1,1],
+                                                [0,2,2,np.nan]]),
+                                     rel_heights = [1,2],
+                                     rel_widths = [3,1,1])
+        # relative widths need to be length 4...
+    with pytest.raises(Exception) as e_info:
+        mylayout = cow.layout(design = np.array([[0,np.nan,1,1],
+                                                 [0,2,2,np.nan],
+                                                 [0,2,2,np.nan]]),
+                                     rel_heights = [1,2],
+                                     rel_widths = [3,1,1,1])
+        # relative heights need to be length 3...
 
 
 def test_area():
