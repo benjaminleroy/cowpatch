@@ -72,7 +72,7 @@ def _layouts_and_patches_patch_plus_layout(idx):
     g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
                                                          "suv",
                                                          "pickup"])]) +\
-        p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
+        p9.geom_histogram(p9.aes(x="hwy"), bins=10) +\
         p9.facet_wrap("class")
 
 
@@ -119,7 +119,7 @@ def test_patch_plus_layout_second(image_regression, idx):
     with io.BytesIO() as fid2:
         vis_patch.save(filename=fid2, width=12, height=10,
                        dpi=96, _format="png")
-        image_regression.check(fid2.getvalue(), diff_threshold=.05)
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
 
 def test_patch_plus_layout(image_regression):
     """
