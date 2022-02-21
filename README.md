@@ -62,7 +62,12 @@ vis_patch += cow.layout(design = np.array([[0,1],
 vis_patch.show(width = 11, height = 7)
 ```
 <!-- TODO: make sure this updates when we correct the image size problem
-and when we auto-select the size-->
+and when we auto-select the size
+
+```python
+vis_patch.save(width=11,height=7,filename="readme.svg")
+```
+-->
 ![cowpatch example](images/readme.svg)
 
 Please see additional documentation pages like "Getting-Started" and the

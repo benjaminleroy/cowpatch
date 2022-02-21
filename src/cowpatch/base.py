@@ -206,7 +206,6 @@ class patch:
         #  TODO: should figure out how to arrange the notations here ...
 
         base_image = sg.SVGFigure()
-        print(width_pt, height_pt)
         base_image.set_size((str(width_pt)+"pt", str(height_pt)+"pt"))
         # add a view box... (set_size doesn't correctly update this...)
         # maybe should have used px instead of px....
@@ -221,8 +220,6 @@ class patch:
 
             inner_width_pt = inner_area.width
             inner_height_pt = inner_area.height
-            print(p_idx)
-            print(inner_width_pt, inner_height_pt)
 
             # TODO: how to deal with ggplot objects vs patch objects
             if inherits(self.grobs[p_idx], patch):
@@ -237,7 +234,6 @@ class patch:
                                                         units="pt",
                                                         dpi=96),
                                       dpi = 96, maxIter=10)
-                print("gg size:", inner_svg.get_size())
             else:
                 raise ValueError("grob idx %i is not a patch object nor"+\
                                  "a ggplot object" % p_idx)
