@@ -29,6 +29,7 @@ jobs:
     - name: Build documentation
       run: |
         mkdir gh-pages
+        touch .nojekyll
         cd docs/
         poetry run make clean
         poetry run make html

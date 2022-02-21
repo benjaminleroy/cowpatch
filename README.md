@@ -65,7 +65,7 @@ vis_patch.show(width = 11, height = 7)
 and when we auto-select the size
 
 ```python
-vis_patch.save(width=11,height=7,filename="readme.svg")
+vis_patch.save(width=11, height=7, filename="readme.svg")
 ```
 -->
 ![cowpatch example](images/readme.svg)
