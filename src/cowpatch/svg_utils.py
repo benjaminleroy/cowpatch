@@ -3,6 +3,9 @@ import plotnine as p9
 import cairosvg
 import svgutils.transform as sg
 from PIL import Image
+import warnings
+from .exceptions import CowpatchWarning
+
 import re
 from IPython.display import SVG, display
 import IPython
@@ -44,8 +47,8 @@ def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
     fid = io.StringIO()
 
     try:
-        gg.save(fid, format= "svg", height = height, width = width,
-            dpi=dpi, units = "in", limitsize = limitsize, verbose = False)
+        gg.save(fid, format="svg", height=height, width=width,
+            dpi=dpi, units="in", limitsize=limitsize, verbose=False)
     except ValueError:
         raise(ValueError, "No ggplot SVG backend")
     fid.seek(0)
@@ -100,7 +103,7 @@ def _real_size_out_svg(gg, height, width, dpi, limitsize=True):
     return to_inches(new_width, "pt", dpi), to_inches(new_height, "pt", dpi)
 
 def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
-                    eps=1e-2, maxIter=4, min_size_px=10):
+                    eps=1e-2, maxIter=20, min_size_px=10, throw_error=True):
     """
     Obtain the correct input saving size plotnine.ggplot object to actual
     obtain desired height and width (inches)
@@ -141,13 +144,20 @@ def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
     min_size_px : int
         early stopping rule if converging height or width has a pixel size
         smaller than or equal to this value (assumes process will not converge)
+    throw_error : boolean
+        logic if an error should be thrown if the convergence fails. If False,
+        then this will return ratios of width_requested/width_obtained,
+        height_requested/height_obtained, and a boolean = False.
 
     Returns
     -------
     tuple
-        three value tuple of width, height to provide desired measures and a
-        boolean value (true if iteration was successful, false otherwise -
-        just returns original width and height)
+        if the process converges successful, it will return a three value
+        tuple of a width and height to provide desired measures and a
+        boolean value (True). if process fails to converge, either this
+        functions raises an error (if throw_error is True), or a three value
+        tuple of a scaled width_requested/width_obtained,
+        height_requested/height_obtained, and a boolean value (False).
     """
     # starting at desired values (a reasonsable starting values)
     desired_width, desired_height = width, height
@@ -169,13 +179,29 @@ def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
         if deltas[-1] < eps:
             return current_width, current_height, True
         elif len(deltas) > maxIter:
-            raise StopIteration("unable to get correct size within epsilon and number of interations")
-        elif current_width * dpi < min_size_px or current_height * dpi < min_size_px:
-            raise ValueError("height or width is too small for acceptable image")
-    return width, height, False
+            error_str = "unable to get correct size within "+\
+                                "epsilon and number of interations"
+            break
+        elif current_width * dpi < min_size_px or \
+            current_height * dpi < min_size_px:
+            error_str = "height or width is too small for "+\
+                             "acceptable image"
+            break
+
+    if throw_error:
+        raise StopIteration(error_str)
+    else:
+        actual_width, actual_height = _real_size_out_svg(gg=gg,
+                                            height=desired_height,
+                                            width=desired_width,
+                                            dpi=dpi,
+                                            limitsize=limitsize)
+        return desired_width/actual_width, \
+            desired_height/actual_height, \
+            False
 
 def gg_to_svg(gg, width, height, dpi, limitsize=True,
-              eps=1e-2, maxIter=4, min_size_px=10):
+              eps=1e-2, maxIter=20, min_size_px=10):
     """
     Convert plotnine ggplot figure to svg and return it (with close to perfect
     sizing).
@@ -262,7 +288,7 @@ def _raw_mpt_to_svg(fig, ax, width, height, dpi):
     self.fig.set_size_inches((width, height))
 
     fid = io.StringIO()
-    self.fig.savefig(fid, format = "svg")
+    self.fig.savefig(fid, format="svg")
     fid.seek(0)
     image_string = fid.read()
     img = sg.fromstring(image_string)
@@ -282,7 +308,8 @@ def mpt_to_svg(gg, width, height, dpi):
 
 _file_options = ["pdf", "png", "ps", "eps", "jpg", "jpeg", "svg"]
 
-def _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None):
+def _save_svg_wrapper(svg, filename, width, height, dpi=300,
+                      _format=None, verbose=True):
     """
     save svg object to a range of different file names
 
@@ -303,15 +330,16 @@ def _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None):
     format : str
         string of format (error tells options). If provided this is the format
         used, if None, then we'll try to use the filename extension.
+    verbose : bool
+            If `True`, print the saving information.
 
     Returns
     -------
     None
         saves to a file
-
-    TODO: default width and height somewhere? also width and height are in inches (also it's directly associated with the svg object...)
     """
 
+    # format checking
     if _format is None:
         dot_ending = re.findall("\\..+$", filename)[0]
         _format = re.sub("\\.", "", dot_ending)
@@ -321,26 +349,34 @@ def _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None):
     if _format not in _file_options:
         raise ValueError("format / end of file name must be one of\n{}".format(_file_options))
 
+    # verbosity
+    if verbose:
+        warnings.warn("Saving {0:,.2g} x {1:,.2g} inch image.".format(
+             width, height), CowpatchWarning)
+        warnings.warn('Filename: {}'.format(filename), CowpatchWarning)
+
+
+
     if _format == "svg":
         svg.save(filename)
     elif _format == "pdf":
         base_image_string = svg.to_str()
-        cairosvg.svg2pdf(bytestring = base_image_string,
-                 write_to = filename,
-                 output_width = width * 96,
-                 output_height = height * 96)
+        cairosvg.svg2pdf(bytestring=base_image_string,
+                 write_to=filename,
+                 output_width=width * 96,
+                 output_height=height * 96)
     elif _format == "ps":
         base_image_string = svg.to_str()
-        cairosvg.svg2ps(bytestring = base_image_string,
-                        write_to = filename,
-                        output_width = width * 96,
-                        output_height = height * 96)
+        cairosvg.svg2ps(bytestring=base_image_string,
+                        write_to=filename,
+                        output_width=width * 96,
+                        output_height=height * 96)
     elif _format == "eps":
         base_image_string = svg.to_str()
-        cairosvg.svg2eps(bytestring = base_image_string,
-                         write_to = filename,
-                         output_width = width * 96,
-                         output_height = height * 96)
+        cairosvg.svg2eps(bytestring=base_image_string,
+                         write_to=filename,
+                         output_width=width * 96,
+                         output_height=height * 96)
     else: # raster
         base_image_string = svg.to_str()
 
@@ -350,21 +386,21 @@ def _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None):
             scale = 1
 
         if _format == "png":
-            cairosvg.svg2png(bytestring = base_image_string,
-                 write_to = filename, scale = scale,
-                 output_width = width * 96 * scale,
-                 output_height = height * 96 * scale)
+            cairosvg.svg2png(bytestring=base_image_string,
+                 write_to=filename, scale=scale,
+                 output_width=width * 96 * scale,
+                 output_height=height * 96 * scale)
         elif _format == "jpeg" or _format == "jpg":
             fid = io.BytesIO()
-            out_bytes = cairosvg.svg2png(bytestring = base_image_string,
-                                         write_to = fid,
-                                         scale = scale,
-                                         output_width = width * 96 * scale,
-                                         output_height = height * 96 * scale)
+            out_bytes = cairosvg.svg2png(bytestring=base_image_string,
+                                         write_to=fid,
+                                         scale=scale,
+                                         output_width=width * 96 * scale,
+                                         output_height=height * 96 * scale)
             img_png = Image.open(io.BytesIO(fid.getvalue()))
             img_png.save(filename)
 
-def _show_image(svg, width, height, dpi = 300):
+def _show_image(svg, width, height, dpi=300, verbose=True):
     """
     display svg object as a png
 
@@ -385,16 +421,21 @@ def _show_image(svg, width, height, dpi = 300):
         shows svg object as a png (with provided width + height + dpi)
     """
 
+    if verbose:
+        warnings.warn("Showing {0:,.2g} x {1:,.2g} inch image.".format(
+             width, height), CowpatchWarning)
+
     ipython_info = IPython.get_ipython()
 
     if ipython_info is None or ipython_info.config.get("IPKernelApp") is None:
         # base python or ipython in the terminal will just show png ----------
         fid = io.BytesIO()
-        _save_svg_wrapper(svg, filename = fid,
-                          width = width,
-                          height = height,
-                          dpi = dpi,
-                          _format = "png")
+        _save_svg_wrapper(svg, filename=fid,
+                          width=width,
+                          height=height,
+                          dpi=dpi,
+                          _format="png",
+                          verbose=False)
         img_png = Image.open(io.BytesIO(fid.getvalue()))
 
         img_png.show()

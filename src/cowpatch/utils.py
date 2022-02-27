@@ -217,3 +217,25 @@ def _proposed_scaling_both(current, desired):
     scale_y = desired[1]/current[1]
 
     return scale_x, scale_y
+
+def _flatten_nested_list(x):
+    """
+    Flatten nested list
+
+    Argument
+    --------
+    x : list
+        nested list with different leveling of different objects
+
+    Returns
+    -------
+    flatten version of list
+    """
+    out = []
+    for xi in x:
+        if type(xi) is list:
+            out += _flatten_nested_list(xi)
+        else:
+            out.append(xi)
+    return out
+
