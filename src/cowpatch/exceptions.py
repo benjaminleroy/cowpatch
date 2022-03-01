@@ -10,5 +10,5 @@ class CowpatchWarning(UserWarning):
     """
     Warnings for cowpatch inconsistancies
     """
-    pass
+
 

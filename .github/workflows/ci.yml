@@ -11,7 +11,7 @@ on:
 jobs:
   ci:
     # Step 1. Set up operating system
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
     # Step 2. Set up Python 3.9
     - uses: actions/setup-python@v2

@@ -806,6 +806,4 @@ def test_patch__and__(image_regression):
     # g02 = g0p + g2p
     # g012 = g0p + g1p + g2p
     # g012_2 = g01 + g2p
-
     pass
-

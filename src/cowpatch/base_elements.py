@@ -65,7 +65,7 @@ class patch:
         - `__and__` (`&`) with a plotnine theme object will apply that theme to
             every `plotnine` object at any depth (and `text` object - see document)
         """
-        # todo put *args into a list
+        # put *args into a list
         args_grobs = [x for x in args]
         if len(args_grobs) > 0:
             if grobs is not None:
@@ -619,4 +619,3 @@ class patch:
     def __repr__(self):
         self.show()
         return "<patch (%d)>" % self.__hash__()
-

@@ -238,4 +238,3 @@ def _flatten_nested_list(x):
         else:
             out.append(xi)
     return out
-

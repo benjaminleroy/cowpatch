@@ -260,4 +260,3 @@ def test__select_correcting_size_svg():
             "epsilon and number of interations", \
         "expected error when throw_error =True (not enough interations "+\
         "to succeed) not observed"
-
