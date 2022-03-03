@@ -10,6 +10,9 @@ import IPython
 from .utils import _transform_size_to_pt, _proposed_scaling_both, \
                     to_inches, from_inches
 
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
 def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
     """
     Convert plotnine ggplot figure to svg and return it (pass width, height
@@ -366,7 +369,8 @@ def _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None):
 
 def _show_image(svg, width, height, dpi = 300):
     """
-    display svg object as a png
+    display svg object for user (either run from command line or jupyter
+    notebook)
 
     Arguments
     ---------
@@ -382,7 +386,16 @@ def _show_image(svg, width, height, dpi = 300):
     Returns
     -------
     None
-        shows svg object as a png (with provided width + height + dpi)
+        shows svg object (with provided width + height + dpi)
+
+    Note
+    ----
+    If run from the command line, the image will be presented using matplotlib's
+    plotting tool with a png representation of the object. If run within a
+    jupyter notebook, the object will leverage ipython's internal svg presenter
+    to present the object as real svg object. Both approaches do not allow for
+    resizing of the image and seeing the image correct itself to the new size,
+    which is a bummer for command line usage.
     """
 
     ipython_info = IPython.get_ipython()
@@ -395,9 +408,13 @@ def _show_image(svg, width, height, dpi = 300):
                           height = height,
                           dpi = dpi,
                           _format = "png")
-        img_png = Image.open(io.BytesIO(fid.getvalue()))
+        img = mpimg.imread(io.BytesIO(fid.getvalue()))
 
-        img_png.show()
+        fig, ax = plt.subplots(figsize=(width, height))
+        ax.imshow(img)
+        ax.axis("off")
+        fig.tight_layout()
+        plt.show()
     else:
         # jupyter notebook ------
         base_image_string = svg.to_str()
