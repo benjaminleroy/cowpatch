@@ -156,3 +156,18 @@ def test__proposed_scaling_both(cx,cy,dx,dy):
         "expected scaling to correctly scale current values to desired "+\
         "values (in x and y directions individually)"
 
+def test__flatten_nested_list():
+    x = [True, [True, False], True, [True]]
+    x_flat = cowpatch.utils._flatten_nested_list(x)
+    assert x_flat == [True, True, False, True, True], \
+        "_flatten_nested_list failed to flatten correctly (v1 - single nesting)"
+
+    x2 = [True, [True, False], True, [True], False, [False, [False, True]]]
+    x2_flat = cowpatch.utils._flatten_nested_list(x2)
+    assert x2_flat == [True, True, False, True, True, False, False, False, True], \
+        "_flatten_nested_list failed to flatten correctly (v2 - double nesting)"
+
+    x3 = [True, False, True]
+    x3_flat = cowpatch.utils._flatten_nested_list(x3)
+    assert x3_flat == x3, \
+        "_flatten_nested_list failed to flatten correctly (v3 - no nesting)"
