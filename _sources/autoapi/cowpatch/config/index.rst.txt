@@ -1,0 +1,14 @@
+:py:mod:`cowpatch.config`
+=========================
+
+.. py:module:: cowpatch.config
+
+
+Module Contents
+---------------
+
+.. py:data:: rcParams
+   
+
+   
+

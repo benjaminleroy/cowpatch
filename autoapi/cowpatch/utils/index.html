@@ -53,7 +53,9 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../base/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
@@ -160,6 +162,9 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.utils._proposed_scaling_both" title="cowpatch.utils._proposed_scaling_both"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_proposed_scaling_both</span></code></a>(current, desired)</p></td>
 <td><p>identify a x and y scaling to make the current size into the desired size</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.utils._flatten_nested_list" title="cowpatch.utils._flatten_nested_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_flatten_nested_list</span></code></a>(x)</p></td>
+<td><p>Flatten nested list</p></td>
 </tr>
 </tbody>
 </table>
@@ -312,6 +317,21 @@ from plotnine package…)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cowpatch.utils._flatten_nested_list">
+<span class="sig-prename descclassname"><span class="pre">cowpatch.utils.</span></span><span class="sig-name descname"><span class="pre">_flatten_nested_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/utils.html#_flatten_nested_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.utils._flatten_nested_list" title="Permalink to this definition"></a></dt>
+<dd><p>Flatten nested list</p>
+<dl class="simple">
+<dt>x<span class="classifier">list</span></dt><dd><p>nested list with different leveling of different objects</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>flatten version of list</p>
 </dd>
 </dl>
 </dd></dl>

@@ -90,6 +90,9 @@
 <span class="kn">import</span> <span class="nn">cairosvg</span>
 <span class="kn">import</span> <span class="nn">svgutils.transform</span> <span class="k">as</span> <span class="nn">sg</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">CowpatchWarning</span>
+
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">SVG</span><span class="p">,</span> <span class="n">display</span>
 <span class="kn">import</span> <span class="nn">IPython</span>
@@ -131,8 +134,8 @@
     <span class="n">fid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">gg</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span> <span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">width</span><span class="p">,</span>
-            <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">limitsize</span> <span class="o">=</span> <span class="n">limitsize</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">gg</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">limitsize</span><span class="o">=</span><span class="n">limitsize</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="s2">&quot;No ggplot SVG backend&quot;</span><span class="p">)</span>
     <span class="n">fid</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -187,7 +190,7 @@
     <span class="k">return</span> <span class="n">to_inches</span><span class="p">(</span><span class="n">new_width</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="p">),</span> <span class="n">to_inches</span><span class="p">(</span><span class="n">new_height</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="_select_correcting_size_svg"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils._select_correcting_size_svg">[docs]</a><span class="k">def</span> <span class="nf">_select_correcting_size_svg</span><span class="p">(</span><span class="n">gg</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">limitsize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">min_size_px</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+                    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">min_size_px</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">throw_error</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Obtain the correct input saving size plotnine.ggplot object to actual</span>
 <span class="sd">    obtain desired height and width (inches)</span>
@@ -228,13 +231,20 @@
 <span class="sd">    min_size_px : int</span>
 <span class="sd">        early stopping rule if converging height or width has a pixel size</span>
 <span class="sd">        smaller than or equal to this value (assumes process will not converge)</span>
+<span class="sd">    throw_error : boolean</span>
+<span class="sd">        logic if an error should be thrown if the convergence fails. If False,</span>
+<span class="sd">        then this will return ratios of width_requested/width_obtained,</span>
+<span class="sd">        height_requested/height_obtained, and a boolean = False.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
-<span class="sd">        three value tuple of width, height to provide desired measures and a</span>
-<span class="sd">        boolean value (true if iteration was successful, false otherwise -</span>
-<span class="sd">        just returns original width and height)</span>
+<span class="sd">        if the process converges successful, it will return a three value</span>
+<span class="sd">        tuple of a width and height to provide desired measures and a</span>
+<span class="sd">        boolean value (True). if process fails to converge, either this</span>
+<span class="sd">        functions raises an error (if throw_error is True), or a three value</span>
+<span class="sd">        tuple of a scaled width_requested/width_obtained,</span>
+<span class="sd">        height_requested/height_obtained, and a boolean value (False).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># starting at desired values (a reasonsable starting values)</span>
     <span class="n">desired_width</span><span class="p">,</span> <span class="n">desired_height</span> <span class="o">=</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span>
@@ -256,13 +266,29 @@
         <span class="k">if</span> <span class="n">deltas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">current_width</span><span class="p">,</span> <span class="n">current_height</span><span class="p">,</span> <span class="kc">True</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">deltas</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">maxIter</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s2">&quot;unable to get correct size within epsilon and number of interations&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">current_width</span> <span class="o">*</span> <span class="n">dpi</span> <span class="o">&lt;</span> <span class="n">min_size_px</span> <span class="ow">or</span> <span class="n">current_height</span> <span class="o">*</span> <span class="n">dpi</span> <span class="o">&lt;</span> <span class="n">min_size_px</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;height or width is too small for acceptable image&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="kc">False</span></div>
+            <span class="n">error_str</span> <span class="o">=</span> <span class="s2">&quot;unable to get correct size within &quot;</span><span class="o">+</span>\
+                                <span class="s2">&quot;epsilon and number of interations&quot;</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">current_width</span> <span class="o">*</span> <span class="n">dpi</span> <span class="o">&lt;</span> <span class="n">min_size_px</span> <span class="ow">or</span> \
+            <span class="n">current_height</span> <span class="o">*</span> <span class="n">dpi</span> <span class="o">&lt;</span> <span class="n">min_size_px</span><span class="p">:</span>
+            <span class="n">error_str</span> <span class="o">=</span> <span class="s2">&quot;height or width is too small for &quot;</span><span class="o">+</span>\
+                             <span class="s2">&quot;acceptable image&quot;</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">throw_error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="n">error_str</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">actual_width</span><span class="p">,</span> <span class="n">actual_height</span> <span class="o">=</span> <span class="n">_real_size_out_svg</span><span class="p">(</span><span class="n">gg</span><span class="o">=</span><span class="n">gg</span><span class="p">,</span>
+                                            <span class="n">height</span><span class="o">=</span><span class="n">desired_height</span><span class="p">,</span>
+                                            <span class="n">width</span><span class="o">=</span><span class="n">desired_width</span><span class="p">,</span>
+                                            <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
+                                            <span class="n">limitsize</span><span class="o">=</span><span class="n">limitsize</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">desired_width</span><span class="o">/</span><span class="n">actual_width</span><span class="p">,</span> \
+            <span class="n">desired_height</span><span class="o">/</span><span class="n">actual_height</span><span class="p">,</span> \
+            <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="gg_to_svg"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils.gg_to_svg">[docs]</a><span class="k">def</span> <span class="nf">gg_to_svg</span><span class="p">(</span><span class="n">gg</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">limitsize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-              <span class="n">eps</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">min_size_px</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+              <span class="n">eps</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">min_size_px</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert plotnine ggplot figure to svg and return it (with close to perfect</span>
 <span class="sd">    sizing).</span>
@@ -349,7 +375,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
 
     <span class="n">fid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;svg&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;svg&quot;</span><span class="p">)</span>
     <span class="n">fid</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">image_string</span> <span class="o">=</span> <span class="n">fid</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">image_string</span><span class="p">)</span>
@@ -369,7 +395,8 @@
 
 <span class="n">_file_options</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;ps&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">,</span> <span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;svg&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="_save_svg_wrapper"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils._save_svg_wrapper">[docs]</a><span class="k">def</span> <span class="nf">_save_svg_wrapper</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">_format</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="_save_svg_wrapper"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils._save_svg_wrapper">[docs]</a><span class="k">def</span> <span class="nf">_save_svg_wrapper</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+                      <span class="n">_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    save svg object to a range of different file names</span>
 
@@ -390,15 +417,16 @@
 <span class="sd">    format : str</span>
 <span class="sd">        string of format (error tells options). If provided this is the format</span>
 <span class="sd">        used, if None, then we&#39;ll try to use the filename extension.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">            If `True`, print the saving information.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    None</span>
 <span class="sd">        saves to a file</span>
-
-<span class="sd">    TODO: default width and height somewhere? also width and height are in inches (also it&#39;s directly associated with the svg object...)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># format checking</span>
     <span class="k">if</span> <span class="n">_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dot_ending</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">..+$&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">_format</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dot_ending</span><span class="p">)</span>
@@ -408,26 +436,34 @@
     <span class="k">if</span> <span class="n">_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_file_options</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;format / end of file name must be one of</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_file_options</span><span class="p">))</span>
 
+    <span class="c1"># verbosity</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Saving </span><span class="si">{0:,.2g}</span><span class="s2"> x </span><span class="si">{1:,.2g}</span><span class="s2"> inch image.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+             <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">CowpatchWarning</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Filename: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">CowpatchWarning</span><span class="p">)</span>
+
+
+
     <span class="k">if</span> <span class="n">_format</span> <span class="o">==</span> <span class="s2">&quot;svg&quot;</span><span class="p">:</span>
         <span class="n">svg</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">_format</span> <span class="o">==</span> <span class="s2">&quot;pdf&quot;</span><span class="p">:</span>
         <span class="n">base_image_string</span> <span class="o">=</span> <span class="n">svg</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
-        <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2pdf</span><span class="p">(</span><span class="n">bytestring</span> <span class="o">=</span> <span class="n">base_image_string</span><span class="p">,</span>
-                 <span class="n">write_to</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span>
-                 <span class="n">output_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">96</span><span class="p">,</span>
-                 <span class="n">output_height</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="mi">96</span><span class="p">)</span>
+        <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2pdf</span><span class="p">(</span><span class="n">bytestring</span><span class="o">=</span><span class="n">base_image_string</span><span class="p">,</span>
+                 <span class="n">write_to</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                 <span class="n">output_width</span><span class="o">=</span><span class="n">width</span> <span class="o">*</span> <span class="mi">96</span><span class="p">,</span>
+                 <span class="n">output_height</span><span class="o">=</span><span class="n">height</span> <span class="o">*</span> <span class="mi">96</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">_format</span> <span class="o">==</span> <span class="s2">&quot;ps&quot;</span><span class="p">:</span>
         <span class="n">base_image_string</span> <span class="o">=</span> <span class="n">svg</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
-        <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2ps</span><span class="p">(</span><span class="n">bytestring</span> <span class="o">=</span> <span class="n">base_image_string</span><span class="p">,</span>
-                        <span class="n">write_to</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span>
-                        <span class="n">output_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">96</span><span class="p">,</span>
-                        <span class="n">output_height</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="mi">96</span><span class="p">)</span>
+        <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2ps</span><span class="p">(</span><span class="n">bytestring</span><span class="o">=</span><span class="n">base_image_string</span><span class="p">,</span>
+                        <span class="n">write_to</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                        <span class="n">output_width</span><span class="o">=</span><span class="n">width</span> <span class="o">*</span> <span class="mi">96</span><span class="p">,</span>
+                        <span class="n">output_height</span><span class="o">=</span><span class="n">height</span> <span class="o">*</span> <span class="mi">96</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">_format</span> <span class="o">==</span> <span class="s2">&quot;eps&quot;</span><span class="p">:</span>
         <span class="n">base_image_string</span> <span class="o">=</span> <span class="n">svg</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
-        <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2eps</span><span class="p">(</span><span class="n">bytestring</span> <span class="o">=</span> <span class="n">base_image_string</span><span class="p">,</span>
-                         <span class="n">write_to</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span>
-                         <span class="n">output_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">96</span><span class="p">,</span>
-                         <span class="n">output_height</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="mi">96</span><span class="p">)</span>
+        <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2eps</span><span class="p">(</span><span class="n">bytestring</span><span class="o">=</span><span class="n">base_image_string</span><span class="p">,</span>
+                         <span class="n">write_to</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                         <span class="n">output_width</span><span class="o">=</span><span class="n">width</span> <span class="o">*</span> <span class="mi">96</span><span class="p">,</span>
+                         <span class="n">output_height</span><span class="o">=</span><span class="n">height</span> <span class="o">*</span> <span class="mi">96</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> <span class="c1"># raster</span>
         <span class="n">base_image_string</span> <span class="o">=</span> <span class="n">svg</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
 
@@ -437,21 +473,21 @@
             <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="n">_format</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span><span class="p">:</span>
-            <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2png</span><span class="p">(</span><span class="n">bytestring</span> <span class="o">=</span> <span class="n">base_image_string</span><span class="p">,</span>
-                 <span class="n">write_to</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">,</span>
-                 <span class="n">output_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span>
-                 <span class="n">output_height</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+            <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2png</span><span class="p">(</span><span class="n">bytestring</span><span class="o">=</span><span class="n">base_image_string</span><span class="p">,</span>
+                 <span class="n">write_to</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+                 <span class="n">output_width</span><span class="o">=</span><span class="n">width</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span>
+                 <span class="n">output_height</span><span class="o">=</span><span class="n">height</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">_format</span> <span class="o">==</span> <span class="s2">&quot;jpeg&quot;</span> <span class="ow">or</span> <span class="n">_format</span> <span class="o">==</span> <span class="s2">&quot;jpg&quot;</span><span class="p">:</span>
             <span class="n">fid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-            <span class="n">out_bytes</span> <span class="o">=</span> <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2png</span><span class="p">(</span><span class="n">bytestring</span> <span class="o">=</span> <span class="n">base_image_string</span><span class="p">,</span>
-                                         <span class="n">write_to</span> <span class="o">=</span> <span class="n">fid</span><span class="p">,</span>
-                                         <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">,</span>
-                                         <span class="n">output_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span>
-                                         <span class="n">output_height</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+            <span class="n">out_bytes</span> <span class="o">=</span> <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2png</span><span class="p">(</span><span class="n">bytestring</span><span class="o">=</span><span class="n">base_image_string</span><span class="p">,</span>
+                                         <span class="n">write_to</span><span class="o">=</span><span class="n">fid</span><span class="p">,</span>
+                                         <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+                                         <span class="n">output_width</span><span class="o">=</span><span class="n">width</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span>
+                                         <span class="n">output_height</span><span class="o">=</span><span class="n">height</span> <span class="o">*</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
             <span class="n">img_png</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">fid</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()))</span>
             <span class="n">img_png</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="_show_image"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils._show_image">[docs]</a><span class="k">def</span> <span class="nf">_show_image</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">dpi</span> <span class="o">=</span> <span class="mi">300</span><span class="p">):</span>
+<div class="viewcode-block" id="_show_image"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils._show_image">[docs]</a><span class="k">def</span> <span class="nf">_show_image</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    display svg object as a png</span>
 
@@ -472,16 +508,21 @@
 <span class="sd">        shows svg object as a png (with provided width + height + dpi)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Showing </span><span class="si">{0:,.2g}</span><span class="s2"> x </span><span class="si">{1:,.2g}</span><span class="s2"> inch image.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+             <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">CowpatchWarning</span><span class="p">)</span>
+
     <span class="n">ipython_info</span> <span class="o">=</span> <span class="n">IPython</span><span class="o">.</span><span class="n">get_ipython</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">ipython_info</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ipython_info</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IPKernelApp&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># base python or ipython in the terminal will just show png ----------</span>
         <span class="n">fid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-        <span class="n">_save_svg_wrapper</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">fid</span><span class="p">,</span>
-                          <span class="n">width</span> <span class="o">=</span> <span class="n">width</span><span class="p">,</span>
-                          <span class="n">height</span> <span class="o">=</span> <span class="n">height</span><span class="p">,</span>
-                          <span class="n">dpi</span> <span class="o">=</span> <span class="n">dpi</span><span class="p">,</span>
-                          <span class="n">_format</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span><span class="p">)</span>
+        <span class="n">_save_svg_wrapper</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">fid</span><span class="p">,</span>
+                          <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                          <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+                          <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
+                          <span class="n">_format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span>
+                          <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">img_png</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">fid</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()))</span>
 
         <span class="n">img_png</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>

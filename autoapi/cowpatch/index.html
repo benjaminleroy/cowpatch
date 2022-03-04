@@ -26,7 +26,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="cowpatch.base" href="base/index.html" />
+    <link rel="next" title="cowpatch.base_elements" href="base_elements/index.html" />
     <link rel="prev" title="API Reference" href="../index.html" /> 
 </head>
 
@@ -53,7 +53,9 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="base/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
@@ -113,7 +115,9 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="base/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
@@ -165,6 +169,9 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.__version__" title="cowpatch.__version__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__version__</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.rcParams" title="cowpatch.rcParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcParams</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -564,7 +571,7 @@ standard <cite>__hash__</cite></p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cowpatch.patch">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cowpatch.</span></span><span class="sig-name descname"><span class="pre">patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cowpatch.</span></span><span class="sig-name descname"><span class="pre">patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch" title="Permalink to this definition"></a></dt>
 <dd><p>general object to describe a plots or arangement of plots</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -630,38 +637,38 @@ until use of the <cite>layout</cite> is actually needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch._check_layout">
-<span class="sig-name descname"><span class="pre">_check_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch._check_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._check_layout" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_check_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch._check_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._check_layout" title="Permalink to this definition"></a></dt>
 <dd><p>checks layout if design matrix is fulled defined</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.__or__">
-<span class="sig-name descname"><span class="pre">__or__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.__or__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__or__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__or__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.__or__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__or__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.__div__">
-<span class="sig-name descname"><span class="pre">__div__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.__div__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__div__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__div__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.__div__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__div__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.__add__">
-<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__add__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__add__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.__mul__">
-<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__mul__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__mul__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.__and__">
-<span class="sig-name descname"><span class="pre">__and__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.__and__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__and__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__and__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.__and__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__and__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch._svg">
-<span class="sig-name descname"><span class="pre">_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_pt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch._svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._svg" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_attempts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch._svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._svg" title="Permalink to this definition"></a></dt>
 <dd><p>Internal function to create an svg representation of the patch</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -680,8 +687,137 @@ until use of the <cite>layout</cite> is actually needed.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.patch._size_dive">
+<span class="sig-name descname"><span class="pre">_size_dive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents_areas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch._size_dive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._size_dive" title="Permalink to this definition"></a></dt>
+<dd><p>(Internal) calculate a suggested overall size that ensures a minimum
+width and height of the smallest inner plot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parents_areas</strong> (<em>list</em>) – list of parent’s/parents’ areas. If value is None it means element
+has no parents</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>suggested_width</strong> (<em>float or list</em>) – proposed width for overall size if parents_areas=None, else this
+is a list of relative proportion of widths of images (relative to
+the global width taking a value of 1)</p></li>
+<li><p><strong>suggested_height</strong> (<em>float or</em>) – proposed height for overall size if parents_areas=None, else this
+is a list of relative proportion of height of images (relative to
+the global height taking a value of 1)</p></li>
+<li><p><strong>depth</strong> (<em>int or list</em>) – maximum depth of structure if parents_areas=None, else this
+is a list of inner elements.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>The default rcParams are:</dt><dd><p>base_height=3.71,
+base_aspect_ratio=1.618 # the golden ratio</p>
+</dd>
+</dl>
+<p>This follows ideas proposed in cowplot: <a class="reference external" href="https://wilkelab.org/cowplot/reference/save_plot.html">https://wilkelab.org/cowplot/reference/save_plot.html</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.patch._default_size">
+<span class="sig-name descname"><span class="pre">_default_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch._default_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._default_size" title="Permalink to this definition"></a></dt>
+<dd><p>(Internal) obtain default recommended size of overall image if width or
+height is None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<em>float</em>) – width of output image in inches (this should actually be associated
+with the svg…)</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – height of svg in inches (this should actually be associated
+with the svg…)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>width</strong> (<em>float</em>) – returns default width for given object if not provided (else just
+returns provided value). If only height is provided then width
+proposed is relative to a default aspect ratio for the object.</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – returns default height for given object if not provided (else just
+returns provided value). If only width is provided then height
+proposed is relative to a default aspect ratio for the object.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.patch._svg_get_sizes">
+<span class="sig-name descname"><span class="pre">_svg_get_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_pt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch._svg_get_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._svg_get_sizes" title="Permalink to this definition"></a></dt>
+<dd><p>(Internal) Calculates required sizes for plot objects to meet required
+sizes and logics if the requested sizing was possible</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width_pt</strong> (<em>float</em>) – overall width of the image in points</p></li>
+<li><p><strong>height_pt</strong> (<em>float</em>) – overall height of the image in points</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sizes</strong> (<em>nested list</em>) – For each element in the patch (with nesting structure in the list),
+this contains width, height tuples that either capture the size
+to request the ggplot object to be to return the actual desired
+size (see gg_to_svg notes), OR it contains the fraction defined by
+the requested width (or height) w.r.t. the returned width
+(or height) from saving the plotnine object. The later option
+occurs when when the ggplot’s sizing didn’t converge to the
+desired size.</p></li>
+<li><p><strong>logics</strong> (<em>nested list</em>) – For each element in the patch (with nesting structure in the list),
+this contains a boolean value if the ggplot object was able to
+be correctly size.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Internally this function uses rcParams’s <code class="docutils literal notranslate"><span class="pre">eps</span></code>, <code class="docutils literal notranslate"><span class="pre">mini_size_px</span></code> and
+<code class="docutils literal notranslate"><span class="pre">maxIter</span></code> to determine the parameters to be put in
+.svg_utils._select_correcting_size_svg.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cowpatch.patch._process_sizes">
+<span class="sig-name descname"><span class="pre">_process_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch._process_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch._process_sizes" title="Permalink to this definition"></a></dt>
+<dd><p>(Internal) draw conclusions about the output of _svg_get_sizes.</p>
+<p>This function assesses if any internal ggplot object failed to
+produce an image of the requested size (w.r.t. to given interation
+parameters)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sizes</strong> (<em>nested list</em>) – sizes output of _svg_get_sizes. This is a nested list with
+(width,height) or (requested_width/actual_width,
+requested_height/actual_width), with the different being if the
+ggplot object was able to be presented in the requested size</p></li>
+<li><p><strong>logics</strong> (<em>nested list</em>) – logics output of _svg_get_sizes. This is a nested list of boolean
+values w.r.t. the previous different.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sizes</strong> (<em>nested list</em>) – Returned if no logics values are False. This object is the sizes
+nested list that was input.</p></li>
+<li><p><strong>max_scaling</strong> (<em>float</em>) – Returned if at least one of the logics values are False. This is
+the scaling of the original width_pt and height_pt that defined
+the sizes and logics that could make the requested sizes for all
+ggplots that failed to be correctly sized be at least as large
+as the returned size from a basic ggplot saving.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.save" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.save" title="Permalink to this definition"></a></dt>
 <dd><p>save patch to file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -695,6 +831,9 @@ with the svg…)</p></li>
 <li><p><strong>_format</strong> (<em>str</em>) – string of format (error tells options). If provided this is the
 format used, if None, then we’ll try to use the <cite>filename</cite>
 extension.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, print the saving information. The package default
+is defined by cowpatch’s own rcParams (the base default is
+<code class="docutils literal notranslate"><span class="pre">True</span></code>), which is used if verbose is <code class="docutils literal notranslate"><span class="pre">None</span></code>. See Notes.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -704,17 +843,43 @@ extension.</p></li>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If width and/or height is None, the approach will attempt to define
+acceptable width and height.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">verbose</span></code> parameter can be changed either directly with defining
+<code class="docutils literal notranslate"><span class="pre">verbose</span></code> input parameter or changing
+<code class="docutils literal notranslate"><span class="pre">cow.rcParams[&quot;save_verbose&quot;]</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.show" title="Permalink to this definition"></a></dt>
-<dd><p>show base inside an interactive shell</p>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.show" title="Permalink to this definition"></a></dt>
+<dd><p>display object in terminal or jupyter notebook</p>
+<dl class="simple">
+<dt>width<span class="classifier">float</span></dt><dd><p>width of output image in inches (this should actually be associated
+with the svg…)</p>
+</dd>
+<dt>height<span class="classifier">float</span></dt><dd><p>height of svg in inches (this should actually be associated
+with the svg…)</p>
+</dd>
+<dt>dpi<span class="classifier">int or float</span></dt><dd><p>dots per square inch, default is 96 (standard)</p>
+</dd>
+<dt>verbose<span class="classifier">bool</span></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, print the saving information. The package default
+is defined by cowpatch’s own rcParams (the base default is
+<code class="docutils literal notranslate"><span class="pre">True</span></code>), which is used if verbose is <code class="docutils literal notranslate"><span class="pre">None</span></code>. See Notes.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If width and/or height is None, the approach will attempt to define
+acceptable width and height.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">verbose</span></code> parameter can be changed either directly with defining
+<code class="docutils literal notranslate"><span class="pre">verbose</span></code> input parameter or changing
+<code class="docutils literal notranslate"><span class="pre">cow.rcParams[&quot;show_verbose&quot;]</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.patch.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base.html#patch.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__repr__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/base_elements.html#patch.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.patch.__repr__" title="Permalink to this definition"></a></dt>
 <dd><p>Return repr(self).</p>
 </dd></dl>
 
@@ -835,7 +1000,7 @@ and correct image size)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="cowpatch.wrapper_plotnine">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cowpatch.</span></span><span class="sig-name descname"><span class="pre">wrapper_plotnine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/wrappers.html#wrapper_plotnine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.wrapper_plotnine" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="base/index.html#cowpatch.base.patch" title="cowpatch.base.patch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cowpatch.base.patch</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="base_elements/index.html#cowpatch.base_elements.patch" title="cowpatch.base_elements.patch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cowpatch.base_elements.patch</span></code></a></p>
 <p>wrapper for plotnine objects</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -876,7 +1041,7 @@ can be combined with other patch objects.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="cowpatch.wrapper_matplotlib">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cowpatch.</span></span><span class="sig-name descname"><span class="pre">wrapper_matplotlib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cowpatch/wrappers.html#wrapper_matplotlib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.wrapper_matplotlib" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="base/index.html#cowpatch.base.patch" title="cowpatch.base.patch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cowpatch.base.patch</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="base_elements/index.html#cowpatch.base_elements.patch" title="cowpatch.base_elements.patch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cowpatch.base_elements.patch</span></code></a></p>
 <p>wrapper for matplotlib objects</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -932,6 +1097,11 @@ can be combined with other patch objects.</p>
 can be combined with other patch objects.</p>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="cowpatch.rcParams">
+<span class="sig-prename descclassname"><span class="pre">cowpatch.</span></span><span class="sig-name descname"><span class="pre">rcParams</span></span><a class="headerlink" href="#cowpatch.rcParams" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 </section>
 </section>
@@ -941,7 +1111,7 @@ can be combined with other patch objects.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="base/index.html" class="btn btn-neutral float-right" title="cowpatch.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="base_elements/index.html" class="btn btn-neutral float-right" title="cowpatch.base_elements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

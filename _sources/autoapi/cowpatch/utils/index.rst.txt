@@ -28,6 +28,7 @@ Functions
    cowpatch.utils.inherits_plotnine
    cowpatch.utils._transform_size_to_pt
    cowpatch.utils._proposed_scaling_both
+   cowpatch.utils._flatten_nested_list
 
 
 
@@ -138,5 +139,17 @@ Functions
 
    :returns: float tuple of scalar constants for size change in each dimension
    :rtype: tuple
+
+
+.. py:function:: _flatten_nested_list(x)
+
+   Flatten nested list
+
+   Argument
+   --------
+   x : list
+       nested list with different leveling of different objects
+
+   :rtype: flatten version of list
 
 

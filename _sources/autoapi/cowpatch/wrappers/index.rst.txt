@@ -21,7 +21,7 @@ Classes
 
 .. py:class:: wrapper_plotnine(gg)
 
-   Bases: :py:obj:`cowpatch.base.patch`
+   Bases: :py:obj:`cowpatch.base_elements.patch`
 
    wrapper for plotnine objects
 
@@ -53,7 +53,7 @@ Classes
 
 .. py:class:: wrapper_matplotlib(fig, axes)
 
-   Bases: :py:obj:`cowpatch.base.patch`
+   Bases: :py:obj:`cowpatch.base_elements.patch`
 
    wrapper for matplotlib objects
 

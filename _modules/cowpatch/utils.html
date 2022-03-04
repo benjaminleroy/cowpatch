@@ -304,6 +304,27 @@
     <span class="n">scale_y</span> <span class="o">=</span> <span class="n">desired</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">current</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">scale_x</span><span class="p">,</span> <span class="n">scale_y</span></div>
+
+<div class="viewcode-block" id="_flatten_nested_list"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils._flatten_nested_list">[docs]</a><span class="k">def</span> <span class="nf">_flatten_nested_list</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flatten nested list</span>
+
+<span class="sd">    Argument</span>
+<span class="sd">    --------</span>
+<span class="sd">    x : list</span>
+<span class="sd">        nested list with different leveling of different objects</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flatten version of list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">_flatten_nested_list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
 </pre></div>
 
            </div>

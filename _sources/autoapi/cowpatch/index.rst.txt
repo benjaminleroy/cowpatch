@@ -10,7 +10,9 @@ Submodules
    :titlesonly:
    :maxdepth: 1
 
-   base/index.rst
+   base_elements/index.rst
+   config/index.rst
+   exceptions/index.rst
    layout_elements/index.rst
    svg_utils/index.rst
    text_elements/index.rst
@@ -43,6 +45,7 @@ Attributes
 .. autoapisummary::
 
    cowpatch.__version__
+   cowpatch.rcParams
 
 
 .. py:data:: __version__
@@ -467,7 +470,7 @@ Attributes
    .. py:method:: __and__(self, other)
 
 
-   .. py:method:: _svg(self, width_pt, height_pt)
+   .. py:method:: _svg(self, width_pt, height_pt, sizes=None, num_attempts=None)
 
       Internal function to create an svg representation of the patch
 
@@ -480,7 +483,109 @@ Attributes
       :rtype: svgutils.transforms object
 
 
-   .. py:method:: save(self, filename, width, height, dpi=96, _format=None)
+   .. py:method:: _size_dive(self, parents_areas=None)
+
+      (Internal) calculate a suggested overall size that ensures a minimum
+      width and height of the smallest inner plot
+
+      :param parents_areas: list of parent's/parents' areas. If value is None it means element
+                            has no parents
+      :type parents_areas: list
+
+      :returns: * **suggested_width** (*float or list*) -- proposed width for overall size if parents_areas=None, else this
+                  is a list of relative proportion of widths of images (relative to
+                  the global width taking a value of 1)
+                * **suggested_height** (*float or*) -- proposed height for overall size if parents_areas=None, else this
+                  is a list of relative proportion of height of images (relative to
+                  the global height taking a value of 1)
+                * **depth** (*int or list*) -- maximum depth of structure if parents_areas=None, else this
+                  is a list of inner elements.
+
+      .. rubric:: Notes
+
+      The default rcParams are:
+          base_height=3.71,
+          base_aspect_ratio=1.618 # the golden ratio
+
+      This follows ideas proposed in cowplot: https://wilkelab.org/cowplot/reference/save_plot.html
+
+
+   .. py:method:: _default_size(self, width, height)
+
+      (Internal) obtain default recommended size of overall image if width or
+      height is None
+
+      :param width: width of output image in inches (this should actually be associated
+                    with the svg...)
+      :type width: float
+      :param height: height of svg in inches (this should actually be associated
+                     with the svg...)
+      :type height: float
+
+      :returns: * **width** (*float*) -- returns default width for given object if not provided (else just
+                  returns provided value). If only height is provided then width
+                  proposed is relative to a default aspect ratio for the object.
+                * **height** (*float*) -- returns default height for given object if not provided (else just
+                  returns provided value). If only width is provided then height
+                  proposed is relative to a default aspect ratio for the object.
+
+
+   .. py:method:: _svg_get_sizes(self, width_pt, height_pt)
+
+      (Internal) Calculates required sizes for plot objects to meet required
+      sizes and logics if the requested sizing was possible
+
+      :param width_pt: overall width of the image in points
+      :type width_pt: float
+      :param height_pt: overall height of the image in points
+      :type height_pt: float
+
+      :returns: * **sizes** (*nested list*) -- For each element in the patch (with nesting structure in the list),
+                  this contains width, height tuples that either capture the size
+                  to request the ggplot object to be to return the actual desired
+                  size (see gg_to_svg notes), OR it contains the fraction defined by
+                  the requested width (or height) w.r.t. the returned width
+                  (or height) from saving the plotnine object. The later option
+                  occurs when when the ggplot's sizing didn't converge to the
+                  desired size.
+                * **logics** (*nested list*) -- For each element in the patch (with nesting structure in the list),
+                  this contains a boolean value if the ggplot object was able to
+                  be correctly size.
+
+      .. rubric:: Notes
+
+      Internally this function uses rcParams's ``eps``, ``mini_size_px`` and
+      ``maxIter`` to determine the parameters to be put in
+      .svg_utils._select_correcting_size_svg.
+
+
+   .. py:method:: _process_sizes(self, sizes, logics)
+
+      (Internal) draw conclusions about the output of _svg_get_sizes.
+
+      This function assesses if any internal ggplot object failed to
+      produce an image of the requested size (w.r.t. to given interation
+      parameters)
+
+      :param sizes: sizes output of _svg_get_sizes. This is a nested list with
+                    (width,height) or (requested_width/actual_width,
+                    requested_height/actual_width), with the different being if the
+                    ggplot object was able to be presented in the requested size
+      :type sizes: nested list
+      :param logics: logics output of _svg_get_sizes. This is a nested list of boolean
+                     values w.r.t. the previous different.
+      :type logics: nested list
+
+      :returns: * **sizes** (*nested list*) -- Returned if no logics values are False. This object is the sizes
+                  nested list that was input.
+                * **max_scaling** (*float*) -- Returned if at least one of the logics values are False. This is
+                  the scaling of the original width_pt and height_pt that defined
+                  the sizes and logics that could make the requested sizes for all
+                  ggplots that failed to be correctly sized be at least as large
+                  as the returned size from a basic ggplot saving.
+
+
+   .. py:method:: save(self, filename, width=None, height=None, dpi=96, _format=None, verbose=None)
 
       save patch to file
 
@@ -498,14 +603,51 @@ Attributes
                       format used, if None, then we'll try to use the `filename`
                       extension.
       :type _format: str
+      :param verbose: If ``True``, print the saving information. The package default
+                      is defined by cowpatch's own rcParams (the base default is
+                      ``True``), which is used if verbose is ``None``. See Notes.
+      :type verbose: bool
 
       :returns: saves to a file
       :rtype: None
 
+      .. rubric:: Notes
 
-   .. py:method:: show(self, width=None, height=None, dpi=None)
+      If width and/or height is None, the approach will attempt to define
+      acceptable width and height.
 
-      show base inside an interactive shell
+      The ``verbose`` parameter can be changed either directly with defining
+      ``verbose`` input parameter or changing
+      ``cow.rcParams["save_verbose"]``.
+
+
+   .. py:method:: show(self, width=None, height=None, dpi=96, verbose=None)
+
+      display object in terminal or jupyter notebook
+
+      Argument
+      --------
+      width : float
+          width of output image in inches (this should actually be associated
+          with the svg...)
+      height : float
+          height of svg in inches (this should actually be associated
+          with the svg...)
+      dpi : int or float
+          dots per square inch, default is 96 (standard)
+      verbose : bool
+          If ``True``, print the saving information. The package default
+          is defined by cowpatch's own rcParams (the base default is
+          ``True``), which is used if verbose is ``None``. See Notes.
+
+      .. rubric:: Notes
+
+      If width and/or height is None, the approach will attempt to define
+      acceptable width and height.
+
+      The ``verbose`` parameter can be changed either directly with defining
+      ``verbose`` input parameter or changing
+      ``cow.rcParams["show_verbose"]``.
 
 
    .. py:method:: __repr__(self)
@@ -609,7 +751,7 @@ Attributes
 
 .. py:class:: wrapper_plotnine(gg)
 
-   Bases: :py:obj:`cowpatch.base.patch`
+   Bases: :py:obj:`cowpatch.base_elements.patch`
 
    wrapper for plotnine objects
 
@@ -641,7 +783,7 @@ Attributes
 
 .. py:class:: wrapper_matplotlib(fig, axes)
 
-   Bases: :py:obj:`cowpatch.base.patch`
+   Bases: :py:obj:`cowpatch.base_elements.patch`
 
    wrapper for matplotlib objects
 
@@ -689,4 +831,9 @@ Attributes
    `object.fig.(function)`. This wrapper creates a special patch object that
    can be combined with other patch objects.
 
+
+.. py:data:: rcParams
+   
+
+   
 

@@ -1,0 +1,16 @@
+:py:mod:`cowpatch.exceptions`
+=============================
+
+.. py:module:: cowpatch.exceptions
+
+
+Module Contents
+---------------
+
+.. py:exception:: CowpatchWarning
+
+   Bases: :py:obj:`UserWarning`
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+

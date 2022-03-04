@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cowpatch.base_elements &mdash; cowpatch  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cowpatch
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">cowpatch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/benjaminleroy/cowpatch">View on Github</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cowpatch</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cowpatch.base_elements</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cowpatch.base_elements</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">plotnine</span> <span class="k">as</span> <span class="nn">p9</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">svgutils.transform</span> <span class="k">as</span> <span class="nn">sg</span>
+
+<span class="kn">from</span> <span class="nn">.svg_utils</span> <span class="kn">import</span> <span class="n">gg_to_svg</span><span class="p">,</span> <span class="n">_save_svg_wrapper</span><span class="p">,</span> <span class="n">_show_image</span><span class="p">,</span> \
+                    <span class="n">_raw_gg_to_svg</span><span class="p">,</span> <span class="n">_select_correcting_size_svg</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">to_inches</span><span class="p">,</span> <span class="n">from_inches</span><span class="p">,</span> <span class="n">inherits_plotnine</span><span class="p">,</span> <span class="n">inherits</span><span class="p">,</span> \
+                    <span class="n">_flatten_nested_list</span>
+<span class="kn">from</span> <span class="nn">.layout_elements</span> <span class="kn">import</span> <span class="n">layout</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">rcParams</span>
+
+
+
+<span class="kn">import</span> <span class="nn">pdb</span>
+<span class="c1"># TODO notes:</span>
+<span class="c1"># 2/7 (Ben): patch object needs annotation functionality, * and &amp; operators</span>
+<span class="c1">#       to work with themes. And a lot of testing. I also think we need to</span>
+<span class="c1">#       think about how to deal inputs that are UNwrapped plotnine ggplot objects.</span>
+
+
+<div class="viewcode-block" id="patch"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch">[docs]</a><span class="k">class</span> <span class="nc">patch</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        general object to describe a plots or arangement of plots</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        \*args : ggplots and patches</span>
+<span class="sd">        grobs : list</span>
+<span class="sd">            list of ggplot objects and patches. Either `\*args` is empty or</span>
+<span class="sd">            `grobs` is `None`.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        All patch objects can be combined with other patch objects, either inside</span>
+<span class="sd">        other `patch` calls or using mathematical grammar (described below).</span>
+
+<span class="sd">        Additionally, patch objects&#39;s layouts can be described by adding a `layout`</span>
+<span class="sd">        object, can have figure labels and titles added using an addition of a</span>
+<span class="sd">        `annotation` object, and can have plots inset into it&#39;s grid with a</span>
+<span class="sd">        `inset` object addition.</span>
+
+<span class="sd">        **Mathematical Grammar**</span>
+
+<span class="sd">        Mirroring ideas in `R`&#39;s `patchwork` package, the following methods can</span>
+<span class="sd">        be used to combine patch objects</span>
+
+<span class="sd">        - `__add__` (`+`) of `patches` will (in the default) arange a sequence of</span>
+<span class="sd">            `patches` in a matrix grid (byrow)</span>
+<span class="sd">        - `__or__` (`|`) of `patches` will (in the default) arange a sequence of</span>
+<span class="sd">            `patches` in a single row</span>
+<span class="sd">        - `__div__` (`/`) of `patches` will (in the default) arange a sequence of</span>
+<span class="sd">            `patches` in a single column</span>
+
+<span class="sd">        These can also be combined to make complex layout structures. In addition,</span>
+<span class="sd">        these structures can define depths structures. The top layout can be</span>
+<span class="sd">        updated with an addition of a `layout`.</span>
+
+<span class="sd">        Beyond combinations with other patches, the use of</span>
+
+<span class="sd">        - `__mul__` (`*`) with a `plotnine` `theme` object will apply that theme to</span>
+<span class="sd">            every `plotnine` object on the top `layer` (and `text` object - see</span>
+<span class="sd">            document)</span>
+<span class="sd">        - `__and__` (`&amp;`) with a plotnine theme object will apply that theme to</span>
+<span class="sd">            every `plotnine` object at any depth (and `text` object - see document)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># put *args into a list</span>
+        <span class="n">args_grobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args_grobs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">grobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot input a grobs list&quot;</span><span class="o">+</span>\
+                                 <span class="s2">&quot; as well as individual plots&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">grobs</span> <span class="o">=</span> <span class="n">args_grobs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grobs</span> <span class="o">=</span> <span class="n">grobs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__layout</span> <span class="o">=</span> <span class="s2">&quot;patch&quot;</span> <span class="c1"># this is different than None...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        provide `__layout` default else return `__layout`</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This allows for the different structure of `__add__` to not be built</span>
+<span class="sd">        until use of the `layout` is actually needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__layout</span> <span class="o">==</span> <span class="s2">&quot;patch&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">layout</span><span class="p">(</span><span class="n">nrow</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">),</span> <span class="n">ncol</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">num_grobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)</span>
+                <span class="n">nrow</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">num_grobs</span><span class="p">)))</span>
+                <span class="n">ncol</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">))</span>
+
+                <span class="k">return</span> <span class="n">layout</span><span class="p">(</span><span class="n">nrow</span><span class="o">=</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__layout</span>
+
+<div class="viewcode-block" id="patch._check_layout"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch._check_layout">[docs]</a>    <span class="k">def</span> <span class="nf">_check_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        checks layout if design matrix is fulled defined</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">num_grobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+           <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">num_grobs</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;layout&#39;s number of patches does not &quot;</span><span class="o">+</span>\
+                                 <span class="s2">&quot;matches number of patches in arangement&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch.__or__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__or__">[docs]</a>    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="c1"># check proper usage -------</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">patch</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;only can connect specific general patch items&quot;</span><span class="o">+</span>\
+                             <span class="s2">&quot; with </span><span class="se">\&quot;</span><span class="s2">|</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># combine with other -------</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># only for wrappers!</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">nrow</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">==</span> <span class="n">layout</span><span class="p">(</span><span class="n">design</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])):</span>
+            <span class="c1"># current self is [inner]</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">nrow</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">nrow</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># continuing a row</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">nrow</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">nrow</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch.__div__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__div__">[docs]</a>    <span class="k">def</span> <span class="nf">__div__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="c1"># check proper usage -------</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">patch</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;only can connect specific general patch items&quot;</span><span class="o">+</span>\
+                             <span class="s2">&quot; with </span><span class="se">\&quot;</span><span class="s2">/</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># combine with other -------</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># only for wrappers!</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">nrow</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">==</span> <span class="n">layout</span><span class="p">(</span><span class="n">design</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])):</span>
+            <span class="c1"># current self is [inner]</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">nrow</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">nrow</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># continuing a row</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">nrow</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span> <span class="o">+</span> <span class="n">layout</span><span class="p">(</span><span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">nrow</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch.__add__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="c1"># check proper usage -------</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">patch</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">layout</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">annotation</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">p9</span><span class="o">.</span><span class="n">theme</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot directly add a theme to a patch&quot;</span> <span class="o">+</span>\
+                                 <span class="s2">&quot; object unless a wrapper, try </span><span class="se">\&quot;</span><span class="s2">&amp;</span><span class="se">\&quot;</span><span class="s2"> or </span><span class="se">\&quot;</span><span class="s2">*</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;only can connect specific general patch items&quot;</span><span class="o">+</span>\
+                             <span class="s2">&quot; with </span><span class="se">\&quot;</span><span class="s2">/</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">patch</span><span class="p">):</span>
+            <span class="c1"># combine with other patch -------</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># only for wrappers!</span>
+                <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">==</span> <span class="n">layout</span><span class="p">(</span><span class="n">design</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])):</span>
+                <span class="c1"># current self is [inner]</span>
+                <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">nrow</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># continuing a row</span>
+                <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">patch</span><span class="p">(</span><span class="n">grobs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="n">other</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+            <span class="c1"># combine with layout -------------</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__layout</span> <span class="o">=</span> <span class="n">other</span>
+        <span class="k">elif</span> <span class="n">inherits</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">annotation</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;currently not implimented addition with annotation&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="patch.__mul__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;currently not implimented *&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch.__and__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__and__">[docs]</a>    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;currently not implimented &amp;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch._svg"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch._svg">[docs]</a>    <span class="k">def</span> <span class="nf">_svg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">,</span> <span class="n">sizes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_attempts</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal function to create an svg representation of the patch</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        width_pt : float</span>
+<span class="sd">            desired width of svg object in points</span>
+<span class="sd">        height_pt : float</span>
+<span class="sd">            desired height of svg object in points</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        svg_object : svgutils.transforms object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_layout</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">num_attempts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">num_attempts</span> <span class="o">=</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;num_attempts&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># top layer</span>
+            <span class="c1">#pdb.set_trace()</span>
+            <span class="k">while</span> <span class="n">num_attempts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sizes</span><span class="p">,</span> <span class="n">logics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_svg_get_sizes</span><span class="p">(</span><span class="n">width_pt</span><span class="o">=</span><span class="n">width_pt</span><span class="p">,</span>
+                                                    <span class="n">height_pt</span><span class="o">=</span><span class="n">height_pt</span><span class="p">)</span>
+                <span class="n">out_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_sizes</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span> <span class="n">logics</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">out_info</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+                    <span class="n">num_attempts</span> <span class="o">=</span> <span class="o">-</span><span class="mi">412</span> <span class="c1"># strictly less than 0</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1"># out_info is a scaling</span>
+                    <span class="n">width_pt</span> <span class="o">=</span> <span class="n">width_pt</span><span class="o">*</span><span class="n">out_info</span>
+                    <span class="n">height_pt</span> <span class="o">=</span> <span class="n">height_pt</span><span class="o">*</span><span class="n">out_info</span>
+
+                <span class="n">num_attempts</span> <span class="o">-=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">num_attempts</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s2">&quot;Attempts to find the correct sizing of inner&quot;</span><span class="o">+</span>\
+                            <span class="s2">&quot;plots failed with provided parameters&quot;</span><span class="p">)</span>
+
+        <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span>
+
+        <span class="n">areas</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="n">_element_locations</span><span class="p">(</span><span class="n">width_pt</span><span class="o">=</span><span class="n">width_pt</span><span class="p">,</span>
+                                          <span class="n">height_pt</span><span class="o">=</span><span class="n">height_pt</span><span class="p">,</span>
+                                          <span class="n">num_grobs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">))</span>
+
+        <span class="n">base_image</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">SVGFigure</span><span class="p">()</span>
+        <span class="n">base_image</span><span class="o">.</span><span class="n">set_size</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">width_pt</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">height_pt</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;pt&quot;</span><span class="p">))</span>
+        <span class="c1"># add a view box... (set_size doesn&#39;t correctly update this...)</span>
+        <span class="c1"># maybe should have used px instead of px....</span>
+        <span class="n">base_image</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;viewBox&quot;</span><span class="p">,</span> <span class="s2">&quot;0 0 </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">width_pt</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">height_pt</span><span class="p">)))</span>
+
+        <span class="c1"># TODO: way to make decisions about the base image...</span>
+        <span class="n">base_image</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">sg</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="s2">&quot;&lt;rect width=</span><span class="se">\&quot;</span><span class="s2">100%</span><span class="se">\&quot;</span><span class="s2"> height=</span><span class="se">\&quot;</span><span class="s2">100%</span><span class="se">\&quot;</span><span class="s2"> fill=</span><span class="se">\&quot;</span><span class="s2">#FFFFFF</span><span class="se">\&quot;</span><span class="s2">/&gt;&quot;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">p_idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)):</span>
+            <span class="n">inner_area</span> <span class="o">=</span> <span class="n">areas</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+            <span class="c1"># TODO: how to deal with ggplot objects vs patch objects</span>
+            <span class="k">if</span> <span class="n">inherits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">],</span> <span class="n">patch</span><span class="p">):</span>
+                <span class="n">inner_width_pt</span><span class="p">,</span> <span class="n">inner_height_pt</span> <span class="o">=</span> <span class="n">inner_area</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">inner_area</span><span class="o">.</span><span class="n">height</span>
+                <span class="n">inner_svg</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span><span class="o">.</span><span class="n">_svg</span><span class="p">(</span><span class="n">width_pt</span> <span class="o">=</span> <span class="n">inner_width_pt</span><span class="p">,</span>
+                                                   <span class="n">height_pt</span> <span class="o">=</span> <span class="n">inner_height_pt</span><span class="p">,</span>
+                                                   <span class="n">sizes</span> <span class="o">=</span>  <span class="n">sizes</span><span class="p">[</span><span class="n">p_idx</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">inherits_plotnine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]):</span>
+                <span class="n">inner_gg_width_in</span><span class="p">,</span> <span class="n">inner_gg_height_in</span>  <span class="o">=</span> <span class="n">sizes</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+                <span class="n">inner_svg</span> <span class="o">=</span> <span class="n">_raw_gg_to_svg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">],</span>
+                                      <span class="n">width</span> <span class="o">=</span> <span class="n">inner_gg_width_in</span><span class="p">,</span>
+                                      <span class="n">height</span> <span class="o">=</span> <span class="n">inner_gg_height_in</span><span class="p">,</span>
+                                      <span class="n">dpi</span> <span class="o">=</span> <span class="mi">96</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;grob idx </span><span class="si">%i</span><span class="s2"> is not a patch object nor&quot;</span><span class="o">+</span>\
+                                 <span class="s2">&quot;a ggplot object within patch with hash </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">p_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">)</span>
+
+
+            <span class="n">inner_root</span> <span class="o">=</span> <span class="n">inner_svg</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+            <span class="n">inner_root</span><span class="o">.</span><span class="n">moveto</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">inner_area</span><span class="o">.</span><span class="n">x_left</span><span class="p">,</span>
+                              <span class="n">y</span><span class="o">=</span><span class="n">inner_area</span><span class="o">.</span><span class="n">y_top</span><span class="p">)</span>
+            <span class="n">base_image</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inner_root</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">base_image</span><span class="p">,</span> <span class="p">(</span><span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch._size_dive"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch._size_dive">[docs]</a>    <span class="k">def</span> <span class="nf">_size_dive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parents_areas</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        (Internal) calculate a suggested overall size that ensures a minimum</span>
+<span class="sd">        width and height of the smallest inner plot</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        parents_areas : list</span>
+<span class="sd">            list of parent&#39;s/parents&#39; areas. If value is None it means element</span>
+<span class="sd">            has no parents</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        suggested_width : float or list</span>
+<span class="sd">            proposed width for overall size if parents_areas=None, else this</span>
+<span class="sd">            is a list of relative proportion of widths of images (relative to</span>
+<span class="sd">            the global width taking a value of 1)</span>
+<span class="sd">        suggested_height : float or</span>
+<span class="sd">            proposed height for overall size if parents_areas=None, else this</span>
+<span class="sd">            is a list of relative proportion of height of images (relative to</span>
+<span class="sd">            the global height taking a value of 1)</span>
+<span class="sd">        depth : int or list</span>
+<span class="sd">            maximum depth of structure if parents_areas=None, else this</span>
+<span class="sd">            is a list of inner elements.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The default rcParams are:</span>
+<span class="sd">            base_height=3.71,</span>
+<span class="sd">            base_aspect_ratio=1.618 # the golden ratio</span>
+
+<span class="sd">        This follows ideas proposed in cowplot: https://wilkelab.org/cowplot/reference/save_plot.html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># basically following: https://wilkelab.org/cowplot/reference/save_plot.html</span>
+        <span class="n">min_image_height</span> <span class="o">=</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;base_height&quot;</span><span class="p">]</span>
+        <span class="n">min_image_width</span> <span class="o">=</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;base_aspect_ratio&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">min_image_height</span>
+
+
+        <span class="n">image_rel_widths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">image_rel_heights</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">areas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">_element_locations</span><span class="p">(</span><span class="n">width_pt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                               <span class="n">height_pt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                               <span class="n">num_grobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">parents_areas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parents_areas</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">rel_width_to_parents</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">rel_height_to_parents</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rel_width_to_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">width</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">parents_areas</span><span class="p">])</span>
+            <span class="n">rel_height_to_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">height</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">parents_areas</span><span class="p">])</span>
+
+        <span class="n">parent_depth</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents_areas</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">g_idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)):</span>
+            <span class="n">inner_area</span> <span class="o">=</span> <span class="n">areas</span><span class="p">[</span><span class="n">g_idx</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">inherits_plotnine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">g_idx</span><span class="p">]):</span>
+                <span class="n">inner_rw</span> <span class="o">=</span> <span class="p">[</span><span class="n">inner_area</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">rel_width_to_parents</span><span class="p">]</span>
+                <span class="n">inner_rh</span> <span class="o">=</span> <span class="p">[</span><span class="n">inner_area</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="n">rel_height_to_parents</span><span class="p">]</span>
+                <span class="n">inner_d</span> <span class="o">=</span> <span class="p">[</span><span class="n">parent_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inner_rw</span><span class="p">,</span> <span class="n">inner_rh</span><span class="p">,</span> <span class="n">inner_d</span> <span class="o">=</span>\
+                    <span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">g_idx</span><span class="p">]</span><span class="o">.</span><span class="n">_size_dive</span><span class="p">(</span><span class="n">parents_areas</span><span class="o">=</span><span class="n">parents_areas</span><span class="o">+</span>\
+                                                    <span class="p">[</span><span class="n">inner_area</span><span class="p">])</span>
+            <span class="n">image_rel_widths</span> <span class="o">+=</span> <span class="n">inner_rw</span>
+            <span class="n">image_rel_heights</span> <span class="o">+=</span> <span class="n">inner_rh</span>
+            <span class="n">depth</span> <span class="o">+=</span> <span class="n">inner_d</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents_areas</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">min_image_width</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">image_rel_widths</span><span class="p">),</span>
+                    <span class="n">min_image_height</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">image_rel_heights</span><span class="p">),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">depth</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">image_rel_widths</span><span class="p">,</span>
+                    <span class="n">image_rel_heights</span><span class="p">,</span>
+                    <span class="n">depth</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch._default_size"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch._default_size">[docs]</a>    <span class="k">def</span> <span class="nf">_default_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        (Internal) obtain default recommended size of overall image if width or</span>
+<span class="sd">        height is None</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        width : float</span>
+<span class="sd">            width of output image in inches (this should actually be associated</span>
+<span class="sd">            with the svg...)</span>
+<span class="sd">        height : float</span>
+<span class="sd">            height of svg in inches (this should actually be associated</span>
+<span class="sd">            with the svg...)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        width : float</span>
+<span class="sd">            returns default width for given object if not provided (else just</span>
+<span class="sd">            returns provided value). If only height is provided then width</span>
+<span class="sd">            proposed is relative to a default aspect ratio for the object.</span>
+<span class="sd">        height : float</span>
+<span class="sd">            returns default height for given object if not provided (else just</span>
+<span class="sd">            returns provided value). If only width is provided then height</span>
+<span class="sd">            proposed is relative to a default aspect ratio for the object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">both_none</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_width</span><span class="p">,</span> <span class="n">_height</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_dive</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">both_none</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">_width</span>
+                <span class="n">height</span> <span class="o">=</span> <span class="n">_height</span>
+            <span class="k">elif</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">height</span> <span class="o">=</span> <span class="n">_height</span> <span class="o">/</span> <span class="n">_width</span> <span class="o">*</span> <span class="n">width</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">_width</span> <span class="o">/</span> <span class="n">_height</span> <span class="o">*</span> <span class="n">height</span>
+        <span class="k">return</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span></div>
+
+<div class="viewcode-block" id="patch._svg_get_sizes"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch._svg_get_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_svg_get_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        (Internal) Calculates required sizes for plot objects to meet required</span>
+<span class="sd">        sizes and logics if the requested sizing was possible</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        width_pt : float</span>
+<span class="sd">            overall width of the image in points</span>
+<span class="sd">        height_pt : float</span>
+<span class="sd">            overall height of the image in points</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sizes : nested list</span>
+<span class="sd">            For each element in the patch (with nesting structure in the list),</span>
+<span class="sd">            this contains width, height tuples that either capture the size</span>
+<span class="sd">            to request the ggplot object to be to return the actual desired</span>
+<span class="sd">            size (see gg_to_svg notes), OR it contains the fraction defined by</span>
+<span class="sd">            the requested width (or height) w.r.t. the returned width</span>
+<span class="sd">            (or height) from saving the plotnine object. The later option</span>
+<span class="sd">            occurs when when the ggplot&#39;s sizing didn&#39;t converge to the</span>
+<span class="sd">            desired size.</span>
+<span class="sd">        logics : nested list</span>
+<span class="sd">            For each element in the patch (with nesting structure in the list),</span>
+<span class="sd">            this contains a boolean value if the ggplot object was able to</span>
+<span class="sd">            be correctly size.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Internally this function uses rcParams&#39;s ``eps``, ``mini_size_px`` and</span>
+<span class="sd">        ``maxIter`` to determine the parameters to be put in</span>
+<span class="sd">        .svg_utils._select_correcting_size_svg.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span>
+
+        <span class="n">areas</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="n">_element_locations</span><span class="p">(</span><span class="n">width_pt</span><span class="o">=</span><span class="n">width_pt</span><span class="p">,</span>
+                                          <span class="n">height_pt</span><span class="o">=</span><span class="n">height_pt</span><span class="p">,</span>
+                                          <span class="n">num_grobs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">))</span>
+
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">logics</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">p_idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">)):</span>
+            <span class="n">inner_area</span> <span class="o">=</span> <span class="n">areas</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+
+            <span class="n">inner_width_pt</span> <span class="o">=</span> <span class="n">inner_area</span><span class="o">.</span><span class="n">width</span>
+            <span class="n">inner_height_pt</span> <span class="o">=</span> <span class="n">inner_area</span><span class="o">.</span><span class="n">height</span>
+
+            <span class="c1"># TODO: how to deal with ggplot objects vs patch objects</span>
+            <span class="k">if</span> <span class="n">inherits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">],</span> <span class="n">patch</span><span class="p">):</span>
+                <span class="n">inner_sizes_list</span><span class="p">,</span> <span class="n">logic_list</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span><span class="o">.</span><span class="n">_svg_get_sizes</span><span class="p">(</span><span class="n">width_pt</span> <span class="o">=</span> <span class="n">inner_width_pt</span><span class="p">,</span>
+                                                 <span class="n">height_pt</span> <span class="o">=</span> <span class="n">inner_height_pt</span><span class="p">)</span>
+                <span class="n">sizes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inner_sizes_list</span><span class="p">)</span>
+                <span class="n">logics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logic_list</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">inherits_plotnine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]):</span>
+                <span class="n">inner_w</span><span class="p">,</span> <span class="n">inner_h</span><span class="p">,</span> <span class="n">inner_logic</span> <span class="o">=</span> \
+                    <span class="n">_select_correcting_size_svg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">[</span><span class="n">p_idx</span><span class="p">],</span>
+                                      <span class="n">width</span><span class="o">=</span><span class="n">to_inches</span><span class="p">(</span><span class="n">inner_width_pt</span><span class="p">,</span>
+                                                        <span class="n">units</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                                                        <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">),</span>
+                                      <span class="n">height</span><span class="o">=</span><span class="n">to_inches</span><span class="p">(</span><span class="n">inner_height_pt</span><span class="p">,</span>
+                                                        <span class="n">units</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                                                        <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">),</span>
+                                      <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span>
+                                      <span class="n">eps</span><span class="o">=</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">],</span>
+                                      <span class="n">min_size_px</span><span class="o">=</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;min_size_px&quot;</span><span class="p">],</span>
+                                      <span class="n">maxIter</span><span class="o">=</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;maxIter&quot;</span><span class="p">],</span>
+                                      <span class="n">throw_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">sizes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">inner_w</span><span class="p">,</span><span class="n">inner_h</span><span class="p">))</span>
+                <span class="n">logics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inner_logic</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;grob idx </span><span class="si">%i</span><span class="s2"> is not a patch object nor&quot;</span><span class="o">+</span>\
+                                 <span class="s2">&quot;a ggplot object&quot;</span> <span class="o">%</span> <span class="n">p_idx</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">logics</span></div>
+
+<div class="viewcode-block" id="patch._process_sizes"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch._process_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">_process_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">logics</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        (Internal) draw conclusions about the output of _svg_get_sizes.</span>
+
+<span class="sd">        This function assesses if any internal ggplot object failed to</span>
+<span class="sd">        produce an image of the requested size (w.r.t. to given interation</span>
+<span class="sd">        parameters)</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        sizes : nested list</span>
+<span class="sd">            sizes output of _svg_get_sizes. This is a nested list with</span>
+<span class="sd">            (width,height) or (requested_width/actual_width,</span>
+<span class="sd">            requested_height/actual_width), with the different being if the</span>
+<span class="sd">            ggplot object was able to be presented in the requested size</span>
+<span class="sd">        logics : nested list</span>
+<span class="sd">            logics output of _svg_get_sizes. This is a nested list of boolean</span>
+<span class="sd">            values w.r.t. the previous different.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sizes : nested list</span>
+<span class="sd">            Returned if no logics values are False. This object is the sizes</span>
+<span class="sd">            nested list that was input.</span>
+<span class="sd">        max_scaling : float</span>
+<span class="sd">            Returned if at least one of the logics values are False. This is</span>
+<span class="sd">            the scaling of the original width_pt and height_pt that defined</span>
+<span class="sd">            the sizes and logics that could make the requested sizes for all</span>
+<span class="sd">            ggplots that failed to be correctly sized be at least as large</span>
+<span class="sd">            as the returned size from a basic ggplot saving.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flatten_logics</span> <span class="o">=</span> <span class="n">_flatten_nested_list</span><span class="p">(</span><span class="n">logics</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">flatten_logics</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">sizes</span>
+
+        <span class="c1"># else suggest a rescale:</span>
+        <span class="n">flatten_sizes</span> <span class="o">=</span> <span class="n">_flatten_nested_list</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span>
+        <span class="n">bad_sizing_info</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flatten_sizes</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">flatten_logics</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+        <span class="n">width_scaling</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">sizing</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">sizing</span> <span class="ow">in</span> <span class="n">bad_sizing_info</span><span class="p">])</span>
+        <span class="n">height_scaling</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">sizing</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">sizing</span> <span class="ow">in</span> <span class="n">bad_sizing_info</span><span class="p">])</span>
+
+        <span class="n">max_scaling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">width_scaling</span><span class="p">,</span> <span class="n">height_scaling</span><span class="p">])</span>
+        <span class="c1"># ^ keeping aspect ratio with a single scaling</span>
+
+        <span class="k">return</span> <span class="n">max_scaling</span></div>
+
+<div class="viewcode-block" id="patch.save"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save patch to file</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            local string to save the file to (this can also be at a `io.BytesIO`)</span>
+<span class="sd">        width : float</span>
+<span class="sd">            width of output image in inches (this should actually be associated</span>
+<span class="sd">            with the svg...)</span>
+<span class="sd">        height : float</span>
+<span class="sd">            height of svg in inches (this should actually be associated</span>
+<span class="sd">            with the svg...)</span>
+<span class="sd">        dpi : int or float</span>
+<span class="sd">            dots per square inch, default is 96 (standard)</span>
+<span class="sd">        _format : str</span>
+<span class="sd">            string of format (error tells options). If provided this is the</span>
+<span class="sd">            format used, if None, then we&#39;ll try to use the `filename`</span>
+<span class="sd">            extension.</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            If ``True``, print the saving information. The package default</span>
+<span class="sd">            is defined by cowpatch&#39;s own rcParams (the base default is</span>
+<span class="sd">            ``True``), which is used if verbose is ``None``. See Notes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            saves to a file</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        If width and/or height is None, the approach will attempt to define</span>
+<span class="sd">        acceptable width and height.</span>
+
+<span class="sd">        The ``verbose`` parameter can be changed either directly with defining</span>
+<span class="sd">        ``verbose`` input parameter or changing</span>
+<span class="sd">        ``cow.rcParams[&quot;save_verbose&quot;]``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># updating width and height if necessary (some combine is none)</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_size</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+
+        <span class="c1"># global default for verbose (if not provided by the user)</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;save_verbose&quot;</span><span class="p">]</span>
+
+        <span class="n">svg_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">actual_width_pt</span><span class="p">,</span> <span class="n">actual_height_pt</span><span class="p">)</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_svg</span><span class="p">(</span><span class="n">width_pt</span> <span class="o">=</span> <span class="n">from_inches</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">),</span>
+                            <span class="n">height_pt</span> <span class="o">=</span> <span class="n">from_inches</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">))</span>
+
+        <span class="n">_save_svg_wrapper</span><span class="p">(</span><span class="n">svg_obj</span><span class="p">,</span>
+                           <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                           <span class="n">width</span><span class="o">=</span><span class="n">to_inches</span><span class="p">(</span><span class="n">actual_width_pt</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">),</span>
+                           <span class="n">height</span><span class="o">=</span><span class="n">to_inches</span><span class="p">(</span><span class="n">actual_height_pt</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">),</span>
+                           <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
+                           <span class="n">_format</span><span class="o">=</span><span class="n">_format</span><span class="p">,</span>
+                           <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch.show"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        display object in terminal or jupyter notebook</span>
+
+<span class="sd">        Argument</span>
+<span class="sd">        --------</span>
+<span class="sd">        width : float</span>
+<span class="sd">            width of output image in inches (this should actually be associated</span>
+<span class="sd">            with the svg...)</span>
+<span class="sd">        height : float</span>
+<span class="sd">            height of svg in inches (this should actually be associated</span>
+<span class="sd">            with the svg...)</span>
+<span class="sd">        dpi : int or float</span>
+<span class="sd">            dots per square inch, default is 96 (standard)</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            If ``True``, print the saving information. The package default</span>
+<span class="sd">            is defined by cowpatch&#39;s own rcParams (the base default is</span>
+<span class="sd">            ``True``), which is used if verbose is ``None``. See Notes.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        If width and/or height is None, the approach will attempt to define</span>
+<span class="sd">        acceptable width and height.</span>
+
+<span class="sd">        The ``verbose`` parameter can be changed either directly with defining</span>
+<span class="sd">        ``verbose`` input parameter or changing</span>
+<span class="sd">        ``cow.rcParams[&quot;show_verbose&quot;]``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># updating width and height if necessary (some combine is none)</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_size</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+
+        <span class="c1"># global default for verbose (if not provided by the user)</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;show_verbose&quot;</span><span class="p">]</span>
+
+        <span class="n">svg_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">actual_width_pt</span><span class="p">,</span> <span class="n">actual_height_pt</span><span class="p">)</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_svg</span><span class="p">(</span><span class="n">width_pt</span> <span class="o">=</span> <span class="n">from_inches</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">),</span>
+                       <span class="n">height_pt</span> <span class="o">=</span> <span class="n">from_inches</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">))</span>
+
+        <span class="n">_show_image</span><span class="p">(</span><span class="n">svg_obj</span><span class="p">,</span>
+                    <span class="n">width</span><span class="o">=</span><span class="n">to_inches</span><span class="p">(</span><span class="n">actual_width_pt</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">),</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">to_inches</span><span class="p">(</span><span class="n">actual_height_pt</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">),</span>
+                    <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="patch.__repr__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;patch (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Benjamin LeRoy, Mallory Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

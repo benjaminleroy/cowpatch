@@ -93,7 +93,7 @@ Attributes
    :rtype: tuple
 
 
-.. py:function:: _select_correcting_size_svg(gg, height, width, dpi, limitsize=True, eps=0.01, maxIter=4, min_size_px=10)
+.. py:function:: _select_correcting_size_svg(gg, height, width, dpi, limitsize=True, eps=0.01, maxIter=20, min_size_px=10, throw_error=True)
 
    Obtain the correct input saving size plotnine.ggplot object to actual
    obtain desired height and width (inches)
@@ -132,14 +132,21 @@ Attributes
    :param min_size_px: early stopping rule if converging height or width has a pixel size
                        smaller than or equal to this value (assumes process will not converge)
    :type min_size_px: int
+   :param throw_error: logic if an error should be thrown if the convergence fails. If False,
+                       then this will return ratios of width_requested/width_obtained,
+                       height_requested/height_obtained, and a boolean = False.
+   :type throw_error: boolean
 
-   :returns: three value tuple of width, height to provide desired measures and a
-             boolean value (true if iteration was successful, false otherwise -
-             just returns original width and height)
+   :returns: if the process converges successful, it will return a three value
+             tuple of a width and height to provide desired measures and a
+             boolean value (True). if process fails to converge, either this
+             functions raises an error (if throw_error is True), or a three value
+             tuple of a scaled width_requested/width_obtained,
+             height_requested/height_obtained, and a boolean value (False).
    :rtype: tuple
 
 
-.. py:function:: gg_to_svg(gg, width, height, dpi, limitsize=True, eps=0.01, maxIter=4, min_size_px=10)
+.. py:function:: gg_to_svg(gg, width, height, dpi, limitsize=True, eps=0.01, maxIter=20, min_size_px=10)
 
    Convert plotnine ggplot figure to svg and return it (with close to perfect
    sizing).
@@ -188,7 +195,7 @@ Attributes
 
    
 
-.. py:function:: _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None)
+.. py:function:: _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None, verbose=True)
 
    save svg object to a range of different file names
 
@@ -207,12 +214,14 @@ Attributes
    :param format: string of format (error tells options). If provided this is the format
                   used, if None, then we'll try to use the filename extension.
    :type format: str
+   :param verbose: If `True`, print the saving information.
+   :type verbose: bool
 
-   :returns: * *None* -- saves to a file
-             * **TODO** (*default width and height somewhere? also width and height are in inches (also it's directly associated with the svg object...)*)
+   :returns: saves to a file
+   :rtype: None
 
 
-.. py:function:: _show_image(svg, width, height, dpi=300)
+.. py:function:: _show_image(svg, width, height, dpi=300, verbose=True)
 
    display svg object as a png
 
