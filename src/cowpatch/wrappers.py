@@ -1,5 +1,5 @@
 import numpy as np
-from .base import patch
+from .base_elements import patch
 from .svg_utils import gg_to_svg
 from .utils import inherits_plotnine
 
