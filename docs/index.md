@@ -9,7 +9,7 @@
 
 self
 getting_started.ipynb
-examples/examples_index.rst
+guides/guides_index.rst
 autoapi/index
 ```
 
