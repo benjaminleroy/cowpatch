@@ -573,7 +573,7 @@ class patch:
 
     def show(self, width=None, height=None, dpi=96, verbose=None):
         """
-        display object in terminal or jupyter notebook
+        display object from the command line or in a jupyter notebook
 
         Argument
         --------
@@ -598,6 +598,11 @@ class patch:
         The ``verbose`` parameter can be changed either directly with defining
         ``verbose`` input parameter or changing
         ``cow.rcParams["show_verbose"]``.
+
+        If run from the command line, this approach leverage matplotlib's
+        plot render to show a static png version of the image. If run inside
+        a jupyter notebook, this approache presents the actual svg
+        representation.
         """
         # updating width and height if necessary (some combine is none)
         width, height = self._default_size(width=width,height=height)
