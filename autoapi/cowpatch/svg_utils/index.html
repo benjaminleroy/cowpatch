@@ -48,8 +48,8 @@
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/guides_index.html">Guides</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
@@ -140,7 +140,7 @@
 <td><p>save svg object to a range of different file names</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.svg_utils._show_image" title="cowpatch.svg_utils._show_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_show_image</span></code></a>(svg, width, height, dpi=300, verbose=True)</p></td>
-<td><p>display svg object as a png</p></td>
+<td><p>display svg object for user (either run from command line or jupyter</p></td>
 </tr>
 </tbody>
 </table>
@@ -354,7 +354,8 @@ used, if None, then we’ll try to use the filename extension.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="cowpatch.svg_utils._show_image">
 <span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_show_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">svg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#_show_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils._show_image" title="Permalink to this definition"></a></dt>
-<dd><p>display svg object as a png</p>
+<dd><p>display svg object for user (either run from command line or jupyter
+notebook)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -366,12 +367,21 @@ with the svg…)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>shows svg object as a png (with provided width + height + dpi)</p>
+<dd class="field-even"><p>shows svg object (with provided width + height + dpi)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If run from the command line, the image will be presented using matplotlib’s
+plotting tool with a png representation of the object. If run within a
+jupyter notebook, the object will leverage ipython’s internal svg presenter
+to present the object as real svg object. Both approaches do not allow for
+resizing of the image and seeing the image correct itself to the new size,
+which is a bummer for command line usage.</p>
+</div>
 </dd></dl>
 
 </section>

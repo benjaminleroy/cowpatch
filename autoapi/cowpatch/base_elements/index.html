@@ -48,8 +48,8 @@
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/guides_index.html">Guides</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
@@ -408,7 +408,7 @@ acceptable width and height.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.base_elements.patch.show">
 <span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/base_elements.html#patch.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.base_elements.patch.show" title="Permalink to this definition"></a></dt>
-<dd><p>display object in terminal or jupyter notebook</p>
+<dd><p>display object from the command line or in a jupyter notebook</p>
 <dl class="simple">
 <dt>width<span class="classifier">float</span></dt><dd><p>width of output image in inches (this should actually be associated
 with the svg…)</p>
@@ -429,6 +429,10 @@ acceptable width and height.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">verbose</span></code> parameter can be changed either directly with defining
 <code class="docutils literal notranslate"><span class="pre">verbose</span></code> input parameter or changing
 <code class="docutils literal notranslate"><span class="pre">cow.rcParams[&quot;show_verbose&quot;]</span></code>.</p>
+<p>If run from the command line, this approach leverage matplotlib’s
+plot render to show a static png version of the image. If run inside
+a jupyter notebook, this approache presents the actual svg
+representation.</p>
 </dd></dl>
 
 <dl class="py method">

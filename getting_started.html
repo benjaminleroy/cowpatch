@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting Started &mdash; cowpatch  documentation</title>
+  <title>Getting started &mdash; cowpatch  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Examples" href="examples/examples_index.html" />
+    <link rel="next" title="Guides" href="guides/guides_index.html" />
     <link rel="prev" title="cowpatch" href="index.html" /> 
 </head>
 
@@ -48,11 +48,13 @@
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">cowpatch</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#grammar-combination">grammar combination</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-plots-to-combine">Creating plots to combine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arranging-plots">Arranging plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#displaying-the-image">Displaying the image</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guides/guides_index.html">Guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
@@ -80,7 +82,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Getting Started</li>
+      <li>Getting started</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/getting_started.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -91,9 +93,13 @@
            <div itemprop="articleBody">
              
   <section class="tex2jax_ignore mathjax_ignore" id="getting-started">
-<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
-<p>TODO: update this into a getting started document</p>
-<p>To use <code class="docutils literal notranslate"><span class="pre">cowpatch</span></code> in a project:</p>
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
+<p><em>Please see the <strong>Guides</strong> tab to find more thorough examples.</em></p>
+<hr class="docutils" />
+<p>After installing <code class="docutils literal notranslate"><span class="pre">cowpatch</span></code>, you can combine your plot objects together in different arrangements with different combinations of <code class="docutils literal notranslate"><span class="pre">cow.patch</span></code> and <code class="docutils literal notranslate"><span class="pre">cow.layout</span></code>.</p>
+<section id="creating-plots-to-combine">
+<h2>Creating plots to combine<a class="headerlink" href="#creating-plots-to-combine" title="Permalink to this headline"></a></h2>
+<p>Before we start arranging, we load common <code class="docutils literal notranslate"><span class="pre">python</span></code> packages we use to create some basic plots.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cowpatch</span> <span class="k">as</span> <span class="nn">cow</span>
@@ -128,6 +134,10 @@
 </div>
 </div>
 </div>
+</section>
+<section id="arranging-plots">
+<h2>Arranging plots<a class="headerlink" href="#arranging-plots" title="Permalink to this headline"></a></h2>
+<p>To arrange these plots into a single patchwork, we first group the plots together with <code class="docutils literal notranslate"><span class="pre">cow.patch</span></code> and define a <code class="docutils literal notranslate"><span class="pre">cow.layout</span></code> that will define the layout of the plots.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_patch</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">)</span>
@@ -138,6 +148,10 @@
 </div>
 </div>
 </div>
+</section>
+<section id="displaying-the-image">
+<h2>Displaying the image<a class="headerlink" href="#displaying-the-image" title="Permalink to this headline"></a></h2>
+<p>Finally, we can display the arrangement using the <code class="docutils literal notranslate"><span class="pre">.show</span></code> method<a class="footnote-reference brackets" href="#id2" id="id1">1</a>. To save the arrangement on can use the <code class="docutils literal notranslate"><span class="pre">.save</span></code> method.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_patch</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">width</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
@@ -145,44 +159,17 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:425: CowpatchWarning: Showing 11 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 11 x 7 inch image.
 </pre></div>
 </div>
-<img alt="_images/getting_started_5_1.svg" src="_images/getting_started_5_1.svg" /></div>
+<img alt="_images/getting_started_7_1.svg" src="_images/getting_started_7_1.svg" /></div>
 </div>
-<section id="grammar-combination">
-<h2>grammar combination<a class="headerlink" href="#grammar-combination" title="Permalink to this headline"></a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g0p</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">)</span>
-<span class="n">g1p</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g1</span><span class="p">)</span>
-<span class="n">g2p</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g01</span> <span class="o">=</span> <span class="n">g0p</span> <span class="o">+</span> <span class="n">g1p</span>
-<span class="n">g02</span> <span class="o">=</span> <span class="n">g0p</span> <span class="o">+</span> <span class="n">g2p</span>
-<span class="n">g012</span> <span class="o">=</span> <span class="n">g0p</span> <span class="o">+</span> <span class="n">g1p</span> <span class="o">+</span> <span class="n">g2p</span>
-<span class="n">g012_2</span> <span class="o">=</span> <span class="n">g01</span> <span class="o">+</span> <span class="n">g2p</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g01</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">width</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:425: CowpatchWarning: Showing 11 x 7 inch image.
-</pre></div>
-</div>
-<img alt="_images/getting_started_9_1.svg" src="_images/getting_started_9_1.svg" /></div>
-</div>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">.show</span></code> method works slightly different inside <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebooks</span></code> versus from the command line. Inside <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span></code> the image is displayed as an <code class="docutils literal notranslate"><span class="pre">svg</span></code> object. From the command line we present a <code class="docutils literal notranslate"><span class="pre">png</span></code> representation of the object using <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code>’s standard graphic presenter. <strong>Note</strong> the command line approach doesn’t update the image when the sizing of the display is changed(.</p>
+</dd>
+</dl>
 </section>
 </section>
 
@@ -191,7 +178,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="cowpatch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="examples/examples_index.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="guides/guides_index.html" class="btn btn-neutral float-right" title="Guides" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

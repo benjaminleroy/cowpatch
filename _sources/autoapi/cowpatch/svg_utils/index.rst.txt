@@ -223,7 +223,8 @@ Attributes
 
 .. py:function:: _show_image(svg, width, height, dpi=300, verbose=True)
 
-   display svg object as a png
+   display svg object for user (either run from command line or jupyter
+   notebook)
 
    :param svg: svg object to save
    :type svg: svgutils.transform.SVGFigure
@@ -234,7 +235,16 @@ Attributes
                   with the svg...)
    :type height: float
 
-   :returns: shows svg object as a png (with provided width + height + dpi)
+   :returns: shows svg object (with provided width + height + dpi)
    :rtype: None
+
+   .. note::
+
+      If run from the command line, the image will be presented using matplotlib's
+      plotting tool with a png representation of the object. If run within a
+      jupyter notebook, the object will leverage ipython's internal svg presenter
+      to present the object as real svg object. Both approaches do not allow for
+      resizing of the image and seeing the image correct itself to the new size,
+      which is a bummer for command line usage.
 
 

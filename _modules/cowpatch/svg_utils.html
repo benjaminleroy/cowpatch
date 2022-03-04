@@ -45,8 +45,8 @@
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">cowpatch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/guides_index.html">Guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
@@ -99,6 +99,9 @@
 
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">_transform_size_to_pt</span><span class="p">,</span> <span class="n">_proposed_scaling_both</span><span class="p">,</span> \
                     <span class="n">to_inches</span><span class="p">,</span> <span class="n">from_inches</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
 
 <div class="viewcode-block" id="_raw_gg_to_svg"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils._raw_gg_to_svg">[docs]</a><span class="k">def</span> <span class="nf">_raw_gg_to_svg</span><span class="p">(</span><span class="n">gg</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">limitsize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -489,7 +492,8 @@
 
 <div class="viewcode-block" id="_show_image"><a class="viewcode-back" href="../../autoapi/cowpatch/svg_utils/index.html#cowpatch.svg_utils._show_image">[docs]</a><span class="k">def</span> <span class="nf">_show_image</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    display svg object as a png</span>
+<span class="sd">    display svg object for user (either run from command line or jupyter</span>
+<span class="sd">    notebook)</span>
 
 <span class="sd">    Arguments</span>
 <span class="sd">    ---------</span>
@@ -505,7 +509,16 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    None</span>
-<span class="sd">        shows svg object as a png (with provided width + height + dpi)</span>
+<span class="sd">        shows svg object (with provided width + height + dpi)</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    If run from the command line, the image will be presented using matplotlib&#39;s</span>
+<span class="sd">    plotting tool with a png representation of the object. If run within a</span>
+<span class="sd">    jupyter notebook, the object will leverage ipython&#39;s internal svg presenter</span>
+<span class="sd">    to present the object as real svg object. Both approaches do not allow for</span>
+<span class="sd">    resizing of the image and seeing the image correct itself to the new size,</span>
+<span class="sd">    which is a bummer for command line usage.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -517,15 +530,19 @@
     <span class="k">if</span> <span class="n">ipython_info</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ipython_info</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IPKernelApp&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># base python or ipython in the terminal will just show png ----------</span>
         <span class="n">fid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-        <span class="n">_save_svg_wrapper</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">fid</span><span class="p">,</span>
-                          <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
-                          <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
-                          <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
-                          <span class="n">_format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span>
+        <span class="n">_save_svg_wrapper</span><span class="p">(</span><span class="n">svg</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">fid</span><span class="p">,</span>
+                          <span class="n">width</span> <span class="o">=</span> <span class="n">width</span><span class="p">,</span>
+                          <span class="n">height</span> <span class="o">=</span> <span class="n">height</span><span class="p">,</span>
+                          <span class="n">dpi</span> <span class="o">=</span> <span class="n">dpi</span><span class="p">,</span>
+                          <span class="n">_format</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span>
                           <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">img_png</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">fid</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()))</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">fid</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()))</span>
 
-        <span class="n">img_png</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># jupyter notebook ------</span>
         <span class="n">base_image_string</span> <span class="o">=</span> <span class="n">svg</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>

@@ -45,8 +45,8 @@
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">cowpatch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/guides_index.html">Guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
@@ -660,7 +660,7 @@
 
 <div class="viewcode-block" id="patch.show"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        display object in terminal or jupyter notebook</span>
+<span class="sd">        display object from the command line or in a jupyter notebook</span>
 
 <span class="sd">        Argument</span>
 <span class="sd">        --------</span>
@@ -685,6 +685,11 @@
 <span class="sd">        The ``verbose`` parameter can be changed either directly with defining</span>
 <span class="sd">        ``verbose`` input parameter or changing</span>
 <span class="sd">        ``cow.rcParams[&quot;show_verbose&quot;]``.</span>
+
+<span class="sd">        If run from the command line, this approach leverage matplotlib&#39;s</span>
+<span class="sd">        plot render to show a static png version of the image. If run inside</span>
+<span class="sd">        a jupyter notebook, this approache presents the actual svg</span>
+<span class="sd">        representation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># updating width and height if necessary (some combine is none)</span>
         <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_size</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
