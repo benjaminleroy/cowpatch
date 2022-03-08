@@ -11,6 +11,11 @@ import io
 import plotnine as p9
 import plotnine.data as p9_data
 
+import re
+import matplotlib.pyplot as plt
+
+import pdb
+
 # inner functions -----
 
 def test_patch__init__():
@@ -592,8 +597,6 @@ def test_patch__process_sizes(w1,h1,w2,h2,w3,h3):
         "expected max_scaling should be the max of 1/width_scale and "+\
         "1/height_scale assoicated with failed plot(s) (v2.2 - 2 plot failed)"
 
-
-
 # global savings and showing and creating ------
 
 def _layouts_and_patches_patch_plus_layout(idx):
@@ -728,7 +731,6 @@ def test_patch_nesting(image_regression):
 
         image_regression.check(fid2.getvalue(), diff_threshold=.1)
 
-
 def test_patch__svg():
     """
     static due to time it takes to run this test :(
@@ -773,6 +775,63 @@ def test_patch__svg():
                                 "innerplots failed with provided parameters", \
         "expected failure to create correct size image to be a certain "+\
         "class of error"
+
+# printing ----------
+
+def test_patch__repr__(monkeypatch,capsys):
+    monkeypatch.setattr(plt, "show", lambda:None)
+
+    g0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.labs(title = 'Plot 0')
+
+    g1 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+        p9.labs(title = 'Plot 1')
+
+    g2 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+        p9.labs(title = 'Plot 2')
+
+    vis_left = cow.patch(g1,g2) + cow.layout(ncol = 1, rel_heights = [1,1])
+    vis_patch = cow.patch(g0, vis_left) + cow.layout(nrow = 1)
+
+
+    print(vis_patch)
+    captured = capsys.readouterr()
+
+    re_cap = re.search("<patch \(-{0,1}[0-9]+\)>\\n", captured.out)
+    assert re_cap is not None and \
+        re_cap.start() == 0 and re_cap.end() == len(captured.out),\
+        "expected __str__ expression for patch to be of <patch (num)> format"
+
+def test_patch__str__(capsys):
+
+    g0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.labs(title = 'Plot 0')
+
+    g1 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+        p9.labs(title = 'Plot 1')
+
+    g2 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+        p9.labs(title = 'Plot 2')
+
+    vis_left = cow.patch(g1,g2) + cow.layout(ncol = 1, rel_heights = [1,1])
+    vis_patch = cow.patch(g0, vis_left) + cow.layout(nrow = 1)
+
+    print(repr(vis_patch))
+    captured = capsys.readouterr()
+    re_cap = re.search("^<patch \(-{0,1}[0-9]+\)>\\nnum_grobs: 2"+\
+          "\\n---\\nlayout:\\n<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+
+    assert re_cap is not None and \
+        re_cap.start() == 0,\
+        "expected __repr__ expression for patch more descriptive w.r.t."+\
+        " # grobs and layout"
+
 
 # grammar -----------
 
