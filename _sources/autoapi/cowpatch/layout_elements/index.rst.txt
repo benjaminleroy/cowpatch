@@ -210,14 +210,14 @@ Classes
       :rtype: hash integer
 
 
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
-
-
    .. py:method:: __str__(self)
 
       Return str(self).
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
 
 
    .. py:method:: __eq__(self, value)
@@ -344,14 +344,14 @@ Classes
       standard `__hash__`
 
 
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
-
-
    .. py:method:: __str__(self)
 
       Return str(self).
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
 
 
    .. py:method:: __eq__(self, value)

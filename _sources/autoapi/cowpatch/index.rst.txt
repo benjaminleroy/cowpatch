@@ -245,14 +245,14 @@ Attributes
       :rtype: hash integer
 
 
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
-
-
    .. py:method:: __str__(self)
 
       Return str(self).
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
 
 
    .. py:method:: __eq__(self, value)
@@ -379,14 +379,14 @@ Attributes
       standard `__hash__`
 
 
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
-
-
    .. py:method:: __str__(self)
 
       Return str(self).
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
 
 
    .. py:method:: __eq__(self, value)
@@ -653,6 +653,11 @@ Attributes
       plot render to show a static png version of the image. If run inside
       a jupyter notebook, this approache presents the actual svg
       representation.
+
+
+   .. py:method:: __str__(self)
+
+      Return str(self).
 
 
    .. py:method:: __repr__(self)

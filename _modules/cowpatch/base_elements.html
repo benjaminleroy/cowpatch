@@ -708,9 +708,15 @@
                     <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
                     <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="patch.__repr__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="patch.__str__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">return</span> <span class="s2">&quot;&lt;patch (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="s2">&quot;&lt;patch (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="patch.__repr__"><a class="viewcode-back" href="../../autoapi/cowpatch/index.html#cowpatch.base_elements.patch.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;num_grobs: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grobs</span><span class="p">))</span> <span class="o">+</span>\
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">---</span><span class="se">\n</span><span class="s2">layout:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="s2">&quot;&lt;patch (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out</span></div></div>
 </pre></div>
 
            </div>
