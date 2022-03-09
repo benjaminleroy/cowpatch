@@ -621,6 +621,12 @@ class patch:
                     dpi=dpi,
                     verbose=verbose)
 
-    def __repr__(self):
+    def __str__(self):
         self.show()
         return "<patch (%d)>" % self.__hash__()
+
+    def __repr__(self):
+        out = "num_grobs: " + str(len(self.grobs)) +\
+            "\n---\nlayout:\n" + self.layout.__repr__()
+
+        return "<patch (%d)>" % self.__hash__() + "\n" + out

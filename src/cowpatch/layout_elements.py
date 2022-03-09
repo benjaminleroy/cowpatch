@@ -495,10 +495,10 @@ class layout:
             [self.ncol, self.nrow, self.num_grobs]
         return abs(hash(tuple(info_list)))
 
-    def __repr__(self):
+    def __str__(self):
         return "<layout (%d)>" % self.__hash__()
 
-    def __str__(self):
+    def __repr__(self):
         nrow_str = str(self.nrow)
         if self.nrow is None:
             nrow_str = "unk"
@@ -525,7 +525,7 @@ class layout:
             rw_str +\
             "\nheights:\n" +\
             rh_str
-        return self.__repr__() + "\n" + out
+        return self.__str__() + "\n" + out
 
     def __eq__(self, value):
         """
@@ -772,10 +772,10 @@ class area:
                      self.width, self.height,
                      self._type))
 
-    def __repr__(self):
+    def __str__(self):
         return "<area (%d)>" % self._hash()
 
-    def __str__(self):
+    def __repr__(self):
         out = "_type: " + self._type +\
             "\n\nx_left: " +\
             self.x_left.__str__() +\
@@ -785,7 +785,7 @@ class area:
             self.width.__str__() +\
             "\nheight: " +\
             self.height.__str__()
-        return self.__repr__() + "\n" + out
+        return self.__str__() + "\n" + out
 
     def __eq__(self, value):
         return type(self) == type(value) and \
