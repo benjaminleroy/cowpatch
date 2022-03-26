@@ -10,61 +10,99 @@ from .utils import to_inches, from_inches, inherits_plotnine, inherits, \
 from .layout_elements import layout
 from .config import rcParams
 
-
-
 import pdb
-# TODO notes:
-# 2/7 (Ben): patch object needs annotation functionality, * and & operators
-#       to work with themes. And a lot of testing. I also think we need to
-#       think about how to deal inputs that are UNwrapped plotnine ggplot objects.
-
 
 class patch:
     def __init__(self, *args, grobs=None):
         """
-        general object to describe a plots or arangement of plots
+        fundamental object of `cowpatch`, encapsulates plot objects and
+        can be told how to present them
 
         Arguments
         ---------
-        \*args : ggplots and patches
+        \*args : plot objects and patches
+            all non-named parameters are expected to be plot objects or
+            lower-level ``cow.patch`` objects.
         grobs : list
-            list of ggplot objects and patches. Either `\*args` is empty or
-            `grobs` is `None`.
+            list of plot objects and patches. Either ``\*args`` is empty or
+            ``grobs`` is ``None``.
+
 
         Notes
         -----
-        All patch objects can be combined with other patch objects, either inside
-        other `patch` calls or using mathematical grammar (described below).
 
-        Additionally, patch objects's layouts can be described by adding a `layout`
-        object, can have figure labels and titles added using an addition of a
-        `annotation` object, and can have plots inset into it's grid with a
-        `inset` object addition.
+        *Guiding arangement:*
 
-        **Mathematical Grammar**
+        In combination with ``cow.layout`` one can define arrangement of plots
+        and lower-level arangements.
 
-        Mirroring ideas in `R`'s `patchwork` package, the following methods can
-        be used to combine patch objects
+        For example,
 
-        - `__add__` (`+`) of `patches` will (in the default) arange a sequence of
-            `patches` in a matrix grid (byrow)
-        - `__or__` (`|`) of `patches` will (in the default) arange a sequence of
-            `patches` in a single row
-        - `__div__` (`/`) of `patches` will (in the default) arange a sequence of
-            `patches` in a single column
+        >>> vis_obj = cow.patch(g1,g2,g3)
+        >>> vis_obj += cow.layout(design = np.array([[0,1],
+        ...                                          [2,2]]))
+        >>> vis_obj.show()
 
-        These can also be combined to make complex layout structures. In addition,
-        these structures can define depths structures. The top layout can be
-        updated with an addition of a `layout`.
+        See the `Layout guide`_ for more detailed examples of functionality.
 
-        Beyond combinations with other patches, the use of
+        .. _Layout guide: https://benjaminleroy.github.io/cowpatch/guides/Layout.html
 
-        - `__mul__` (`*`) with a `plotnine` `theme` object will apply that theme to
-            every `plotnine` object on the top `layer` (and `text` object - see
-            document)
-        - `__and__` (`&`) with a plotnine theme object will apply that theme to
-            every `plotnine` object at any depth (and `text` object - see document)
+        *Nesting:*
+
+        One can nest `cow.patch` objects within other `cow.patch` objects. For
+        example,
+
+        >>> vis_obj2 = cow.patch(g4, vis_obj)
+        >>> vis_obj2 += cow.layout(nrow = 1)
+        >>> vis_obj2.show()
+
+        Examples
+        --------
+
+        >>> # Necessary libraries for example
+        >>> import numpy as np
+        >>> import cowpatch as cow
+        >>> import plotnine as p9
+        >>> import plotnine.data as p9_data
+
+        >>> g0 = p9.ggplot(p9_data.mpg) +\\
+        ...     p9.geom_bar(p9.aes(x="hwy")) +\\
+        ...     p9.labs(title = 'Plot 0')
+        >>> g1 = p9.ggplot(p9_data.mpg) +\\
+        ...     p9.geom_point(p9.aes(x="hwy", y = "displ")) +\\
+        ...     p9.labs(title = 'Plot 1')
+        >>> g2 = p9.ggplot(p9_data.mpg) +\\
+        ...     p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\\
+        ...     p9.labs(title = 'Plot 2')
+        >>> g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+        ...                                                      "suv",
+        ...                                                      "pickup"])]) +\\
+        ...     p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\\
+        ...     p9.facet_wrap("class")
+
+        >>> # Basic example:
+        >>> vis_obj = cow.patch(g0,g1,g2)
+        >>> vis_obj += cow.layout(design = np.array([[0,1],
+        ...                                          [2,2]]))
+        >>> vis_obj.show()
+
+        >>> # Nesting example:
+        >>> vis_obj2 = cow.patch(g3, vis_obj)
+        >>> vis_obj2 += cow.layout(nrow = 1)
+        >>> vis_obj2.show()
+
+        See Also
+        --------
+        layout : class objects that can aid in defining the layout of plots in
+            ``cow.patch`` objects
         """
+        future_docstring = """
+
+        *Algebraic Combinations:*
+
+        *Titles and Labels:*
+        """
+
         # put *args into a list
         args_grobs = [x for x in args]
         if len(args_grobs) > 0:
@@ -81,12 +119,9 @@ class patch:
     @property
     def layout(self):
         """
-        provide `__layout` default else return `__layout`
-
-        Notes
-        -----
-        This allows for the different structure of `__add__` to not be built
-        until use of the `layout` is actually needed.
+        defines ``layout`` that either returns the last added ``cow.layout``
+        object or the default ``layout`` if no layout has been explicitly
+        defined
         """
         if self.__layout == "patch":
             if len(self.grobs) < 4:
@@ -198,7 +233,11 @@ class patch:
 
         Returns
         -------
-        svg_object : svgutils.transforms object
+        svg_object : ``svgutils.transforms`` object
+
+        See also
+        --------
+        svgutils.transforms : pythonic svg object
         """
 
         self._check_layout()
@@ -206,6 +245,8 @@ class patch:
         if num_attempts is None:
             num_attempts = rcParams["num_attempts"]
 
+        # examine if sizing is possible and update or error if not
+        # --------------------------------------------------------
         if sizes is None: # top layer
             #pdb.set_trace()
             while num_attempts > 0:
@@ -293,13 +334,14 @@ class patch:
             maximum depth of structure if parents_areas=None, else this
             is a list of inner elements.
 
+
         Notes
         -----
         The default rcParams are:
-            base_height=3.71,
-            base_aspect_ratio=1.618 # the golden ratio
+            base_height = 3.71,
+            base_aspect_ratio = 1.618 # the golden ratio
 
-        This follows ideas proposed in cowplot: https://wilkelab.org/cowplot/reference/save_plot.html
+        This follows ideas proposed in cowplot: `wilkelab.org/cowplot/reference/save_plot.html <https://wilkelab.org/cowplot/reference/save_plot.html>`_.
         """
         # basically following: https://wilkelab.org/cowplot/reference/save_plot.html
         min_image_height = rcParams["base_height"]
@@ -490,10 +532,10 @@ class patch:
             nested list that was input.
         max_scaling : float
             Returned if at least one of the logics values are False. This is
-            the scaling of the original width_pt and height_pt that defined
-            the sizes and logics that could make the requested sizes for all
-            ggplots that failed to be correctly sized be at least as large
-            as the returned size from a basic ggplot saving.
+            the scaling of the original ``width_pt`` and ``height_pt`` that
+            defined the sizes and logics that could make the requested sizes
+            for all ggplots that failed to be correctly sized be at least as
+            large as the returned size from a basic ggplot saving.
         """
         flatten_logics = _flatten_nested_list(logics)
         if np.all(flatten_logics):
@@ -520,7 +562,8 @@ class patch:
         Arguments
         ---------
         filename : str
-            local string to save the file to (this can also be at a `io.BytesIO`)
+            local string to save the file to (this can also be at a
+            ``io.BytesIO``)
         width : float
             width of output image in inches (this should actually be associated
             with the svg...)
@@ -531,7 +574,7 @@ class patch:
             dots per square inch, default is 96 (standard)
         _format : str
             string of format (error tells options). If provided this is the
-            format used, if None, then we'll try to use the `filename`
+            format used, if None, then we'll try to use the ``filename``
             extension.
         verbose : bool
             If ``True``, print the saving information. The package default
@@ -551,6 +594,10 @@ class patch:
         The ``verbose`` parameter can be changed either directly with defining
         ``verbose`` input parameter or changing
         ``cow.rcParams["save_verbose"]``.
+
+        See also
+        --------
+        io.BytesIO : object that acts like a reading in of bytes
         """
         # updating width and height if necessary (some combine is none)
         width, height = self._default_size(width=width,height=height)
@@ -575,8 +622,8 @@ class patch:
         """
         display object from the command line or in a jupyter notebook
 
-        Argument
-        --------
+        Arguments
+        ---------
         width : float
             width of output image in inches (this should actually be associated
             with the svg...)

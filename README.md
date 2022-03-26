@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/benjaminleroy/cowpatch/branch/main/graph/badge.svg?token=QM5G5WV7AE)](https://codecov.io/gh/benjaminleroy/cowpatch)
 [![CodeFactor](https://www.codefactor.io/repository/github/benjaminleroy/cowpatch/badge)](https://www.codefactor.io/repository/github/benjaminleroy/cowpatch)
 
-A package for combining/aranging multiple python ggplot visuals from [`plotnine`](https://plotnine.readthedocs.io/en/stable/), with allowances to also combined figures from [`matplotlib`](https://matplotlib.org/) and [`seaborn`](https://seaborn.pydata.org/). Internally, we leverage SVG objects and descriptions to accomplish it's goals.
+A package for combining/aranging multiple python ggplot visuals from [`plotnine`](https://plotnine.readthedocs.io/en/stable/)<!--, with allowances to also combined figures from [`matplotlib`](https://matplotlib.org/) and [`seaborn`](https://seaborn.pydata.org/)-->. Internally, we leverage SVG objects and descriptions to accomplish it's goals.
 
 ## Installation
 
@@ -26,6 +26,22 @@ installed):
     ```bash
     $ poetry install
     ```
+
+<!-- for pip
+
+## Installation
+
+To install the current version of this package, please run
+
+```
+pip install cowpatch
+```
+
+If you would like to experiment with the development version of this package
+please following the guidelines in the contributing page.
+-->
+
+
 
 ## Usage
 
@@ -58,11 +74,9 @@ vis_patch += cow.layout(design = np.array([[0,1],
                         rel_heights = [1,2])
 vis_patch.show(width = 11, height = 7)
 ```
-<!-- TODO: make sure this updates when we correct the image size problem
-and when we auto-select the size
-
+<!--
 ```python
-vis_patch.save(width=11, height=7, filename="readme.svg")
+vis_patch.save(width=11, height=7, filename="images/readme.svg")
 ```
 -->
 ![cowpatch example](images/readme.svg)
@@ -70,15 +84,31 @@ vis_patch.save(width=11, height=7, filename="readme.svg")
 Please see additional documentation pages like "Getting-Started" and the
 individual pages on different plot arrangement strategies.
 
+## Future Goals
+
+This package is currently in development (please feel welcome to contribute, with code, examples, issues, publicity, etc.). We envision a sequence of versions coming out with different added features in each. The order of the features will look something like the following
+
+- [x] MVP #1: base implimentation (reflecting `cowplot` and `gridExtra` functionality, minus labeling and titles)
+- [ ] MVP #2: figure labeling and titles and `cow.text()` objects
+- [ ] MVP #3: "Arithmetic of arrangement" (reflecting `patchwork`)
+
+In addition, we envision the following features coming along in parallel:
+
+- [ ] inseting plots (like seen in `cowplot`)
+- [ ] wrapping of `matplotlib`, `plotnine` and `seaborn` plots to work within the `cowpatch` framework and within the `patchwork` framework
+- [ ] more complex drawing tools like the `R` package `grid` to allow for easy creation of complex features
+
+For the interested reader, a lot of these ideas have been sketched in our `notes/` folder as "proof of concepts".
+
 ## Package Logistics
 
 ### Background and history
 
 This package's name is a merging of the names of `R` packages' `cowplot` and `patchwork`. It attempts to provide similar plot arrangement and combination tools as `gridExtra`, `cowplot` and `patchwork` for the `plotnine`'s `ggplot` objects.
 
-This package is not directly related to any of a-fore-mentioned plots but naturally stands on the shoulders of the contributions each of the packages made.
+This package is not directly related to any of aforementioned packages (including the [Wilke Lab](https://wilkelab.org/), lead by Claus O. Wilke) but naturally stands on the shoulders of the contributions each of the packages made.
 
-The approach of this package to leverage a SVG backend may make the actually the actual package a bit more "hacky" then some may like, but we hope it can still be of use to the community and should naturally avoid certain drawbacks in individual package development.
+This package leverages a SVG backend to create the arangements. This may make the actual package a bit more "hacky" then some may like, but we hope it can still be of use to the community.
 
 
 ### Contributing
@@ -91,5 +121,5 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 
 ### Credits
 
-`cowpatch` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter), the documentation leverages [`sphinx`](https://www.sphinx-doc.org/en/master/), and underlying testing leverages [`pytest`](https://docs.pytest.org/en/7.0.x/), [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/) and [`pytest-regression`](https://pytest-regressions.readthedocs.io/en/latest/overview.html). See the full list of package dependencies on [Github](https://github.com/benjaminleroy/cowpatch/blob/main/pyproject.toml).
+This `python` package stands on the shoulders of many open-source tools, `cowpatch` structure was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter), the documentation leverages [`sphinx`](https://www.sphinx-doc.org/en/master/), and underlying testing leverages [`pytest`](https://docs.pytest.org/en/7.0.x/), [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/) and [`pytest-regression`](https://pytest-regressions.readthedocs.io/en/latest/overview.html). See the full list of package dependencies on [Github](https://github.com/benjaminleroy/cowpatch/blob/main/pyproject.toml).
 

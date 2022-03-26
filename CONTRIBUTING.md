@@ -26,7 +26,9 @@ add additional tests to capture what the bug was.
 ### Implement Features
 
 Look through the GitHub issues for features. Anything tagged with "enhancement"
-and "help wanted" is open to whoever wants to implement it.
+and "help wanted" is open to whoever wants to implement it. Additionally, if you
+see anything in the future goals that looks interesting to develop please feel
+free to reach out to Ben via email to connect.
 
 ### Write Documentation
 
@@ -97,7 +99,7 @@ Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request should include additional tests if appropriate.
 2. If the pull request adds functionality, the docs should be updated.
-3. The pull request should work for all currently supported operating systems and versions of Python.
+3. The pull request should work for all currently supported operating systems and versions of Python (a subset of these will be checked with Github actions).
 
 ## Code of Conduct
 

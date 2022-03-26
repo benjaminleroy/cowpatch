@@ -16,26 +16,28 @@ class layout:
              design=None
              ):
         """
-        layout class to store information about arangement of patches
+        layout class to store information about arangement of patches found
+        in `cow.patch`.
 
         Arguments
         ---------
         ncol : integer
             Integer for the number of columns to arrange the the patches in.
             The default is None (which avoids conflicts if a value for
-            `design` is provided). If `ncol` is None but `nrow` is not, then
-            `ncol` will default to the minimum number of columns to make sure
-            that all patches can be visualized.
+            `design` is provided). If ``ncol`` is None but ``nrow`` is not,
+            then ``ncol`` will default to the minimum number of columns to
+            make sure that all patches can be visualized.
         nrow : integer
             Integer for the number of rows to arrange the the patches in.
             The default is None (which avoids conflicts if a value for
-            `design` is provided). If `nrow` is None but `ncol` is not, then
-            `nrow` will default to the minimum number of rows to make sure
-            that all patches can be visualized.
+            ``design`` is provided). If ``nrow`` is None but ``ncol`` is not,
+            then ``nrow`` will default to the minimum number of rows to make
+            sure that all patches can be visualized.
         byrow : boolean
-            If `ncol` and/or `nrow` is included, then this boolean indicates
-            if the patches should be ordered by row (default if byrow is None
-            or when parameter is True) or by column (if byrow was False).
+            If ``ncol`` and/or ``nrow`` is included, then this boolean
+            indicates if the patches should be ordered by row (default if
+            ``byrow`` is None or when parameter is ``True``) or by column (if
+            ``byrow`` was ``False``).
         design : np.array (float based) or str
             Specification of the location of each patch in the arrangement.
             Can either be a float numpy array with integers between 0 and
@@ -45,74 +47,134 @@ class layout:
             Notes.
         rel_widths : list, np vector or tuple
             Numerical vector of relative columns widths. This not required,
-            the default would be `np.ones(ncol)` or `np.ones(design.shape[0])`.
-            Note that this is a relative sizing and the values are only
-            required to be non-negative, non-zero values, for example
-            [1,2] would would make the first column twice as wide as the
-            second column.
+            the default would be ``np.ones(ncol)`` or
+            ``np.ones(design.shape[0])``. Note that this is a relative sizing
+            and the values are only required to be non-negative, non-zero
+            values, for example ``[1,2]`` would would make the first column
+            twice as wide as the second column.
         rel_heights : list or tuple
             Numerical vector of relative row heights. This not required,
-            the default would be `np.ones(nrow)` or `np.ones(design.shape[1])`.
-            Note that this is a relative sizing and the values are only
-            required to be non-negative, non-zero values, for example
-            [1,2] would would make the first row twice as tall as the
-            second row.
+            the default would be ``np.ones(nrow)`` or
+            ``np.ones(design.shape[1])``. Note that this is a relative sizing
+            and the values are only required to be non-negative, non-zero
+            values, for example ``[1,2]`` would would make the first row twice
+            as tall as the second row.
+
 
         Notes
         -----
-        The `design` parameter expects specific input.
 
-        1. If the `design` is input as a numpy array, we expect it to have
-        integers only (0 to # patches-1). It is allowed to have `np.nan` values
-        if certain "squares" of the  layout are not covered by others (the
-        covering is defined by the value ordering). Note that we won't check
-        for overlap and `np.nan` is not enforced if another patches' relative
-        (min-x,min-y) and (max-x, max-y) define a box over that `np.nan`'s
-        area.
+        *Design*
+
+        The ``design`` parameter expects specific input.
+
+        1. If the ``design`` is input as a numpy array, we expect it to have
+        integers only (0 to # patches-1). It is allowed to have ``np.nan``
+        values if certain "squares" of the  layout are not covered by others
+        (the covering is defined by the value ordering). Note that we won't
+        check for overlap and ``np.nan`` is not enforced if another patches'
+        relative (min-x,min-y) and (max-x, max-y) define a box over that
+        ``np.nan``'s area.
 
         An example of a design of the numpy array form could look like
 
-        .. code-block::
-
-                my_np_design = np.array([[1,1,2],
-                                         [3,3,2],
-                                         [3,3,np.nan]])
+        >>> my_np_design = np.array([[1,1,2],
+        ...                          [3,3,2],
+        ...                          [3,3,np.nan]])
 
 
-        2. if the `design` parameter takes in a string, we expect it to have
-        a structure such that each line (pre "\\\\n") contains the same number
+        2. if the ``design`` parameter takes in a string, we expect it to have
+        a structure such that each line (pre ``\\\\n``) contains the same number
         of characters, and these characters must come from the first
-        (number of patches) capital alphabetical characters or the "\#" or "." sign to
-        indicate an empty square. Similar arguments w.r.t. overlap and the
-        lack of real enforcement for empty squares applies (as in 1.).
+        (number of patches) capital alphabetical characters or the ``\#`` or
+        ``.`` sign to indicate an empty square. Similar arguments w.r.t.
+        overlap and the lack of real enforcement for empty squares applies
+        (as in 1.).
 
         An example of a design of the string form could look like
 
-        .. code-block::
-
-                my_str_design = \"\"\"
-                AAB
-                CCB
-                CC\#
-                \"\"\"
+        >>> my_str_design = \"\"\"
+        ... AAB
+        ... CCB
+        ... CC\#
+        ... \"\"\"
 
         or
 
-        .. code-block::
+        >>> my_str_design = \"\"\"
+        ... AAB
+        ... CCB
+        ... CC.
+        ... \"\"\"
 
-                my_str_design = \"\"\"
-                AAB
-                CCB
-                CC.
-                \"\"\"
+        See the `Layout guide`_ for more detailed examples of functionality.
 
+        .. _Layout guide: https://benjaminleroy.github.io/cowpatch/guides/Layout.html
 
-        **Similarities to `R` cousins:**
+        *Similarities to our `R` cousins:*
 
-        This layout function is similar to `patchwork\:\:plot_layout` (with a
-        special node to `design` parameter) and helps perform similar ideas to
-        `gridExtra\:\:arrangeGrob`'s `layout_matrix` parameter, and
-        `cowplot\:\:plot_grid`'s `rel_widths` and `rel_heights` parameters
+        This layout function is similar to `patchwork\:\:plot_layout <https://patchwork.data-imaginist.com/reference/plot_layout.html>`_
+        (with a special node to ``design`` parameter) and helps perform similar
+        ideas to `gridExtra\:\:arrangeGrob <https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html>`_'s
+        ``layout_matrix`` parameter, and `cowplot\:\:plot_grid <https://wilkelab.org/cowplot/reference/plot_grid.html>`_'s
+        ``rel_widths`` and ``rel_heights`` parameters.
+
+        Examples
+        --------
+        >>> # Necessary libraries for example
+        >>> import numpy as np
+        >>> import cowpatch as cow
+        >>> import plotnine as p9
+        >>> import plotnine.data as p9_data
+
+        >>> g0 = p9.ggplot(p9_data.mpg) +\\
+        ...     p9.geom_bar(p9.aes(x="hwy")) +\\
+        ...     p9.labs(title = 'Plot 0')
+        >>> g1 = p9.ggplot(p9_data.mpg) +\\
+        ...     p9.geom_point(p9.aes(x="hwy", y = "displ")) +\\
+        ...     p9.labs(title = 'Plot 1')
+        >>> g2 = p9.ggplot(p9_data.mpg) +\\
+        ...     p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\\
+        ...     p9.labs(title = 'Plot 2')
+        >>> g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+        ...                                                      "suv",
+        ...                                                      "pickup"])]) +\\
+        ...     p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\\
+        ...     p9.facet_wrap("class")
+
+        >>> # design matrix
+        >>> vis_obj = cow.patch(g1,g2,g3)
+        >>> vis_obj += cow.layout(design = np.array([[0,1],
+        ...                                          [2,2]]))
+        >>> vis_obj.show()
+
+        >>> # design string
+        >>> vis_obj2 = cow.patch(g1,g2,g3)
+        >>> vis_obj2 += cow.layout(design = \"\"\"
+        ...                                 AB
+        ...                                 CC
+        ...                                 \"\"\")
+        >>> vis_obj2.show()
+
+        >>> # nrow, ncol, byrow
+        >>> vis_obj3 = cow.patch(g0,g1,g2,g3)
+        >>> vis_obj3 += cow.layout(nrow=2, byrow=False)
+        >>> vis_obj3.show()
+
+        >>> # rel_widths/heights
+        >>> vis_obj = cow.patch(g1,g2,g3)
+        >>> vis_obj += cow.layout(design = np.array([[0,1],
+        ...                                          [2,2]]),
+        ...                       rel_widths = np.array([1,2]))
+        >>> vis_obj.show()
+
+        See also
+        --------
+        area : object class that helps ``layout`` define where plots will go
+            in the arangement
+        patch : fundamental object class which is combined with ``layout`` to
+            defin the overall arangement of plots
+
         """
         if design is not None:
             if ncol is not None or nrow is not None:
@@ -231,7 +293,7 @@ class layout:
 
         return design
 
-    def get_design(self, num_grobs=None):
+    def _get_design(self, num_grobs=None):
         """
         create a design matrix if not explicit design has been provided
         """
@@ -268,7 +330,11 @@ class layout:
         return inner_design
 
     # property
-    design = property(get_design)
+    design = property(_get_design)
+    """
+    defines underlying ``design`` attribute (potentially defined relative to a
+    ``cow.patch`` object if certain structure are not extremely specific.
+    """
 
     def _assess_mat(self, design):
         """
@@ -358,7 +424,7 @@ class layout:
 
     def _element_locations(self, width_pt, height_pt, num_grobs=None):
         """
-        create a list of `area` objects associated with the location of
+        create a list of ``area`` objects associated with the location of
         each of the layout's grobs w.r.t. a given points width and height
 
         Arguments
@@ -368,13 +434,13 @@ class layout:
         height_pt : float
             global height (in points) of the full arangement of patches
         num_grobs : integer
-            if not None, then this value will be used to understand the number
-            of grobs to be laid out
+            if not ``None``, then this value will be used to understand the
+            number of grobs to be laid out
 
         Returns
         -------
         list
-            list of `area` objects describing the location for each of the
+            list of ``area`` objects describing the location for each of the
             layout's grobs (in the order of the index in the self.design)
         """
 
@@ -392,7 +458,7 @@ class layout:
         areas = []
 
         for p_idx in np.arange(num_grobs):
-            dmat_logic = self.get_design(num_grobs=num_grobs) == p_idx
+            dmat_logic = self._get_design(num_grobs=num_grobs) == p_idx
             r_logic = dmat_logic.sum(axis=1) > 0
             c_logic = dmat_logic.sum(axis=0) > 0
 
@@ -427,8 +493,8 @@ class layout:
         Arguments
         ---------
         num_grobs : integer
-            if not None, then this value will be used to understand the number
-            of grobs to be laid out
+            if not ``None``, then this value will be used to understand the
+            number of grobs to be laid out
 
         Returns
         -------
@@ -568,27 +634,34 @@ class area:
                  width, height,
                  _type):
         """
-        area class that stores information about what area a patch will fill
+        object that stores information about what area a ``patch`` will fill
 
         Arguments
         ---------
         x_left : float
             scalar of where the left-most point of the patch is located (impacted
-            by the `_type` parameter)
+            by the ``_type`` parameter)
         y_top : float
             scalar of where the top-most point of the patch is located (impacted
-            by the `_type` parameter)
+            by the ``_type`` parameter)
         width : float
-            scalar of the width of the patch (impacted by the `_type` parameter)
+            scalar of the width of the patch (impacted by the ``_type``
+            parameter)
         height : float
-            scalar of the height of the patch (impacted by the `_type` parameter)
+            scalar of the height of the patch (impacted by the ``_type``
+            parameter)
         _type : str {"design", "relative", "pt"}
             describes how the parameters are stored. See Notes for more
             information between the options.
 
+
         Notes
         -----
-        The `_type` parameter informs how to understand the other parameters:
+
+        These objects provide structural information about where in the overall
+        arangement individual plots / sub arangments lie.
+
+        The ``_type`` parameter informs how to understand the other parameters:
 
         1. "design" means that the values are w.r.t. to a design matrix
         relative to the `layout` class, and values are relative to the rows
@@ -598,6 +671,11 @@ class area:
         the canvas and taking values between 0-1 (inclusive).
 
         3. "pt" means that values are defined relative to point values
+
+        See also
+        --------
+        layout : object that incorporates multiple area definitions to define
+            layouts.
         """
 
         # some structure check:
@@ -611,21 +689,21 @@ class area:
 
     def _check_info_wrt_type(self, x_left, y_top, width, height, _type):
         """
-        some logic checks of inputs relative to `_type` parameter
+        some logic checks of inputs relative to ``_type`` parameter
 
         Arguments
         ---------
         x_left : float
             scalar of where the left-most point of the patch is located
-            (impacted by the `_type` parameter)
+            (impacted by the ``_type`` parameter)
         y_top : float
             scalar of where the top-most point of the patch is located
-            (impacted by the `_type` parameter)
+            (impacted by the ``_type`` parameter)
         width : float
-            scalar of the width of the patch (impacted by the `_type`
+            scalar of the width of the patch (impacted by the ``_type``
             parameter)
         height : float
-            scalar of the height of the patch (impacted by the `_type`
+            scalar of the height of the patch (impacted by the ``_type``
             parameter)
         _type : str {"design", "relative", "pt"}
             describes how the parameters are stored. Options include
@@ -635,7 +713,7 @@ class area:
         ------
         ValueError
             if any of the first four parameters don't make sense with respect
-            to the `_type` parameter
+            to the ``_type`` parameter
         """
 
         if _type not in ["design", "relative", "pt"]:
@@ -664,8 +742,8 @@ class area:
 
     def _design_to_relative(self, rel_widths, rel_heights):
         """
-        translates an area object with `_type` = "design" to area object
-        with `_type` = "relative".
+        translates an area object with ``_type`` = "design" to area object
+        with ``_type`` = "relative".
 
         Arguments
         ---------
@@ -677,7 +755,7 @@ class area:
         Returns
         -------
         area object
-            area object of `_type` = "relative"
+            area object of ``_type`` = "relative"
         """
         rel_widths = rel_widths/np.sum(rel_widths)
         rel_heights = rel_heights/np.sum(rel_heights)
@@ -698,8 +776,8 @@ class area:
 
     def _relative_to_pt(self, width_pt, height_pt):
         """
-        translates an area object with `_type` = "relative" to area object
-        with `_type` = "pt".
+        translates an area object with ``_type`` = "relative" to area object
+        with ``_type`` = "pt".
 
         Arguments
         ---------
@@ -711,7 +789,7 @@ class area:
         Returns
         -------
         area object
-            area object of `_type` = "pt"
+            area object of ``_type`` = "pt"
         """
         return area(x_left = self.x_left * width_pt,
                     y_top = self.y_top * height_pt,
@@ -726,25 +804,25 @@ class area:
            rel_heights=None
            ):
         """
-        Translates area object to `_type` = "pt"
+        Translates area object to ``_type`` = "pt"
 
         Arguments
         ---------
         width_pt : float
-            width in points (required if `_type` is not "pt")
+            width in points (required if ``_type`` is not "pt")
         height_pt : float
-            height in points (required if `_type` is not "pt")
+            height in points (required if ``_type`` is not "pt")
         rel_widths : np.array (vector)
             list of relative widths of each column of the layout matrix
-            (required if `_type` is "design")
+            (required if ``_type`` is "design")
         rel_heights : np.array (vector)
             list of relative heights of each row of the layout matrix
-            (required if `_type` is "design")
+            (required if ``_type`` is "design")
 
         Returns
         -------
         area object
-            area object of `_type` = "pt"
+            area object of ``_type`` = "pt"
         """
         if self._type == "design":
             rel_area = self._design_to_relative(rel_widths = rel_widths,
@@ -761,12 +839,12 @@ class area:
 
     def _hash(self):
         """
-        replacement function for `__hash__` due to equality conflicts
+        replacement function for ``__hash__`` due to equality conflicts
 
         Notes
         -----
-        required since we defined `__eq__` and this conflicts with the
-        standard `__hash__`
+        required since we defined ``__eq__`` and this conflicts with the
+        standard ``__hash__``
         """
         return hash((self.x_left, self.y_top,
                      self.width, self.height,
