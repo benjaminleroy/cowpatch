@@ -1,3 +1,5 @@
+:orphan:
+
 :py:mod:`cowpatch.base_elements`
 ================================
 
@@ -19,199 +21,96 @@ Classes
 
 .. py:class:: patch(*args, grobs=None)
 
-   general object to describe a plots or arangement of plots
+   fundamental object of `cowpatch`, encapsulates plot objects and
+   can be told how to present them
 
-   :param \*args:
-   :type \*args: ggplots and patches
-   :param grobs: list of ggplot objects and patches. Either `\*args` is empty or
-                 `grobs` is `None`.
+   :param \*args: all non-named parameters are expected to be plot objects or
+                  lower-level ``cow.patch`` objects.
+   :type \*args: plot objects and patches
+   :param grobs: list of plot objects and patches. Either ``\*args`` is empty or
+                 ``grobs`` is ``None``.
    :type grobs: list
 
    .. rubric:: Notes
 
-   All patch objects can be combined with other patch objects, either inside
-   other `patch` calls or using mathematical grammar (described below).
+   *Guiding arangement:*
 
-   Additionally, patch objects's layouts can be described by adding a `layout`
-   object, can have figure labels and titles added using an addition of a
-   `annotation` object, and can have plots inset into it's grid with a
-   `inset` object addition.
+   In combination with ``cow.layout`` one can define arrangement of plots
+   and lower-level arangements.
 
-   **Mathematical Grammar**
+   For example,
 
-   Mirroring ideas in `R`'s `patchwork` package, the following methods can
-   be used to combine patch objects
+   >>> vis_obj = cow.patch(g1,g2,g3)
+   >>> vis_obj += cow.layout(design = np.array([[0,1],
+   ...                                          [2,2]]))
+   >>> vis_obj.show()
 
-   - `__add__` (`+`) of `patches` will (in the default) arange a sequence of
-       `patches` in a matrix grid (byrow)
-   - `__or__` (`|`) of `patches` will (in the default) arange a sequence of
-       `patches` in a single row
-   - `__div__` (`/`) of `patches` will (in the default) arange a sequence of
-       `patches` in a single column
+   See the `Layout guide`_ for more detailed examples of functionality.
 
-   These can also be combined to make complex layout structures. In addition,
-   these structures can define depths structures. The top layout can be
-   updated with an addition of a `layout`.
+   .. _Layout guide: https://benjaminleroy.github.io/cowpatch/guides/Layout.html
 
-   Beyond combinations with other patches, the use of
+   *Nesting:*
 
-   - `__mul__` (`*`) with a `plotnine` `theme` object will apply that theme to
-       every `plotnine` object on the top `layer` (and `text` object - see
-       document)
-   - `__and__` (`&`) with a plotnine theme object will apply that theme to
-       every `plotnine` object at any depth (and `text` object - see document)
+   One can nest `cow.patch` objects within other `cow.patch` objects. For
+   example,
+
+   >>> vis_obj2 = cow.patch(g4, vis_obj)
+   >>> vis_obj2 += cow.layout(nrow = 1)
+   >>> vis_obj2.show()
+
+   .. rubric:: Examples
+
+   >>> # Necessary libraries for example
+   >>> import numpy as np
+   >>> import cowpatch as cow
+   >>> import plotnine as p9
+   >>> import plotnine.data as p9_data
+
+   >>> g0 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_bar(p9.aes(x="hwy")) +\
+   ...     p9.labs(title = 'Plot 0')
+   >>> g1 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+   ...     p9.labs(title = 'Plot 1')
+   >>> g2 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+   ...     p9.labs(title = 'Plot 2')
+   >>> g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+   ...                                                      "suv",
+   ...                                                      "pickup"])]) +\
+   ...     p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
+   ...     p9.facet_wrap("class")
+
+   >>> # Basic example:
+   >>> vis_obj = cow.patch(g0,g1,g2)
+   >>> vis_obj += cow.layout(design = np.array([[0,1],
+   ...                                          [2,2]]))
+   >>> vis_obj.show()
+
+   >>> # Nesting example:
+   >>> vis_obj2 = cow.patch(g3, vis_obj)
+   >>> vis_obj2 += cow.layout(nrow = 1)
+   >>> vis_obj2.show()
+
+   .. seealso::
+
+      :obj:`layout`
+          class objects that can aid in defining the layout of plots in ``cow.patch`` objects
 
    .. py:method:: layout(self)
       :property:
 
-      provide `__layout` default else return `__layout`
-
-      .. rubric:: Notes
-
-      This allows for the different structure of `__add__` to not be built
-      until use of the `layout` is actually needed.
-
-
-   .. py:method:: _check_layout(self)
-
-      checks layout if design matrix is fulled defined
-
-
-   .. py:method:: __or__(self, other)
-
-
-   .. py:method:: __div__(self, other)
-
-
-   .. py:method:: __add__(self, other)
-
-
-   .. py:method:: __mul__(self, other)
-
-
-   .. py:method:: __and__(self, other)
-
-
-   .. py:method:: _svg(self, width_pt, height_pt, sizes=None, num_attempts=None)
-
-      Internal function to create an svg representation of the patch
-
-      :param width_pt: desired width of svg object in points
-      :type width_pt: float
-      :param height_pt: desired height of svg object in points
-      :type height_pt: float
-
-      :returns: **svg_object**
-      :rtype: svgutils.transforms object
-
-
-   .. py:method:: _size_dive(self, parents_areas=None)
-
-      (Internal) calculate a suggested overall size that ensures a minimum
-      width and height of the smallest inner plot
-
-      :param parents_areas: list of parent's/parents' areas. If value is None it means element
-                            has no parents
-      :type parents_areas: list
-
-      :returns: * **suggested_width** (*float or list*) -- proposed width for overall size if parents_areas=None, else this
-                  is a list of relative proportion of widths of images (relative to
-                  the global width taking a value of 1)
-                * **suggested_height** (*float or*) -- proposed height for overall size if parents_areas=None, else this
-                  is a list of relative proportion of height of images (relative to
-                  the global height taking a value of 1)
-                * **depth** (*int or list*) -- maximum depth of structure if parents_areas=None, else this
-                  is a list of inner elements.
-
-      .. rubric:: Notes
-
-      The default rcParams are:
-          base_height=3.71,
-          base_aspect_ratio=1.618 # the golden ratio
-
-      This follows ideas proposed in cowplot: https://wilkelab.org/cowplot/reference/save_plot.html
-
-
-   .. py:method:: _default_size(self, width, height)
-
-      (Internal) obtain default recommended size of overall image if width or
-      height is None
-
-      :param width: width of output image in inches (this should actually be associated
-                    with the svg...)
-      :type width: float
-      :param height: height of svg in inches (this should actually be associated
-                     with the svg...)
-      :type height: float
-
-      :returns: * **width** (*float*) -- returns default width for given object if not provided (else just
-                  returns provided value). If only height is provided then width
-                  proposed is relative to a default aspect ratio for the object.
-                * **height** (*float*) -- returns default height for given object if not provided (else just
-                  returns provided value). If only width is provided then height
-                  proposed is relative to a default aspect ratio for the object.
-
-
-   .. py:method:: _svg_get_sizes(self, width_pt, height_pt)
-
-      (Internal) Calculates required sizes for plot objects to meet required
-      sizes and logics if the requested sizing was possible
-
-      :param width_pt: overall width of the image in points
-      :type width_pt: float
-      :param height_pt: overall height of the image in points
-      :type height_pt: float
-
-      :returns: * **sizes** (*nested list*) -- For each element in the patch (with nesting structure in the list),
-                  this contains width, height tuples that either capture the size
-                  to request the ggplot object to be to return the actual desired
-                  size (see gg_to_svg notes), OR it contains the fraction defined by
-                  the requested width (or height) w.r.t. the returned width
-                  (or height) from saving the plotnine object. The later option
-                  occurs when when the ggplot's sizing didn't converge to the
-                  desired size.
-                * **logics** (*nested list*) -- For each element in the patch (with nesting structure in the list),
-                  this contains a boolean value if the ggplot object was able to
-                  be correctly size.
-
-      .. rubric:: Notes
-
-      Internally this function uses rcParams's ``eps``, ``mini_size_px`` and
-      ``maxIter`` to determine the parameters to be put in
-      .svg_utils._select_correcting_size_svg.
-
-
-   .. py:method:: _process_sizes(self, sizes, logics)
-
-      (Internal) draw conclusions about the output of _svg_get_sizes.
-
-      This function assesses if any internal ggplot object failed to
-      produce an image of the requested size (w.r.t. to given interation
-      parameters)
-
-      :param sizes: sizes output of _svg_get_sizes. This is a nested list with
-                    (width,height) or (requested_width/actual_width,
-                    requested_height/actual_width), with the different being if the
-                    ggplot object was able to be presented in the requested size
-      :type sizes: nested list
-      :param logics: logics output of _svg_get_sizes. This is a nested list of boolean
-                     values w.r.t. the previous different.
-      :type logics: nested list
-
-      :returns: * **sizes** (*nested list*) -- Returned if no logics values are False. This object is the sizes
-                  nested list that was input.
-                * **max_scaling** (*float*) -- Returned if at least one of the logics values are False. This is
-                  the scaling of the original width_pt and height_pt that defined
-                  the sizes and logics that could make the requested sizes for all
-                  ggplots that failed to be correctly sized be at least as large
-                  as the returned size from a basic ggplot saving.
+      defines ``layout`` that either returns the last added ``cow.layout``
+      object or the default ``layout`` if no layout has been explicitly
+      defined
 
 
    .. py:method:: save(self, filename, width=None, height=None, dpi=96, _format=None, verbose=None)
 
       save patch to file
 
-      :param filename: local string to save the file to (this can also be at a `io.BytesIO`)
+      :param filename: local string to save the file to (this can also be at a
+                       ``io.BytesIO``)
       :type filename: str
       :param width: width of output image in inches (this should actually be associated
                     with the svg...)
@@ -222,7 +121,7 @@ Classes
       :param dpi: dots per square inch, default is 96 (standard)
       :type dpi: int or float
       :param _format: string of format (error tells options). If provided this is the
-                      format used, if None, then we'll try to use the `filename`
+                      format used, if None, then we'll try to use the ``filename``
                       extension.
       :type _format: str
       :param verbose: If ``True``, print the saving information. The package default
@@ -242,25 +141,28 @@ Classes
       ``verbose`` input parameter or changing
       ``cow.rcParams["save_verbose"]``.
 
+      .. seealso::
+
+         :obj:`io.BytesIO`
+             object that acts like a reading in of bytes
+
 
    .. py:method:: show(self, width=None, height=None, dpi=96, verbose=None)
 
       display object from the command line or in a jupyter notebook
 
-      Argument
-      --------
-      width : float
-          width of output image in inches (this should actually be associated
-          with the svg...)
-      height : float
-          height of svg in inches (this should actually be associated
-          with the svg...)
-      dpi : int or float
-          dots per square inch, default is 96 (standard)
-      verbose : bool
-          If ``True``, print the saving information. The package default
-          is defined by cowpatch's own rcParams (the base default is
-          ``True``), which is used if verbose is ``None``. See Notes.
+      :param width: width of output image in inches (this should actually be associated
+                    with the svg...)
+      :type width: float
+      :param height: height of svg in inches (this should actually be associated
+                     with the svg...)
+      :type height: float
+      :param dpi: dots per square inch, default is 96 (standard)
+      :type dpi: int or float
+      :param verbose: If ``True``, print the saving information. The package default
+                      is defined by cowpatch's own rcParams (the base default is
+                      ``True``), which is used if verbose is ``None``. See Notes.
+      :type verbose: bool
 
       .. rubric:: Notes
 
@@ -275,16 +177,6 @@ Classes
       plot render to show a static png version of the image. If run inside
       a jupyter notebook, this approache presents the actual svg
       representation.
-
-
-   .. py:method:: __str__(self)
-
-      Return str(self).
-
-
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
 
 
 

@@ -1,3 +1,5 @@
+:orphan:
+
 :py:mod:`cowpatch.utils`
 ========================
 
@@ -26,9 +28,6 @@ Functions
    cowpatch.utils.to_inches
    cowpatch.utils.from_inches
    cowpatch.utils.inherits_plotnine
-   cowpatch.utils._transform_size_to_pt
-   cowpatch.utils._proposed_scaling_both
-   cowpatch.utils._flatten_nested_list
 
 
 
@@ -116,40 +115,5 @@ Functions
 
    checks if object is a plotnine one (but really only checks if comes
    from plotnine package...)
-
-
-.. py:function:: _transform_size_to_pt(size_string_tuple)
-
-   takes string with unit and converts it to a float w.r.t pt
-
-   :param size_string_tuple: tuple of strings with size of svg image
-   :type size_string_tuple: string tuple
-
-   :rtype: tuple of floats of sizes w.r.t pt
-
-
-.. py:function:: _proposed_scaling_both(current, desired)
-
-   identify a x and y scaling to make the current size into the desired size
-
-   :param current: float tuple of current size of svg object
-   :type current: tuple
-   :param desired: float tuple of desired size of svg object
-   :type desired: tuple
-
-   :returns: float tuple of scalar constants for size change in each dimension
-   :rtype: tuple
-
-
-.. py:function:: _flatten_nested_list(x)
-
-   Flatten nested list
-
-   Argument
-   --------
-   x : list
-       nested list with different leveling of different objects
-
-   :rtype: flatten version of list
 
 

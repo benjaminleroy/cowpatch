@@ -103,26 +103,28 @@
              <span class="n">design</span><span class="o">=</span><span class="kc">None</span>
              <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        layout class to store information about arangement of patches</span>
+<span class="sd">        layout class to store information about arangement of patches found</span>
+<span class="sd">        in `cow.patch`.</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
 <span class="sd">        ncol : integer</span>
 <span class="sd">            Integer for the number of columns to arrange the the patches in.</span>
 <span class="sd">            The default is None (which avoids conflicts if a value for</span>
-<span class="sd">            `design` is provided). If `ncol` is None but `nrow` is not, then</span>
-<span class="sd">            `ncol` will default to the minimum number of columns to make sure</span>
-<span class="sd">            that all patches can be visualized.</span>
+<span class="sd">            `design` is provided). If ``ncol`` is None but ``nrow`` is not,</span>
+<span class="sd">            then ``ncol`` will default to the minimum number of columns to</span>
+<span class="sd">            make sure that all patches can be visualized.</span>
 <span class="sd">        nrow : integer</span>
 <span class="sd">            Integer for the number of rows to arrange the the patches in.</span>
 <span class="sd">            The default is None (which avoids conflicts if a value for</span>
-<span class="sd">            `design` is provided). If `nrow` is None but `ncol` is not, then</span>
-<span class="sd">            `nrow` will default to the minimum number of rows to make sure</span>
-<span class="sd">            that all patches can be visualized.</span>
+<span class="sd">            ``design`` is provided). If ``nrow`` is None but ``ncol`` is not,</span>
+<span class="sd">            then ``nrow`` will default to the minimum number of rows to make</span>
+<span class="sd">            sure that all patches can be visualized.</span>
 <span class="sd">        byrow : boolean</span>
-<span class="sd">            If `ncol` and/or `nrow` is included, then this boolean indicates</span>
-<span class="sd">            if the patches should be ordered by row (default if byrow is None</span>
-<span class="sd">            or when parameter is True) or by column (if byrow was False).</span>
+<span class="sd">            If ``ncol`` and/or ``nrow`` is included, then this boolean</span>
+<span class="sd">            indicates if the patches should be ordered by row (default if</span>
+<span class="sd">            ``byrow`` is None or when parameter is ``True``) or by column (if</span>
+<span class="sd">            ``byrow`` was ``False``).</span>
 <span class="sd">        design : np.array (float based) or str</span>
 <span class="sd">            Specification of the location of each patch in the arrangement.</span>
 <span class="sd">            Can either be a float numpy array with integers between 0 and</span>
@@ -132,74 +134,134 @@
 <span class="sd">            Notes.</span>
 <span class="sd">        rel_widths : list, np vector or tuple</span>
 <span class="sd">            Numerical vector of relative columns widths. This not required,</span>
-<span class="sd">            the default would be `np.ones(ncol)` or `np.ones(design.shape[0])`.</span>
-<span class="sd">            Note that this is a relative sizing and the values are only</span>
-<span class="sd">            required to be non-negative, non-zero values, for example</span>
-<span class="sd">            [1,2] would would make the first column twice as wide as the</span>
-<span class="sd">            second column.</span>
+<span class="sd">            the default would be ``np.ones(ncol)`` or</span>
+<span class="sd">            ``np.ones(design.shape[0])``. Note that this is a relative sizing</span>
+<span class="sd">            and the values are only required to be non-negative, non-zero</span>
+<span class="sd">            values, for example ``[1,2]`` would would make the first column</span>
+<span class="sd">            twice as wide as the second column.</span>
 <span class="sd">        rel_heights : list or tuple</span>
 <span class="sd">            Numerical vector of relative row heights. This not required,</span>
-<span class="sd">            the default would be `np.ones(nrow)` or `np.ones(design.shape[1])`.</span>
-<span class="sd">            Note that this is a relative sizing and the values are only</span>
-<span class="sd">            required to be non-negative, non-zero values, for example</span>
-<span class="sd">            [1,2] would would make the first row twice as tall as the</span>
-<span class="sd">            second row.</span>
+<span class="sd">            the default would be ``np.ones(nrow)`` or</span>
+<span class="sd">            ``np.ones(design.shape[1])``. Note that this is a relative sizing</span>
+<span class="sd">            and the values are only required to be non-negative, non-zero</span>
+<span class="sd">            values, for example ``[1,2]`` would would make the first row twice</span>
+<span class="sd">            as tall as the second row.</span>
+
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        The `design` parameter expects specific input.</span>
 
-<span class="sd">        1. If the `design` is input as a numpy array, we expect it to have</span>
-<span class="sd">        integers only (0 to # patches-1). It is allowed to have `np.nan` values</span>
-<span class="sd">        if certain &quot;squares&quot; of the  layout are not covered by others (the</span>
-<span class="sd">        covering is defined by the value ordering). Note that we won&#39;t check</span>
-<span class="sd">        for overlap and `np.nan` is not enforced if another patches&#39; relative</span>
-<span class="sd">        (min-x,min-y) and (max-x, max-y) define a box over that `np.nan`&#39;s</span>
-<span class="sd">        area.</span>
+<span class="sd">        *Design*</span>
+
+<span class="sd">        The ``design`` parameter expects specific input.</span>
+
+<span class="sd">        1. If the ``design`` is input as a numpy array, we expect it to have</span>
+<span class="sd">        integers only (0 to # patches-1). It is allowed to have ``np.nan``</span>
+<span class="sd">        values if certain &quot;squares&quot; of the  layout are not covered by others</span>
+<span class="sd">        (the covering is defined by the value ordering). Note that we won&#39;t</span>
+<span class="sd">        check for overlap and ``np.nan`` is not enforced if another patches&#39;</span>
+<span class="sd">        relative (min-x,min-y) and (max-x, max-y) define a box over that</span>
+<span class="sd">        ``np.nan``&#39;s area.</span>
 
 <span class="sd">        An example of a design of the numpy array form could look like</span>
 
-<span class="sd">        .. code-block::</span>
-
-<span class="sd">                my_np_design = np.array([[1,1,2],</span>
-<span class="sd">                                         [3,3,2],</span>
-<span class="sd">                                         [3,3,np.nan]])</span>
+<span class="sd">        &gt;&gt;&gt; my_np_design = np.array([[1,1,2],</span>
+<span class="sd">        ...                          [3,3,2],</span>
+<span class="sd">        ...                          [3,3,np.nan]])</span>
 
 
-<span class="sd">        2. if the `design` parameter takes in a string, we expect it to have</span>
-<span class="sd">        a structure such that each line (pre &quot;\\\\n&quot;) contains the same number</span>
+<span class="sd">        2. if the ``design`` parameter takes in a string, we expect it to have</span>
+<span class="sd">        a structure such that each line (pre ``\\\\n``) contains the same number</span>
 <span class="sd">        of characters, and these characters must come from the first</span>
-<span class="sd">        (number of patches) capital alphabetical characters or the &quot;\#&quot; or &quot;.&quot; sign to</span>
-<span class="sd">        indicate an empty square. Similar arguments w.r.t. overlap and the</span>
-<span class="sd">        lack of real enforcement for empty squares applies (as in 1.).</span>
+<span class="sd">        (number of patches) capital alphabetical characters or the ``\#`` or</span>
+<span class="sd">        ``.`` sign to indicate an empty square. Similar arguments w.r.t.</span>
+<span class="sd">        overlap and the lack of real enforcement for empty squares applies</span>
+<span class="sd">        (as in 1.).</span>
 
 <span class="sd">        An example of a design of the string form could look like</span>
 
-<span class="sd">        .. code-block::</span>
-
-<span class="sd">                my_str_design = \&quot;\&quot;\&quot;</span>
-<span class="sd">                AAB</span>
-<span class="sd">                CCB</span>
-<span class="sd">                CC\#</span>
-<span class="sd">                \&quot;\&quot;\&quot;</span>
+<span class="sd">        &gt;&gt;&gt; my_str_design = \&quot;\&quot;\&quot;</span>
+<span class="sd">        ... AAB</span>
+<span class="sd">        ... CCB</span>
+<span class="sd">        ... CC\#</span>
+<span class="sd">        ... \&quot;\&quot;\&quot;</span>
 
 <span class="sd">        or</span>
 
-<span class="sd">        .. code-block::</span>
+<span class="sd">        &gt;&gt;&gt; my_str_design = \&quot;\&quot;\&quot;</span>
+<span class="sd">        ... AAB</span>
+<span class="sd">        ... CCB</span>
+<span class="sd">        ... CC.</span>
+<span class="sd">        ... \&quot;\&quot;\&quot;</span>
 
-<span class="sd">                my_str_design = \&quot;\&quot;\&quot;</span>
-<span class="sd">                AAB</span>
-<span class="sd">                CCB</span>
-<span class="sd">                CC.</span>
-<span class="sd">                \&quot;\&quot;\&quot;</span>
+<span class="sd">        See the `Layout guide`_ for more detailed examples of functionality.</span>
 
+<span class="sd">        .. _Layout guide: https://benjaminleroy.github.io/cowpatch/guides/Layout.html</span>
 
-<span class="sd">        **Similarities to `R` cousins:**</span>
+<span class="sd">        *Similarities to our `R` cousins:*</span>
 
-<span class="sd">        This layout function is similar to `patchwork\:\:plot_layout` (with a</span>
-<span class="sd">        special node to `design` parameter) and helps perform similar ideas to</span>
-<span class="sd">        `gridExtra\:\:arrangeGrob`&#39;s `layout_matrix` parameter, and</span>
-<span class="sd">        `cowplot\:\:plot_grid`&#39;s `rel_widths` and `rel_heights` parameters</span>
+<span class="sd">        This layout function is similar to `patchwork\:\:plot_layout &lt;https://patchwork.data-imaginist.com/reference/plot_layout.html&gt;`_</span>
+<span class="sd">        (with a special node to ``design`` parameter) and helps perform similar</span>
+<span class="sd">        ideas to `gridExtra\:\:arrangeGrob &lt;https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html&gt;`_&#39;s</span>
+<span class="sd">        ``layout_matrix`` parameter, and `cowplot\:\:plot_grid &lt;https://wilkelab.org/cowplot/reference/plot_grid.html&gt;`_&#39;s</span>
+<span class="sd">        ``rel_widths`` and ``rel_heights`` parameters.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; # Necessary libraries for example</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; import cowpatch as cow</span>
+<span class="sd">        &gt;&gt;&gt; import plotnine as p9</span>
+<span class="sd">        &gt;&gt;&gt; import plotnine.data as p9_data</span>
+
+<span class="sd">        &gt;&gt;&gt; g0 = p9.ggplot(p9_data.mpg) +\\</span>
+<span class="sd">        ...     p9.geom_bar(p9.aes(x=&quot;hwy&quot;)) +\\</span>
+<span class="sd">        ...     p9.labs(title = &#39;Plot 0&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; g1 = p9.ggplot(p9_data.mpg) +\\</span>
+<span class="sd">        ...     p9.geom_point(p9.aes(x=&quot;hwy&quot;, y = &quot;displ&quot;)) +\\</span>
+<span class="sd">        ...     p9.labs(title = &#39;Plot 1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; g2 = p9.ggplot(p9_data.mpg) +\\</span>
+<span class="sd">        ...     p9.geom_point(p9.aes(x=&quot;hwy&quot;, y = &quot;displ&quot;, color=&quot;class&quot;)) +\\</span>
+<span class="sd">        ...     p9.labs(title = &#39;Plot 2&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; g3 = p9.ggplot(p9_data.mpg[p9_data.mpg[&quot;class&quot;].isin([&quot;compact&quot;,</span>
+<span class="sd">        ...                                                      &quot;suv&quot;,</span>
+<span class="sd">        ...                                                      &quot;pickup&quot;])]) +\\</span>
+<span class="sd">        ...     p9.geom_histogram(p9.aes(x=&quot;hwy&quot;),bins=10) +\\</span>
+<span class="sd">        ...     p9.facet_wrap(&quot;class&quot;)</span>
+
+<span class="sd">        &gt;&gt;&gt; # design matrix</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj = cow.patch(g1,g2,g3)</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj += cow.layout(design = np.array([[0,1],</span>
+<span class="sd">        ...                                          [2,2]]))</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj.show()</span>
+
+<span class="sd">        &gt;&gt;&gt; # design string</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj2 = cow.patch(g1,g2,g3)</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj2 += cow.layout(design = \&quot;\&quot;\&quot;</span>
+<span class="sd">        ...                                 AB</span>
+<span class="sd">        ...                                 CC</span>
+<span class="sd">        ...                                 \&quot;\&quot;\&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj2.show()</span>
+
+<span class="sd">        &gt;&gt;&gt; # nrow, ncol, byrow</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj3 = cow.patch(g0,g1,g2,g3)</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj3 += cow.layout(nrow=2, byrow=False)</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj3.show()</span>
+
+<span class="sd">        &gt;&gt;&gt; # rel_widths/heights</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj = cow.patch(g1,g2,g3)</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj += cow.layout(design = np.array([[0,1],</span>
+<span class="sd">        ...                                          [2,2]]),</span>
+<span class="sd">        ...                       rel_widths = np.array([1,2]))</span>
+<span class="sd">        &gt;&gt;&gt; vis_obj.show()</span>
+
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        area : object class that helps ``layout`` define where plots will go</span>
+<span class="sd">            in the arangement</span>
+<span class="sd">        patch : fundamental object class which is combined with ``layout`` to</span>
+<span class="sd">            defin the overall arangement of plots</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">design</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ncol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">nrow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -280,7 +342,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rel_heights</span> <span class="o">=</span> <span class="n">rel_heights</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_grobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assess_mat</span><span class="p">(</span><span class="n">design</span><span class="p">)</span>
 
-<div class="viewcode-block" id="layout._design_string_to_mat"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout._design_string_to_mat">[docs]</a>    <span class="k">def</span> <span class="nf">_design_string_to_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_design_string_to_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Internal function to convert design string into a matrix</span>
 
@@ -316,9 +378,9 @@
                             <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span>
                                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row_info</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">design</span></div>
+        <span class="k">return</span> <span class="n">design</span>
 
-<div class="viewcode-block" id="layout.get_design"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout.get_design">[docs]</a>    <span class="k">def</span> <span class="nf">get_design</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_design</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        create a design matrix if not explicit design has been provided</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -352,12 +414,16 @@
 
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assess_mat</span><span class="p">(</span><span class="n">inner_design</span><span class="p">)</span> <span class="c1"># should pass since we just built it...</span>
 
-        <span class="k">return</span> <span class="n">inner_design</span></div>
+        <span class="k">return</span> <span class="n">inner_design</span>
 
     <span class="c1"># property</span>
-    <span class="n">design</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_design</span><span class="p">)</span>
+    <span class="n">design</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_design</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    defines underlying ``design`` attribute (potentially defined relative to a</span>
+<span class="sd">    ``cow.patch`` object if certain structure are not extremely specific.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="layout._assess_mat"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout._assess_mat">[docs]</a>    <span class="k">def</span> <span class="nf">_assess_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_assess_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">design</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assesses if the design matrix includes at least 1 box for patches</span>
 <span class="sd">        indexed 0 to (number of patches - 1). This doesn&#39;t actually assume to know</span>
@@ -393,9 +459,9 @@
                              <span class="s2">&quot;value expected for the number of patches &quot;</span><span class="o">+</span>\
                              <span class="s2">&quot;provided&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">num_unique</span></div>
+        <span class="k">return</span> <span class="n">num_unique</span>
 
-<div class="viewcode-block" id="layout._rel_structure"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout._rel_structure">[docs]</a>    <span class="k">def</span> <span class="nf">_rel_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_rel_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        provide rel_structure (rel_widths, rel_heights) if missing</span>
 
@@ -441,11 +507,11 @@
         <span class="k">if</span> <span class="n">rel_heights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rel_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nrow</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">rel_widths</span><span class="p">,</span> <span class="n">rel_heights</span></div>
+        <span class="k">return</span> <span class="n">rel_widths</span><span class="p">,</span> <span class="n">rel_heights</span>
 
-<div class="viewcode-block" id="layout._element_locations"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout._element_locations">[docs]</a>    <span class="k">def</span> <span class="nf">_element_locations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_element_locations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        create a list of `area` objects associated with the location of</span>
+<span class="sd">        create a list of ``area`` objects associated with the location of</span>
 <span class="sd">        each of the layout&#39;s grobs w.r.t. a given points width and height</span>
 
 <span class="sd">        Arguments</span>
@@ -455,13 +521,13 @@
 <span class="sd">        height_pt : float</span>
 <span class="sd">            global height (in points) of the full arangement of patches</span>
 <span class="sd">        num_grobs : integer</span>
-<span class="sd">            if not None, then this value will be used to understand the number</span>
-<span class="sd">            of grobs to be laid out</span>
+<span class="sd">            if not ``None``, then this value will be used to understand the</span>
+<span class="sd">            number of grobs to be laid out</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
-<span class="sd">            list of `area` objects describing the location for each of the</span>
+<span class="sd">            list of ``area`` objects describing the location for each of the</span>
 <span class="sd">            layout&#39;s grobs (in the order of the index in the self.design)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -479,7 +545,7 @@
         <span class="n">areas</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">p_idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_grobs</span><span class="p">):</span>
-            <span class="n">dmat_logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_design</span><span class="p">(</span><span class="n">num_grobs</span><span class="o">=</span><span class="n">num_grobs</span><span class="p">)</span> <span class="o">==</span> <span class="n">p_idx</span>
+            <span class="n">dmat_logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_design</span><span class="p">(</span><span class="n">num_grobs</span><span class="o">=</span><span class="n">num_grobs</span><span class="p">)</span> <span class="o">==</span> <span class="n">p_idx</span>
             <span class="n">r_logic</span> <span class="o">=</span> <span class="n">dmat_logic</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
             <span class="n">c_logic</span> <span class="o">=</span> <span class="n">dmat_logic</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
@@ -504,9 +570,9 @@
                                               <span class="n">width_pt</span><span class="o">=</span><span class="n">width_pt</span><span class="p">,</span>
                                               <span class="n">height_pt</span><span class="o">=</span><span class="n">height_pt</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">areas</span></div>
+        <span class="k">return</span> <span class="n">areas</span>
 
-<div class="viewcode-block" id="layout._yokogaki_ordering"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout._yokogaki_ordering">[docs]</a>    <span class="k">def</span> <span class="nf">_yokogaki_ordering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_yokogaki_ordering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_grobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculates the yokogaki (left to right, top to bottom) ordering</span>
 <span class="sd">        the the patches</span>
@@ -514,8 +580,8 @@
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
 <span class="sd">        num_grobs : integer</span>
-<span class="sd">            if not None, then this value will be used to understand the number</span>
-<span class="sd">            of grobs to be laid out</span>
+<span class="sd">            if not ``None``, then this value will be used to understand the</span>
+<span class="sd">            number of grobs to be laid out</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -554,9 +620,9 @@
             <span class="n">row_ids</span> <span class="o">=</span> <span class="n">inner_index</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">inner_x_left</span><span class="p">)]</span>
             <span class="n">yokogaki_ordering</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">row_ids</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yokogaki_ordering</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yokogaki_ordering</span><span class="p">)</span>
 
-<div class="viewcode-block" id="layout.__hash__"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout.__hash__">[docs]</a>    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a &#39;unique&#39; hash for the object to help with identification</span>
 
@@ -580,12 +646,12 @@
         <span class="n">info_list</span> <span class="o">=</span> <span class="n">design_list</span> <span class="o">+</span> \
             <span class="n">rw_list</span> <span class="o">+</span> <span class="n">rh_list</span> <span class="o">+</span>\
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ncol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrow</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_grobs</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">info_list</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">info_list</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="layout.__str__"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;&lt;layout (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;layout (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="layout.__repr__"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">nrow_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrow</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">nrow_str</span> <span class="o">=</span> <span class="s2">&quot;unk&quot;</span>
@@ -612,9 +678,9 @@
             <span class="n">rw_str</span> <span class="o">+</span>\
             <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">heights:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>\
             <span class="n">rh_str</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out</span>
 
-<div class="viewcode-block" id="layout.__eq__"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.layout.__eq__">[docs]</a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        checks if object is equal to another object (value)</span>
 
@@ -646,7 +712,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">ncol</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">ncol</span> <span class="ow">and</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">nrow</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">nrow</span> <span class="ow">and</span> \
             <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_heights</span><span class="o">/</span><span class="n">value</span><span class="o">.</span><span class="n">rel_heights</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> \
-            <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_widths</span><span class="o">/</span><span class="n">value</span><span class="o">.</span><span class="n">rel_widths</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span></div></div>
+            <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_widths</span><span class="o">/</span><span class="n">value</span><span class="o">.</span><span class="n">rel_widths</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="area"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area">[docs]</a><span class="k">class</span> <span class="nc">area</span><span class="p">:</span>
@@ -655,27 +721,34 @@
                  <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span>
                  <span class="n">_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        area class that stores information about what area a patch will fill</span>
+<span class="sd">        object that stores information about what area a ``patch`` will fill</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
 <span class="sd">        x_left : float</span>
 <span class="sd">            scalar of where the left-most point of the patch is located (impacted</span>
-<span class="sd">            by the `_type` parameter)</span>
+<span class="sd">            by the ``_type`` parameter)</span>
 <span class="sd">        y_top : float</span>
 <span class="sd">            scalar of where the top-most point of the patch is located (impacted</span>
-<span class="sd">            by the `_type` parameter)</span>
+<span class="sd">            by the ``_type`` parameter)</span>
 <span class="sd">        width : float</span>
-<span class="sd">            scalar of the width of the patch (impacted by the `_type` parameter)</span>
+<span class="sd">            scalar of the width of the patch (impacted by the ``_type``</span>
+<span class="sd">            parameter)</span>
 <span class="sd">        height : float</span>
-<span class="sd">            scalar of the height of the patch (impacted by the `_type` parameter)</span>
+<span class="sd">            scalar of the height of the patch (impacted by the ``_type``</span>
+<span class="sd">            parameter)</span>
 <span class="sd">        _type : str {&quot;design&quot;, &quot;relative&quot;, &quot;pt&quot;}</span>
 <span class="sd">            describes how the parameters are stored. See Notes for more</span>
 <span class="sd">            information between the options.</span>
 
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        The `_type` parameter informs how to understand the other parameters:</span>
+
+<span class="sd">        These objects provide structural information about where in the overall</span>
+<span class="sd">        arangement individual plots / sub arangments lie.</span>
+
+<span class="sd">        The ``_type`` parameter informs how to understand the other parameters:</span>
 
 <span class="sd">        1. &quot;design&quot; means that the values are w.r.t. to a design matrix</span>
 <span class="sd">        relative to the `layout` class, and values are relative to the rows</span>
@@ -685,6 +758,11 @@
 <span class="sd">        the canvas and taking values between 0-1 (inclusive).</span>
 
 <span class="sd">        3. &quot;pt&quot; means that values are defined relative to point values</span>
+
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        layout : object that incorporates multiple area definitions to define</span>
+<span class="sd">            layouts.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># some structure check:</span>
@@ -696,23 +774,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">_type</span>
 
-<div class="viewcode-block" id="area._check_info_wrt_type"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area._check_info_wrt_type">[docs]</a>    <span class="k">def</span> <span class="nf">_check_info_wrt_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_left</span><span class="p">,</span> <span class="n">y_top</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_check_info_wrt_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_left</span><span class="p">,</span> <span class="n">y_top</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        some logic checks of inputs relative to `_type` parameter</span>
+<span class="sd">        some logic checks of inputs relative to ``_type`` parameter</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
 <span class="sd">        x_left : float</span>
 <span class="sd">            scalar of where the left-most point of the patch is located</span>
-<span class="sd">            (impacted by the `_type` parameter)</span>
+<span class="sd">            (impacted by the ``_type`` parameter)</span>
 <span class="sd">        y_top : float</span>
 <span class="sd">            scalar of where the top-most point of the patch is located</span>
-<span class="sd">            (impacted by the `_type` parameter)</span>
+<span class="sd">            (impacted by the ``_type`` parameter)</span>
 <span class="sd">        width : float</span>
-<span class="sd">            scalar of the width of the patch (impacted by the `_type`</span>
+<span class="sd">            scalar of the width of the patch (impacted by the ``_type``</span>
 <span class="sd">            parameter)</span>
 <span class="sd">        height : float</span>
-<span class="sd">            scalar of the height of the patch (impacted by the `_type`</span>
+<span class="sd">            scalar of the height of the patch (impacted by the ``_type``</span>
 <span class="sd">            parameter)</span>
 <span class="sd">        _type : str {&quot;design&quot;, &quot;relative&quot;, &quot;pt&quot;}</span>
 <span class="sd">            describes how the parameters are stored. Options include</span>
@@ -722,7 +800,7 @@
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            if any of the first four parameters don&#39;t make sense with respect</span>
-<span class="sd">            to the `_type` parameter</span>
+<span class="sd">            to the ``_type`` parameter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;design&quot;</span><span class="p">,</span> <span class="s2">&quot;relative&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">]:</span>
@@ -746,13 +824,13 @@
                        <span class="p">[</span><span class="n">is_positive</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">]]):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;with _type=</span><span class="se">\&quot;</span><span class="s2">pt</span><span class="se">\&quot;</span><span class="s2">, all x_left and y_top should&quot;</span><span class="o">+</span>\
                              <span class="s2">&quot; be non-negative and width and height should&quot;</span><span class="o">+</span>\
-                             <span class="s2">&quot; be strictly positive&quot;</span><span class="p">)</span></div>
+                             <span class="s2">&quot; be strictly positive&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="area._design_to_relative"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area._design_to_relative">[docs]</a>    <span class="k">def</span> <span class="nf">_design_to_relative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rel_widths</span><span class="p">,</span> <span class="n">rel_heights</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_design_to_relative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rel_widths</span><span class="p">,</span> <span class="n">rel_heights</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        translates an area object with `_type` = &quot;design&quot; to area object</span>
-<span class="sd">        with `_type` = &quot;relative&quot;.</span>
+<span class="sd">        translates an area object with ``_type`` = &quot;design&quot; to area object</span>
+<span class="sd">        with ``_type`` = &quot;relative&quot;.</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
@@ -764,7 +842,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        area object</span>
-<span class="sd">            area object of `_type` = &quot;relative&quot;</span>
+<span class="sd">            area object of ``_type`` = &quot;relative&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rel_widths</span> <span class="o">=</span> <span class="n">rel_widths</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rel_widths</span><span class="p">)</span>
         <span class="n">rel_heights</span> <span class="o">=</span> <span class="n">rel_heights</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rel_heights</span><span class="p">)</span>
@@ -781,12 +859,12 @@
                         <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
                         <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
                         <span class="n">_type</span><span class="o">=</span><span class="s2">&quot;relative&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">rel_area</span></div>
+        <span class="k">return</span> <span class="n">rel_area</span>
 
-<div class="viewcode-block" id="area._relative_to_pt"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area._relative_to_pt">[docs]</a>    <span class="k">def</span> <span class="nf">_relative_to_pt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_relative_to_pt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width_pt</span><span class="p">,</span> <span class="n">height_pt</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        translates an area object with `_type` = &quot;relative&quot; to area object</span>
-<span class="sd">        with `_type` = &quot;pt&quot;.</span>
+<span class="sd">        translates an area object with ``_type`` = &quot;relative&quot; to area object</span>
+<span class="sd">        with ``_type`` = &quot;pt&quot;.</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
@@ -798,13 +876,13 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        area object</span>
-<span class="sd">            area object of `_type` = &quot;pt&quot;</span>
+<span class="sd">            area object of ``_type`` = &quot;pt&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">area</span><span class="p">(</span><span class="n">x_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_left</span> <span class="o">*</span> <span class="n">width_pt</span><span class="p">,</span>
                     <span class="n">y_top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_top</span> <span class="o">*</span> <span class="n">height_pt</span><span class="p">,</span>
                     <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">width_pt</span><span class="p">,</span>
                     <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="n">height_pt</span><span class="p">,</span>
-                    <span class="n">_type</span> <span class="o">=</span> <span class="s2">&quot;pt&quot;</span><span class="p">)</span></div>
+                    <span class="n">_type</span> <span class="o">=</span> <span class="s2">&quot;pt&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="area.pt"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area.pt">[docs]</a>    <span class="k">def</span> <span class="nf">pt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
            <span class="n">width_pt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -813,25 +891,25 @@
            <span class="n">rel_heights</span><span class="o">=</span><span class="kc">None</span>
            <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Translates area object to `_type` = &quot;pt&quot;</span>
+<span class="sd">        Translates area object to ``_type`` = &quot;pt&quot;</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
 <span class="sd">        width_pt : float</span>
-<span class="sd">            width in points (required if `_type` is not &quot;pt&quot;)</span>
+<span class="sd">            width in points (required if ``_type`` is not &quot;pt&quot;)</span>
 <span class="sd">        height_pt : float</span>
-<span class="sd">            height in points (required if `_type` is not &quot;pt&quot;)</span>
+<span class="sd">            height in points (required if ``_type`` is not &quot;pt&quot;)</span>
 <span class="sd">        rel_widths : np.array (vector)</span>
 <span class="sd">            list of relative widths of each column of the layout matrix</span>
-<span class="sd">            (required if `_type` is &quot;design&quot;)</span>
+<span class="sd">            (required if ``_type`` is &quot;design&quot;)</span>
 <span class="sd">        rel_heights : np.array (vector)</span>
 <span class="sd">            list of relative heights of each row of the layout matrix</span>
-<span class="sd">            (required if `_type` is &quot;design&quot;)</span>
+<span class="sd">            (required if ``_type`` is &quot;design&quot;)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        area object</span>
-<span class="sd">            area object of `_type` = &quot;pt&quot;</span>
+<span class="sd">            area object of ``_type`` = &quot;pt&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="s2">&quot;design&quot;</span><span class="p">:</span>
             <span class="n">rel_area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_design_to_relative</span><span class="p">(</span><span class="n">rel_widths</span> <span class="o">=</span> <span class="n">rel_widths</span><span class="p">,</span>
@@ -846,23 +924,23 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;_type attributes altered to a non-acceptable&quot;</span><span class="o">+</span>\
                              <span class="s2">&quot; value&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="area._hash"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area._hash">[docs]</a>    <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        replacement function for `__hash__` due to equality conflicts</span>
+<span class="sd">        replacement function for ``__hash__`` due to equality conflicts</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        required since we defined `__eq__` and this conflicts with the</span>
-<span class="sd">        standard `__hash__`</span>
+<span class="sd">        required since we defined ``__eq__`` and this conflicts with the</span>
+<span class="sd">        standard ``__hash__``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">x_left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_top</span><span class="p">,</span>
                      <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
-                     <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span></div>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
 
-<div class="viewcode-block" id="area.__str__"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;&lt;area (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;area (</span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">()</span>
 
-<div class="viewcode-block" id="area.__repr__"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;_type: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">+</span>\
             <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">x_left: &quot;</span> <span class="o">+</span>\
             <span class="bp">self</span><span class="o">.</span><span class="n">x_left</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span>\
@@ -872,15 +950,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span>\
             <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">height: &quot;</span> <span class="o">+</span>\
             <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out</span>
 
-<div class="viewcode-block" id="area.__eq__"><a class="viewcode-back" href="../../autoapi/cowpatch/layout_elements/index.html#cowpatch.area.__eq__">[docs]</a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> \
             <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x_left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_top</span><span class="p">,</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">]),</span>
                       <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span><span class="o">.</span><span class="n">x_left</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">y_top</span><span class="p">,</span>
                                 <span class="n">value</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">height</span><span class="p">]))</span> <span class="ow">and</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">_type</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">_type</span></div>
 </pre></div>
 
            </div>

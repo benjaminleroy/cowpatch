@@ -1,3 +1,5 @@
+:orphan:
+
 :py:mod:`cowpatch.text_elements`
 ================================
 
@@ -39,63 +41,6 @@ Classes
 
    Note the function use the ``text`` attribute - NOT the
    ``plot_title`` attribute if a theme is provided.
-
-   .. py:method:: _clean_element_text(self, element_text)
-
-      cleans element_text to make sure any element_text() is a
-      p9.themes.themeable, not just a p9.theme.elements.element_text
-
-      :param element_text: element text added to or initialized with the text object. Can
-                           be None, a p9.theme.elements.element_text or a p9.themes.themeable
-      :type element_text: p9's element_text
-
-      .. rubric:: Notes
-
-      updates i place
-
-
-   .. py:method:: __add__(self, other)
-
-      add element_text or theme to update format
-
-      TODO: make this work w.r.t patchwork approaches (edge cases #8)
-
-      :param other: theme or element_text to define the attributes of the text.
-      :type other: plotnine.themes.elements.element_text or theme
-
-      .. rubric:: Notes
-
-      Note the function use the ``text`` attribute - NOT the ``plot_title``
-      attribute if a theme is provided.
-
-
-   .. py:method:: _provide_complete_theme(self)
-
-      It should be here that the current global theme is accessed, and thing are completed...
-
-
-   .. py:method:: _inner_prep(self)
-
-      Internal function to create matplotlib figure with text and
-      provide a bounding box for the location in the plot
-
-      :returns: * **fig** (*matplotlib.figure.Figure*) -- figure with text at (0,0), no axes
-                * **bbox** (*matplotlib.transforms.Bbox*) -- bbox location of text in figure
-
-
-   .. py:method:: _create_svg_object(self, width=None, height=None)
-
-      Internal to create svg object (with text in correct location
-      and correct image size)
-
-      :param width: width of desired output (in inches)
-      :type width: float
-      :param height: height of desired output (in inches)
-      :type height: float
-
-      :returns: **svg_obj** -- svg representation of text with correct format and image size
-      :rtype: svgutils.transform.SVGFigure
-
 
    .. py:method:: save(self, filename, width=None, height=None)
 

@@ -25,9 +25,7 @@
         <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="cowpatch.wrappers" href="../wrappers/index.html" />
-    <link rel="prev" title="cowpatch.text_elements" href="../text_elements/index.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,28 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guides/guides_index.html">Guides</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../wrappers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.wrappers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
 <ul>
@@ -94,8 +75,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">API Reference</a> &raquo;</li>
-          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.utils</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/cowpatch/utils/index.rst.txt" rel="nofollow"> View page source</a>
@@ -156,15 +135,6 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.utils.inherits_plotnine" title="cowpatch.utils.inherits_plotnine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inherits_plotnine</span></code></a>(other)</p></td>
 <td><p>checks if object is a plotnine one (but really only checks if comes</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.utils._transform_size_to_pt" title="cowpatch.utils._transform_size_to_pt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_transform_size_to_pt</span></code></a>(size_string_tuple)</p></td>
-<td><p>takes string with unit and converts it to a float w.r.t pt</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.utils._proposed_scaling_both" title="cowpatch.utils._proposed_scaling_both"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_proposed_scaling_both</span></code></a>(current, desired)</p></td>
-<td><p>identify a x and y scaling to make the current size into the desired size</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.utils._flatten_nested_list" title="cowpatch.utils._flatten_nested_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_flatten_nested_list</span></code></a>(x)</p></td>
-<td><p>Flatten nested list</p></td>
 </tr>
 </tbody>
 </table>
@@ -287,55 +257,6 @@
 from plotnine package…)</p>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.utils._transform_size_to_pt">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.utils.</span></span><span class="sig-name descname"><span class="pre">_transform_size_to_pt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size_string_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/utils.html#_transform_size_to_pt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.utils._transform_size_to_pt" title="Permalink to this definition"></a></dt>
-<dd><p>takes string with unit and converts it to a float w.r.t pt</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>size_string_tuple</strong> (<em>string tuple</em>) – tuple of strings with size of svg image</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>tuple of floats of sizes w.r.t pt</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.utils._proposed_scaling_both">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.utils.</span></span><span class="sig-name descname"><span class="pre">_proposed_scaling_both</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/utils.html#_proposed_scaling_both"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.utils._proposed_scaling_both" title="Permalink to this definition"></a></dt>
-<dd><p>identify a x and y scaling to make the current size into the desired size</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>current</strong> (<em>tuple</em>) – float tuple of current size of svg object</p></li>
-<li><p><strong>desired</strong> (<em>tuple</em>) – float tuple of desired size of svg object</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>float tuple of scalar constants for size change in each dimension</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.utils._flatten_nested_list">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.utils.</span></span><span class="sig-name descname"><span class="pre">_flatten_nested_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/utils.html#_flatten_nested_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.utils._flatten_nested_list" title="Permalink to this definition"></a></dt>
-<dd><p>Flatten nested list</p>
-<dl class="simple">
-<dt>x<span class="classifier">list</span></dt><dd><p>nested list with different leveling of different objects</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>flatten version of list</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 </section>
 </section>
@@ -343,10 +264,7 @@ from plotnine package…)</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../text_elements/index.html" class="btn btn-neutral float-left" title="cowpatch.text_elements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../wrappers/index.html" class="btn btn-neutral float-right" title="cowpatch.wrappers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

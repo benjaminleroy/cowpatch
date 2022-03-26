@@ -25,9 +25,7 @@
         <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="cowpatch.utils" href="../utils/index.html" />
-    <link rel="prev" title="cowpatch.svg_utils" href="../svg_utils/index.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,28 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guides/guides_index.html">Guides</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../wrappers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.wrappers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
 <ul>
@@ -94,8 +75,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">API Reference</a> &raquo;</li>
-          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/cowpatch/text_elements/index.rst.txt" rel="nofollow"> View page source</a>
@@ -146,79 +125,6 @@ annoying that this is the default).</p>
 <p>Note the function use the <code class="docutils literal notranslate"><span class="pre">text</span></code> attribute - NOT the
 <code class="docutils literal notranslate"><span class="pre">plot_title</span></code> attribute if a theme is provided.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.text_elements.text._clean_element_text">
-<span class="sig-name descname"><span class="pre">_clean_element_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/text_elements.html#text._clean_element_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.text_elements.text._clean_element_text" title="Permalink to this definition"></a></dt>
-<dd><p>cleans element_text to make sure any element_text() is a
-p9.themes.themeable, not just a p9.theme.elements.element_text</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>element_text</strong> (<em>p9's element_text</em>) – element text added to or initialized with the text object. Can
-be None, a p9.theme.elements.element_text or a p9.themes.themeable</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>updates i place</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.text_elements.text.__add__">
-<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/text_elements.html#text.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.text_elements.text.__add__" title="Permalink to this definition"></a></dt>
-<dd><p>add element_text or theme to update format</p>
-<p>TODO: make this work w.r.t patchwork approaches (edge cases #8)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>other</strong> (<em>plotnine.themes.elements.element_text</em><em> or </em><em>theme</em>) – theme or element_text to define the attributes of the text.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Note the function use the <code class="docutils literal notranslate"><span class="pre">text</span></code> attribute - NOT the <code class="docutils literal notranslate"><span class="pre">plot_title</span></code>
-attribute if a theme is provided.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.text_elements.text._provide_complete_theme">
-<span class="sig-name descname"><span class="pre">_provide_complete_theme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/text_elements.html#text._provide_complete_theme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.text_elements.text._provide_complete_theme" title="Permalink to this definition"></a></dt>
-<dd><p>It should be here that the current global theme is accessed, and thing are completed…</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.text_elements.text._inner_prep">
-<span class="sig-name descname"><span class="pre">_inner_prep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/text_elements.html#text._inner_prep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.text_elements.text._inner_prep" title="Permalink to this definition"></a></dt>
-<dd><p>Internal function to create matplotlib figure with text and
-provide a bounding box for the location in the plot</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – figure with text at (0,0), no axes</p></li>
-<li><p><strong>bbox</strong> (<em>matplotlib.transforms.Bbox</em>) – bbox location of text in figure</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.text_elements.text._create_svg_object">
-<span class="sig-name descname"><span class="pre">_create_svg_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/text_elements.html#text._create_svg_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.text_elements.text._create_svg_object" title="Permalink to this definition"></a></dt>
-<dd><p>Internal to create svg object (with text in correct location
-and correct image size)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>width</strong> (<em>float</em>) – width of desired output (in inches)</p></li>
-<li><p><strong>height</strong> (<em>float</em>) – height of desired output (in inches)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>svg_obj</strong> – svg representation of text with correct format and image size</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>svgutils.transform.SVGFigure</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="cowpatch.text_elements.text.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/text_elements.html#text.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.text_elements.text.save" title="Permalink to this definition"></a></dt>
 <dd><p>save text object as image in minimal size object</p>
@@ -242,10 +148,7 @@ and correct image size)</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../svg_utils/index.html" class="btn btn-neutral float-left" title="cowpatch.svg_utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../utils/index.html" class="btn btn-neutral float-right" title="cowpatch.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

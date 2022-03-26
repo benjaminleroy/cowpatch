@@ -1,3 +1,5 @@
+:orphan:
+
 :py:mod:`cowpatch.wrappers`
 ===========================
 
@@ -34,22 +36,6 @@ Classes
    update this object. This wrapper creates a special patch object that
    can be combined with other patch objects.
 
-   .. py:method:: _svg(self, width_px, height_px)
-
-      convert plot to svg objecct
-
-      :param width_px: desired width of svg object in pixels
-      :type width_px: float
-      :param height_px: desired height of svg object in pixels
-      :type height_px: float
-
-      :returns: **svg_object**
-      :rtype: svgutils.transforms object
-
-
-   .. py:method:: __add__(self, other)
-
-
 
 .. py:class:: wrapper_matplotlib(fig, axes)
 
@@ -67,19 +53,6 @@ Classes
    You can still update the plot using `object.fig.(function)` and
    `object.fig.(function)`. This wrapper creates a special patch object that
    can be combined with other patch objects.
-
-   .. py:method:: _svg(self, width_px, height_px)
-
-      Internal function to create an svg representation of the patch
-
-      :param width_pt: desired width of svg object in points
-      :type width_pt: float
-      :param height_pt: desired height of svg object in points
-      :type height_pt: float
-
-      :returns: **svg_object**
-      :rtype: svgutils.transforms object
-
 
 
 .. py:class:: wrapper_seaborn(fig, axes)

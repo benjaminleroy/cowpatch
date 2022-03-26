@@ -51,11 +51,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="guides_index.html">Guides</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Layout: using <code class="docutils literal notranslate"><span class="pre">layout</span></code> to arrange a set of plots</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#connection-to-our-r-cousins">Connection to our <code class="docutils literal notranslate"><span class="pre">R</span></code> cousins</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#outline-of-examples">Outline of examples</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#a-note-on-image-sizes">A note on image sizes</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#initial-definition-of-plots">Initial definition of plots</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#layout-of-multiple-plots">Layout of multiple plots</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#design-matrix-approach">Design matrix approach</a></li>
@@ -71,6 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#defaults-and-error-avoidance-corrections">Defaults and error avoidance corrections</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#example-of-selection-of-height-and-width-if-not-provided">Example of selection of <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code> if not provided</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#example-of-size-correction-if-height-and-width-don-t-work-with-plotnine-s-visualization-ability">Example of size correction if <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code> don’t work with <code class="docutils literal notranslate"><span class="pre">plotnine</span></code>’s visualization ability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#avoiding-sizing-correction">Avoiding sizing correction</a></li>
 </ul>
 </li>
 </ul>
@@ -118,18 +114,12 @@
   <section class="tex2jax_ignore mathjax_ignore" id="layout-using-layout-to-arrange-a-set-of-plots">
 <h1>Layout: using <code class="docutils literal notranslate"><span class="pre">layout</span></code> to arrange a set of plots<a class="headerlink" href="#layout-using-layout-to-arrange-a-set-of-plots" title="Permalink to this headline"></a></h1>
 <p>The simple addition of a <code class="docutils literal notranslate"><span class="pre">cow.patch(...)</span></code> object and a <code class="docutils literal notranslate"><span class="pre">cow.layout(...)</span></code> object allows for a range of different arrangements of plots. The below document enumerates a range of these approaches.</p>
-<section id="connection-to-our-r-cousins">
-<h2>Connection to our <code class="docutils literal notranslate"><span class="pre">R</span></code> cousins<a class="headerlink" href="#connection-to-our-r-cousins" title="Permalink to this headline"></a></h2>
+<p><strong>Connection to our <code class="docutils literal notranslate"><span class="pre">R</span></code> cousins</strong></p>
 <p>These approaches reflect similar arrangements that are seen in <a class="reference external" href="https://www.r-project.org/"><code class="docutils literal notranslate"><span class="pre">R</span></code></a> packages like <a class="reference external" href="https://cran.r-project.org/web/packages/gridExtra/index.html"><code class="docutils literal notranslate"><span class="pre">gridExtra</span></code></a>’s <a class="reference external" href="https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html#basic-usage"><code class="docutils literal notranslate"><span class="pre">arrange.grid</span></code></a>, <a class="reference external" href="https://wilkelab.org/cowplot/index.html"><code class="docutils literal notranslate"><span class="pre">cowplot</span></code></a>’s <a class="reference external" href="https://wilkelab.org/cowplot/articles/plot_grid.html"><code class="docutils literal notranslate"><span class="pre">plot_grid</span></code></a>  and <a class="reference external" href="https://patchwork.data-imaginist.com/"><code class="docutils literal notranslate"><span class="pre">patchwork</span></code></a>’s <a class="reference external" href="https://patchwork.data-imaginist.com/articles/guides/layout.html"><code class="docutils literal notranslate"><span class="pre">plot_layout</span></code></a>.</p>
-</section>
-<section id="outline-of-examples">
-<h2>Outline of examples<a class="headerlink" href="#outline-of-examples" title="Permalink to this headline"></a></h2>
+<p><strong>Outline of examples</strong></p>
 <p>The below subsections lay out arrange of plots using just <code class="docutils literal notranslate"><span class="pre">cow.patch</span></code> and <code class="docutils literal notranslate"><span class="pre">cow.layout</span></code> in two <strong>distinct</strong> ways. The first captures a more straight forward, single step approach to defining the layout, whereas the later presents a way to define the arrangement of plots in a nested way which may align with work flows that are more interative in nature. This first way aligns with <a class="reference external" href="https://cran.r-project.org/web/packages/gridExtra/index.html"><code class="docutils literal notranslate"><span class="pre">gridExtra</span></code></a> philosophical approach more, whereas the second aligns with <a class="reference external" href="https://wilkelab.org/cowplot/index.html"><code class="docutils literal notranslate"><span class="pre">cowplot</span></code></a> development philosophy.</p>
-<section id="a-note-on-image-sizes">
-<h3>A note on image sizes<a class="headerlink" href="#a-note-on-image-sizes" title="Permalink to this headline"></a></h3>
+<p><strong>A note on image sizes</strong></p>
 <p>When we call the <code class="docutils literal notranslate"><span class="pre">.show()</span></code> function, the documentation representation of the slides scales the width of the <code class="docutils literal notranslate"><span class="pre">svg</span></code> object to be 100% width of the document in it exceeds the size. This scaling won’t happen if you run the code in a standard <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span></code><a class="footnote-reference brackets" href="#id4" id="id1">2</a>.</p>
-</section>
-</section>
 <section id="initial-definition-of-plots">
 <h2>Initial definition of plots<a class="headerlink" href="#initial-definition-of-plots" title="Permalink to this headline"></a></h2>
 <div class="cell docutils container">
@@ -405,8 +395,7 @@
 </div>
 <img alt="../_images/Layout_27_1.svg" src="../_images/Layout_27_1.svg" /></div>
 </div>
-<section id="using-only-ncol-with-byrow-false">
-<h5>Using only <code class="docutils literal notranslate"><span class="pre">ncol</span></code> with <code class="docutils literal notranslate"><span class="pre">byrow</span> <span class="pre">=</span> <span class="pre">False</span></code><a class="headerlink" href="#using-only-ncol-with-byrow-false" title="Permalink to this headline"></a></h5>
+<p><strong>Using only <code class="docutils literal notranslate"><span class="pre">ncol</span></code> with <code class="docutils literal notranslate"><span class="pre">byrow</span> <span class="pre">=</span> <span class="pre">False</span></code></strong></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_ncol_bycol</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">)</span> <span class="o">+</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">byrow</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">rel_widths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
@@ -420,7 +409,6 @@
 </div>
 <img alt="../_images/Layout_29_1.svg" src="../_images/Layout_29_1.svg" /></div>
 </div>
-</section>
 </section>
 <section id="using-only-nrow">
 <h4>Using only <code class="docutils literal notranslate"><span class="pre">nrow</span></code><a class="headerlink" href="#using-only-nrow" title="Permalink to this headline"></a></h4>
@@ -437,8 +425,7 @@
 </div>
 <img alt="../_images/Layout_31_1.svg" src="../_images/Layout_31_1.svg" /></div>
 </div>
-<section id="using-only-nrow-with-byrow-false">
-<h5>Using only <code class="docutils literal notranslate"><span class="pre">nrow</span></code> with <code class="docutils literal notranslate"><span class="pre">byrow=False</span></code><a class="headerlink" href="#using-only-nrow-with-byrow-false" title="Permalink to this headline"></a></h5>
+<p><strong>Using only <code class="docutils literal notranslate"><span class="pre">nrow</span></code> with <code class="docutils literal notranslate"><span class="pre">byrow=False</span></code></strong></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_ncol</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">,</span><span class="n">g3</span><span class="p">)</span> <span class="o">+</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">nrow</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">byrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rel_heights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
@@ -452,7 +439,6 @@
 </div>
 <img alt="../_images/Layout_33_1.svg" src="../_images/Layout_33_1.svg" /></div>
 </div>
-</section>
 </section>
 </section>
 </section>
@@ -536,8 +522,9 @@
 </div>
 <img alt="../_images/Layout_43_1.svg" src="../_images/Layout_43_1.svg" /></div>
 </div>
+</section>
 <section id="avoiding-sizing-correction">
-<h4>Avoiding sizing correction<a class="headerlink" href="#avoiding-sizing-correction" title="Permalink to this headline"></a></h4>
+<h3>Avoiding sizing correction<a class="headerlink" href="#avoiding-sizing-correction" title="Permalink to this headline"></a></h3>
 <p>If you want to throw an error when you request a size that is not ability to be delivered (as opposed to the default approach of overriding your request), you can change the global <code class="docutils literal notranslate"><span class="pre">rcParams</span></code>’s <code class="docutils literal notranslate"><span class="pre">num_attempts</span></code>. Specifically, by setting <code class="docutils literal notranslate"><span class="pre">cow.rcParams[&quot;num_attempts&quot;]</span> <span class="pre">=</span> <span class="pre">1</span></code> you’ll observe an error thrown if you define an unobtainable size.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -582,7 +569,6 @@
 <dd><p>The equal sizing for each block is within dimensions not across dimensions. That is, each row is not necessarily the same height as the width of each column.</p>
 </dd>
 </dl>
-</section>
 </section>
 </section>
 </section>

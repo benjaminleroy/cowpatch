@@ -1,3 +1,5 @@
+:orphan:
+
 :py:mod:`cowpatch.svg_utils`
 ============================
 
@@ -13,137 +15,9 @@ Functions
 
 .. autoapisummary::
 
-   cowpatch.svg_utils._raw_gg_to_svg
-   cowpatch.svg_utils._real_size_out_svg
-   cowpatch.svg_utils._select_correcting_size_svg
    cowpatch.svg_utils.gg_to_svg
-   cowpatch.svg_utils._raw_mpt_to_svg
    cowpatch.svg_utils.mpt_to_svg
-   cowpatch.svg_utils._save_svg_wrapper
-   cowpatch.svg_utils._show_image
 
-
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   cowpatch.svg_utils._file_options
-
-
-.. py:function:: _raw_gg_to_svg(gg, width, height, dpi, limitsize=True)
-
-   Convert plotnine ggplot figure to svg and return it (pass width, height
-   directly to p9.save, no correction to incorrect saving)
-
-   :param gg: object to save as a png image
-   :type gg: plotnine.ggplot.ggplot
-   :param width: width in inches to be passed to the plotnine's ggplot.save function
-   :type width: float
-   :param height: height in inches to be passed to the plotnine's ggplot.save function
-   :type height: float
-   :param dpi: dots per inch, to be passed to the plotnine's ggplot.save function
-   :type dpi: int
-   :param limitsize: logic if plotnine's ggplot.save function should check if the requested
-                     width and height in inches are greater than 50 (assumes the user
-                     accidentally entered in these values w.r.t. pixels)
-   :type limitsize: boolean
-
-   :returns: (aka an svg representation)
-   :rtype: svgutils.tranform representation of the ggplot object
-
-   .. rubric:: Notes
-
-   Code idea motified by the stackoverflow question here, https://stackoverflow.com/questions/8598673/how-to-save-a-pylab-figure-into-in-memory-file-which-can-be-read-into-pil-image/8598881
-   and truly influenced by svgutils.transform.from_mpl function.
-
-
-.. py:function:: _real_size_out_svg(gg, height, width, dpi, limitsize=True)
-
-   Calculate the output size for a plotnine.ggplot object saving as an
-   svg
-
-   .. rubric:: Notes
-
-   This function is useful given default approach for the saving of
-   images uses `bbox_inches="tight"`. This appears to be done since to obtain
-   desirable containment of all parts in the image (not to overflow the
-   provided space) and because matplotlib's `plt.tight_layout()` doesn't
-   preform as expected for the `plotnine.ggplot` objects.
-
-   This code leverages ideas that are presented in a blog post by Kavi Gupta
-   at https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/
-
-   :param gg: ggplot object to calculate optimal size
-   :type gg: plotnine.ggplot.ggplot
-   :param height: desired height of svg output (in inches)
-   :type height: float
-   :param width: desired width of svg output (in inches)
-   :type width: float
-   :param dpi: dots per inch of saved object
-   :type dpi: float
-   :param limitsize: logic if plotnine's ggplot.save function should check if the requested
-                     width and height in inches are greater than 50 (assumes the user
-                     accidentally entered in these values w.r.t. pixels)
-   :type limitsize: boolean
-
-   :returns: of the actual height and width (in inches) of the svg image that would
-             be created if the above
-   :rtype: tuple
-
-
-.. py:function:: _select_correcting_size_svg(gg, height, width, dpi, limitsize=True, eps=0.01, maxIter=20, min_size_px=10, throw_error=True)
-
-   Obtain the correct input saving size plotnine.ggplot object to actual
-   obtain desired height and width (inches)
-
-   .. rubric:: Notes
-
-   This function is useful given default approach for the saving of
-   images uses `bbox_inches="tight"`. This appears to be done since to obtain
-   desirable containment of all parts in the image (not to overflow the
-   provided space) and because matplotlib's `plt.tight_layout()` doesn't
-   preform as expected for the `plotnine.ggplot` objects.
-
-   This code leverages ideas that are presented in a blog post by Kavi Gupta
-   at https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/.
-   It is iterative procedure in nature (the reason for eps and maxIter), eps
-   looks at the difference between the desired and obtained height and width.
-
-   :param gg: ggplot object to calculate optimal size
-   :type gg: plotnine.ggplot.ggplot
-   :param height: desired height of svg output (in inches)
-   :type height: float
-   :param width: desired width of svg output (in inches)
-   :type width: float
-   :param dpi: dots per inch of saved object
-   :type dpi: float
-   :param limitsize: logic if plotnine's ggplot.save function should check if the requested
-                     width and height in inches are greater than 50 (assumes the user
-                     accidentally entered in these values w.r.t. pixels)
-   :type limitsize: boolean
-   :param eps: maximum allowed difference between height and width output versus the
-               desired output
-   :type eps: float
-   :param maxIter: maximum number of steps that can be used to the difference
-                   between desired and output height and width within minimum distance
-   :type maxIter: int
-   :param min_size_px: early stopping rule if converging height or width has a pixel size
-                       smaller than or equal to this value (assumes process will not converge)
-   :type min_size_px: int
-   :param throw_error: logic if an error should be thrown if the convergence fails. If False,
-                       then this will return ratios of width_requested/width_obtained,
-                       height_requested/height_obtained, and a boolean = False.
-   :type throw_error: boolean
-
-   :returns: if the process converges successful, it will return a three value
-             tuple of a width and height to provide desired measures and a
-             boolean value (True). if process fails to converge, either this
-             functions raises an error (if throw_error is True), or a three value
-             tuple of a scaled width_requested/width_obtained,
-             height_requested/height_obtained, and a boolean value (False).
-   :rtype: tuple
 
 
 .. py:function:: gg_to_svg(gg, width, height, dpi, limitsize=True, eps=0.01, maxIter=20, min_size_px=10)
@@ -182,69 +56,6 @@ Attributes
    and truly influenced by svgutils.transform.from_mpl function.
 
 
-.. py:function:: _raw_mpt_to_svg(fig, ax, width, height, dpi)
-
-   ... taken from proof_of_concept_wrapper's fa_encapsulate
-
-
 .. py:function:: mpt_to_svg(gg, width, height, dpi)
-
-
-.. py:data:: _file_options
-   :annotation: = ['pdf', 'png', 'ps', 'eps', 'jpg', 'jpeg', 'svg']
-
-   
-
-.. py:function:: _save_svg_wrapper(svg, filename, width, height, dpi=300, _format=None, verbose=True)
-
-   save svg object to a range of different file names
-
-   :param svg: svg object to save
-   :type svg: svgutils.transform.SVGFigure
-   :param filename: local string to save the file to (this can also be at least io.BytesIO)
-   :type filename: str
-   :param width: width of output image in inches (this should actually be associated
-                 with the svg...)
-   :type width: float
-   :param height: height of svg in inches (this should actually be associated
-                  with the svg...)
-   :type height: float
-   :param dpi: dots per square inch, default is 300
-   :type dpi: int or float
-   :param format: string of format (error tells options). If provided this is the format
-                  used, if None, then we'll try to use the filename extension.
-   :type format: str
-   :param verbose: If `True`, print the saving information.
-   :type verbose: bool
-
-   :returns: saves to a file
-   :rtype: None
-
-
-.. py:function:: _show_image(svg, width, height, dpi=300, verbose=True)
-
-   display svg object for user (either run from command line or jupyter
-   notebook)
-
-   :param svg: svg object to save
-   :type svg: svgutils.transform.SVGFigure
-   :param width: width of output image in inches (this should actually be associated
-                 with the svg...)
-   :type width: float
-   :param height: height of svg in inches (this should actually be associated
-                  with the svg...)
-   :type height: float
-
-   :returns: shows svg object (with provided width + height + dpi)
-   :rtype: None
-
-   .. note::
-
-      If run from the command line, the image will be presented using matplotlib's
-      plotting tool with a png representation of the object. If run within a
-      jupyter notebook, the object will leverage ipython's internal svg presenter
-      to present the object as real svg object. Both approaches do not allow for
-      resizing of the image and seeing the image correct itself to the new size,
-      which is a bummer for command line usage.
 
 

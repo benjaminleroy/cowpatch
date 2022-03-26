@@ -256,7 +256,7 @@
     <span class="k">return</span> <span class="s2">&quot;plotnine&quot;</span> <span class="o">==</span> <span class="n">parent</span></div>
 
 
-<div class="viewcode-block" id="_transform_size_to_pt"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils._transform_size_to_pt">[docs]</a><span class="k">def</span> <span class="nf">_transform_size_to_pt</span><span class="p">(</span><span class="n">size_string_tuple</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_transform_size_to_pt</span><span class="p">(</span><span class="n">size_string_tuple</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    takes string with unit and converts it to a float w.r.t pt</span>
 
@@ -280,11 +280,11 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">.75</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">.75</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;size_string_tuple structure of object not as &quot;</span><span class="o">+</span>\
-                         <span class="s2">&quot;expected, new size type&quot;</span><span class="p">)</span></div>
+                         <span class="s2">&quot;expected, new size type&quot;</span><span class="p">)</span>
 
 
 
-<div class="viewcode-block" id="_proposed_scaling_both"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils._proposed_scaling_both">[docs]</a><span class="k">def</span> <span class="nf">_proposed_scaling_both</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">desired</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_proposed_scaling_both</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">desired</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    identify a x and y scaling to make the current size into the desired size</span>
 
@@ -303,9 +303,9 @@
     <span class="n">scale_x</span> <span class="o">=</span> <span class="n">desired</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">current</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">scale_y</span> <span class="o">=</span> <span class="n">desired</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">current</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">scale_x</span><span class="p">,</span> <span class="n">scale_y</span></div>
+    <span class="k">return</span> <span class="n">scale_x</span><span class="p">,</span> <span class="n">scale_y</span>
 
-<div class="viewcode-block" id="_flatten_nested_list"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils._flatten_nested_list">[docs]</a><span class="k">def</span> <span class="nf">_flatten_nested_list</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_flatten_nested_list</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Flatten nested list</span>
 
@@ -324,7 +324,7 @@
             <span class="n">out</span> <span class="o">+=</span> <span class="n">_flatten_nested_list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">out</span></div>
+    <span class="k">return</span> <span class="n">out</span>
 </pre></div>
 
            </div>

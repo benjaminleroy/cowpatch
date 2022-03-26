@@ -25,9 +25,7 @@
         <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="cowpatch.text_elements" href="../text_elements/index.html" />
-    <link rel="prev" title="cowpatch.layout_elements" href="../layout_elements/index.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,28 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guides/guides_index.html">Guides</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../wrappers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.wrappers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
 <ul>
@@ -94,8 +75,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">API Reference</a> &raquo;</li>
-          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/cowpatch/svg_utils/index.rst.txt" rel="nofollow"> View page source</a>
@@ -118,160 +97,14 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.svg_utils._raw_gg_to_svg" title="cowpatch.svg_utils._raw_gg_to_svg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_raw_gg_to_svg</span></code></a>(gg, width, height, dpi, limitsize=True)</p></td>
-<td><p>Convert plotnine ggplot figure to svg and return it (pass width, height</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.svg_utils._real_size_out_svg" title="cowpatch.svg_utils._real_size_out_svg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_real_size_out_svg</span></code></a>(gg, height, width, dpi, limitsize=True)</p></td>
-<td><p>Calculate the output size for a plotnine.ggplot object saving as an</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.svg_utils._select_correcting_size_svg" title="cowpatch.svg_utils._select_correcting_size_svg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_select_correcting_size_svg</span></code></a>(gg, height, width, dpi, limitsize=True, eps=0.01, maxIter=20, min_size_px=10, throw_error=True)</p></td>
-<td><p>Obtain the correct input saving size plotnine.ggplot object to actual</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.svg_utils.gg_to_svg" title="cowpatch.svg_utils.gg_to_svg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gg_to_svg</span></code></a>(gg, width, height, dpi, limitsize=True, eps=0.01, maxIter=20, min_size_px=10)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.svg_utils.gg_to_svg" title="cowpatch.svg_utils.gg_to_svg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gg_to_svg</span></code></a>(gg, width, height, dpi, limitsize=True, eps=0.01, maxIter=20, min_size_px=10)</p></td>
 <td><p>Convert plotnine ggplot figure to svg and return it (with close to perfect</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.svg_utils._raw_mpt_to_svg" title="cowpatch.svg_utils._raw_mpt_to_svg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_raw_mpt_to_svg</span></code></a>(fig, ax, width, height, dpi)</p></td>
-<td><p>... taken from proof_of_concept_wrapper's fa_encapsulate</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.svg_utils.mpt_to_svg" title="cowpatch.svg_utils.mpt_to_svg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mpt_to_svg</span></code></a>(gg, width, height, dpi)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.svg_utils._save_svg_wrapper" title="cowpatch.svg_utils._save_svg_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_svg_wrapper</span></code></a>(svg, filename, width, height, dpi=300, _format=None, verbose=True)</p></td>
-<td><p>save svg object to a range of different file names</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cowpatch.svg_utils._show_image" title="cowpatch.svg_utils._show_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_show_image</span></code></a>(svg, width, height, dpi=300, verbose=True)</p></td>
-<td><p>display svg object for user (either run from command line or jupyter</p></td>
-</tr>
 </tbody>
 </table>
-</section>
-<section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline"></a></h3>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cowpatch.svg_utils._file_options" title="cowpatch.svg_utils._file_options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_file_options</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.svg_utils._raw_gg_to_svg">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_raw_gg_to_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limitsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#_raw_gg_to_svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils._raw_gg_to_svg" title="Permalink to this definition"></a></dt>
-<dd><p>Convert plotnine ggplot figure to svg and return it (pass width, height
-directly to p9.save, no correction to incorrect saving)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>gg</strong> (<em>plotnine.ggplot.ggplot</em>) – object to save as a png image</p></li>
-<li><p><strong>width</strong> (<em>float</em>) – width in inches to be passed to the plotnine’s ggplot.save function</p></li>
-<li><p><strong>height</strong> (<em>float</em>) – height in inches to be passed to the plotnine’s ggplot.save function</p></li>
-<li><p><strong>dpi</strong> (<em>int</em>) – dots per inch, to be passed to the plotnine’s ggplot.save function</p></li>
-<li><p><strong>limitsize</strong> (<em>boolean</em>) – logic if plotnine’s ggplot.save function should check if the requested
-width and height in inches are greater than 50 (assumes the user
-accidentally entered in these values w.r.t. pixels)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(aka an svg representation)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>svgutils.tranform representation of the ggplot object</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Code idea motified by the stackoverflow question here, <a class="reference external" href="https://stackoverflow.com/questions/8598673/how-to-save-a-pylab-figure-into-in-memory-file-which-can-be-read-into-pil-image/8598881">https://stackoverflow.com/questions/8598673/how-to-save-a-pylab-figure-into-in-memory-file-which-can-be-read-into-pil-image/8598881</a>
-and truly influenced by svgutils.transform.from_mpl function.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.svg_utils._real_size_out_svg">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_real_size_out_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limitsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#_real_size_out_svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils._real_size_out_svg" title="Permalink to this definition"></a></dt>
-<dd><p>Calculate the output size for a plotnine.ggplot object saving as an
-svg</p>
-<p class="rubric">Notes</p>
-<p>This function is useful given default approach for the saving of
-images uses <cite>bbox_inches=”tight”</cite>. This appears to be done since to obtain
-desirable containment of all parts in the image (not to overflow the
-provided space) and because matplotlib’s <cite>plt.tight_layout()</cite> doesn’t
-preform as expected for the <cite>plotnine.ggplot</cite> objects.</p>
-<p>This code leverages ideas that are presented in a blog post by Kavi Gupta
-at <a class="reference external" href="https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/">https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>gg</strong> (<em>plotnine.ggplot.ggplot</em>) – ggplot object to calculate optimal size</p></li>
-<li><p><strong>height</strong> (<em>float</em>) – desired height of svg output (in inches)</p></li>
-<li><p><strong>width</strong> (<em>float</em>) – desired width of svg output (in inches)</p></li>
-<li><p><strong>dpi</strong> (<em>float</em>) – dots per inch of saved object</p></li>
-<li><p><strong>limitsize</strong> (<em>boolean</em>) – logic if plotnine’s ggplot.save function should check if the requested
-width and height in inches are greater than 50 (assumes the user
-accidentally entered in these values w.r.t. pixels)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>of the actual height and width (in inches) of the svg image that would
-be created if the above</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.svg_utils._select_correcting_size_svg">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_select_correcting_size_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limitsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxIter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size_px</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throw_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#_select_correcting_size_svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils._select_correcting_size_svg" title="Permalink to this definition"></a></dt>
-<dd><p>Obtain the correct input saving size plotnine.ggplot object to actual
-obtain desired height and width (inches)</p>
-<p class="rubric">Notes</p>
-<p>This function is useful given default approach for the saving of
-images uses <cite>bbox_inches=”tight”</cite>. This appears to be done since to obtain
-desirable containment of all parts in the image (not to overflow the
-provided space) and because matplotlib’s <cite>plt.tight_layout()</cite> doesn’t
-preform as expected for the <cite>plotnine.ggplot</cite> objects.</p>
-<p>This code leverages ideas that are presented in a blog post by Kavi Gupta
-at <a class="reference external" href="https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/">https://kavigupta.org/2019/05/18/Setting-the-size-of-figures-in-matplotlib/</a>.
-It is iterative procedure in nature (the reason for eps and maxIter), eps
-looks at the difference between the desired and obtained height and width.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>gg</strong> (<em>plotnine.ggplot.ggplot</em>) – ggplot object to calculate optimal size</p></li>
-<li><p><strong>height</strong> (<em>float</em>) – desired height of svg output (in inches)</p></li>
-<li><p><strong>width</strong> (<em>float</em>) – desired width of svg output (in inches)</p></li>
-<li><p><strong>dpi</strong> (<em>float</em>) – dots per inch of saved object</p></li>
-<li><p><strong>limitsize</strong> (<em>boolean</em>) – logic if plotnine’s ggplot.save function should check if the requested
-width and height in inches are greater than 50 (assumes the user
-accidentally entered in these values w.r.t. pixels)</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – maximum allowed difference between height and width output versus the
-desired output</p></li>
-<li><p><strong>maxIter</strong> (<em>int</em>) – maximum number of steps that can be used to the difference
-between desired and output height and width within minimum distance</p></li>
-<li><p><strong>min_size_px</strong> (<em>int</em>) – early stopping rule if converging height or width has a pixel size
-smaller than or equal to this value (assumes process will not converge)</p></li>
-<li><p><strong>throw_error</strong> (<em>boolean</em>) – logic if an error should be thrown if the convergence fails. If False,
-then this will return ratios of width_requested/width_obtained,
-height_requested/height_obtained, and a boolean = False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>if the process converges successful, it will return a three value
-tuple of a width and height to provide desired measures and a
-boolean value (True). if process fails to converge, either this
-functions raises an error (if throw_error is True), or a three value
-tuple of a scaled width_requested/width_obtained,
-height_requested/height_obtained, and a boolean value (False).</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="cowpatch.svg_utils.gg_to_svg">
 <span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">gg_to_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limitsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxIter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size_px</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#gg_to_svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils.gg_to_svg" title="Permalink to this definition"></a></dt>
@@ -308,81 +141,9 @@ and truly influenced by svgutils.transform.from_mpl function.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.svg_utils._raw_mpt_to_svg">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_raw_mpt_to_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#_raw_mpt_to_svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils._raw_mpt_to_svg" title="Permalink to this definition"></a></dt>
-<dd><p>… taken from proof_of_concept_wrapper’s fa_encapsulate</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="cowpatch.svg_utils.mpt_to_svg">
 <span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">mpt_to_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#mpt_to_svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils.mpt_to_svg" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="cowpatch.svg_utils._file_options">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_file_options</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">['pdf',</span> <span class="pre">'png',</span> <span class="pre">'ps',</span> <span class="pre">'eps',</span> <span class="pre">'jpg',</span> <span class="pre">'jpeg',</span> <span class="pre">'svg']</span></em><a class="headerlink" href="#cowpatch.svg_utils._file_options" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.svg_utils._save_svg_wrapper">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_save_svg_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">svg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#_save_svg_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils._save_svg_wrapper" title="Permalink to this definition"></a></dt>
-<dd><p>save svg object to a range of different file names</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>svg</strong> (<em>svgutils.transform.SVGFigure</em>) – svg object to save</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – local string to save the file to (this can also be at least io.BytesIO)</p></li>
-<li><p><strong>width</strong> (<em>float</em>) – width of output image in inches (this should actually be associated
-with the svg…)</p></li>
-<li><p><strong>height</strong> (<em>float</em>) – height of svg in inches (this should actually be associated
-with the svg…)</p></li>
-<li><p><strong>dpi</strong> (<em>int</em><em> or </em><em>float</em>) – dots per square inch, default is 300</p></li>
-<li><p><strong>format</strong> (<em>str</em>) – string of format (error tells options). If provided this is the format
-used, if None, then we’ll try to use the filename extension.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – If <cite>True</cite>, print the saving information.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>saves to a file</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cowpatch.svg_utils._show_image">
-<span class="sig-prename descclassname"><span class="pre">cowpatch.svg_utils.</span></span><span class="sig-name descname"><span class="pre">_show_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">svg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/svg_utils.html#_show_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.svg_utils._show_image" title="Permalink to this definition"></a></dt>
-<dd><p>display svg object for user (either run from command line or jupyter
-notebook)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>svg</strong> (<em>svgutils.transform.SVGFigure</em>) – svg object to save</p></li>
-<li><p><strong>width</strong> (<em>float</em>) – width of output image in inches (this should actually be associated
-with the svg…)</p></li>
-<li><p><strong>height</strong> (<em>float</em>) – height of svg in inches (this should actually be associated
-with the svg…)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>shows svg object (with provided width + height + dpi)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If run from the command line, the image will be presented using matplotlib’s
-plotting tool with a png representation of the object. If run within a
-jupyter notebook, the object will leverage ipython’s internal svg presenter
-to present the object as real svg object. Both approaches do not allow for
-resizing of the image and seeing the image correct itself to the new size,
-which is a bummer for command line usage.</p>
-</div>
-</dd></dl>
 
 </section>
 </section>
@@ -391,10 +152,7 @@ which is a bummer for command line usage.</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../layout_elements/index.html" class="btn btn-neutral float-left" title="cowpatch.layout_elements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../text_elements/index.html" class="btn btn-neutral float-right" title="cowpatch.text_elements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

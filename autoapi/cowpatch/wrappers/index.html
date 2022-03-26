@@ -25,9 +25,7 @@
         <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Changelog" href="../../../changelog.html" />
-    <link rel="prev" title="cowpatch.utils" href="../utils/index.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,28 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guides/guides_index.html">Guides</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.utils</span></code></a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.wrappers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
 <ul>
@@ -94,8 +75,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">API Reference</a> &raquo;</li>
-          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.wrappers</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/cowpatch/wrappers/index.rst.txt" rel="nofollow"> View page source</a>
@@ -143,31 +122,6 @@
 <p>You can still use the plotnine ggplot “+” to this object to continue to
 update this object. This wrapper creates a special patch object that
 can be combined with other patch objects.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.wrappers.wrapper_plotnine._svg">
-<span class="sig-name descname"><span class="pre">_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_px</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_px</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/wrappers.html#wrapper_plotnine._svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.wrappers.wrapper_plotnine._svg" title="Permalink to this definition"></a></dt>
-<dd><p>convert plot to svg objecct</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>width_px</strong> (<em>float</em>) – desired width of svg object in pixels</p></li>
-<li><p><strong>height_px</strong> (<em>float</em>) – desired height of svg object in pixels</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>svg_object</strong></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>svgutils.transforms object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.wrappers.wrapper_plotnine.__add__">
-<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/wrappers.html#wrapper_plotnine.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.wrappers.wrapper_plotnine.__add__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -187,26 +141,6 @@ can be combined with other patch objects.</p>
 <p>You can still update the plot using <cite>object.fig.(function)</cite> and
 <cite>object.fig.(function)</cite>. This wrapper creates a special patch object that
 can be combined with other patch objects.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="cowpatch.wrappers.wrapper_matplotlib._svg">
-<span class="sig-name descname"><span class="pre">_svg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_px</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_px</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cowpatch/wrappers.html#wrapper_matplotlib._svg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cowpatch.wrappers.wrapper_matplotlib._svg" title="Permalink to this definition"></a></dt>
-<dd><p>Internal function to create an svg representation of the patch</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>width_pt</strong> (<em>float</em>) – desired width of svg object in points</p></li>
-<li><p><strong>height_pt</strong> (<em>float</em>) – desired height of svg object in points</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>svg_object</strong></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>svgutils.transforms object</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -236,10 +170,7 @@ can be combined with other patch objects.</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../utils/index.html" class="btn btn-neutral float-left" title="cowpatch.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../../../changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

@@ -4,22 +4,6 @@
 .. py:module:: cowpatch
 
 
-Submodules
-----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 1
-
-   base_elements/index.rst
-   config/index.rst
-   exceptions/index.rst
-   layout_elements/index.rst
-   svg_utils/index.rst
-   text_elements/index.rst
-   utils/index.rst
-   wrappers/index.rst
-
-
 Package Contents
 ----------------
 
@@ -31,10 +15,6 @@ Classes
    cowpatch.layout
    cowpatch.area
    cowpatch.patch
-   cowpatch.text
-   cowpatch.wrapper_plotnine
-   cowpatch.wrapper_matplotlib
-   cowpatch.wrapper_seaborn
 
 
 
@@ -44,34 +24,30 @@ Attributes
 
 .. autoapisummary::
 
-   cowpatch.__version__
    cowpatch.rcParams
 
 
-.. py:data:: __version__
-   
-
-   
-
 .. py:class:: layout(ncol=None, nrow=None, byrow=None, rel_widths=None, rel_heights=None, design=None)
 
-   layout class to store information about arangement of patches
+   layout class to store information about arangement of patches found
+   in `cow.patch`.
 
    :param ncol: Integer for the number of columns to arrange the the patches in.
                 The default is None (which avoids conflicts if a value for
-                `design` is provided). If `ncol` is None but `nrow` is not, then
-                `ncol` will default to the minimum number of columns to make sure
-                that all patches can be visualized.
+                `design` is provided). If ``ncol`` is None but ``nrow`` is not,
+                then ``ncol`` will default to the minimum number of columns to
+                make sure that all patches can be visualized.
    :type ncol: integer
    :param nrow: Integer for the number of rows to arrange the the patches in.
                 The default is None (which avoids conflicts if a value for
-                `design` is provided). If `nrow` is None but `ncol` is not, then
-                `nrow` will default to the minimum number of rows to make sure
-                that all patches can be visualized.
+                ``design`` is provided). If ``nrow`` is None but ``ncol`` is not,
+                then ``nrow`` will default to the minimum number of rows to make
+                sure that all patches can be visualized.
    :type nrow: integer
-   :param byrow: If `ncol` and/or `nrow` is included, then this boolean indicates
-                 if the patches should be ordered by row (default if byrow is None
-                 or when parameter is True) or by column (if byrow was False).
+   :param byrow: If ``ncol`` and/or ``nrow`` is included, then this boolean
+                 indicates if the patches should be ordered by row (default if
+                 ``byrow`` is None or when parameter is ``True``) or by column (if
+                 ``byrow`` was ``False``).
    :type byrow: boolean
    :param design: Specification of the location of each patch in the arrangement.
                   Can either be a float numpy array with integers between 0 and
@@ -81,205 +57,155 @@ Attributes
                   Notes.
    :type design: np.array (float based) or str
    :param rel_widths: Numerical vector of relative columns widths. This not required,
-                      the default would be `np.ones(ncol)` or `np.ones(design.shape[0])`.
-                      Note that this is a relative sizing and the values are only
-                      required to be non-negative, non-zero values, for example
-                      [1,2] would would make the first column twice as wide as the
-                      second column.
+                      the default would be ``np.ones(ncol)`` or
+                      ``np.ones(design.shape[0])``. Note that this is a relative sizing
+                      and the values are only required to be non-negative, non-zero
+                      values, for example ``[1,2]`` would would make the first column
+                      twice as wide as the second column.
    :type rel_widths: list, np vector or tuple
    :param rel_heights: Numerical vector of relative row heights. This not required,
-                       the default would be `np.ones(nrow)` or `np.ones(design.shape[1])`.
-                       Note that this is a relative sizing and the values are only
-                       required to be non-negative, non-zero values, for example
-                       [1,2] would would make the first row twice as tall as the
-                       second row.
+                       the default would be ``np.ones(nrow)`` or
+                       ``np.ones(design.shape[1])``. Note that this is a relative sizing
+                       and the values are only required to be non-negative, non-zero
+                       values, for example ``[1,2]`` would would make the first row twice
+                       as tall as the second row.
    :type rel_heights: list or tuple
 
    .. rubric:: Notes
 
-   The `design` parameter expects specific input.
+   *Design*
 
-   1. If the `design` is input as a numpy array, we expect it to have
-   integers only (0 to # patches-1). It is allowed to have `np.nan` values
-   if certain "squares" of the  layout are not covered by others (the
-   covering is defined by the value ordering). Note that we won't check
-   for overlap and `np.nan` is not enforced if another patches' relative
-   (min-x,min-y) and (max-x, max-y) define a box over that `np.nan`'s
-   area.
+   The ``design`` parameter expects specific input.
+
+   1. If the ``design`` is input as a numpy array, we expect it to have
+   integers only (0 to # patches-1). It is allowed to have ``np.nan``
+   values if certain "squares" of the  layout are not covered by others
+   (the covering is defined by the value ordering). Note that we won't
+   check for overlap and ``np.nan`` is not enforced if another patches'
+   relative (min-x,min-y) and (max-x, max-y) define a box over that
+   ``np.nan``'s area.
 
    An example of a design of the numpy array form could look like
 
-   .. code-block::
+   >>> my_np_design = np.array([[1,1,2],
+   ...                          [3,3,2],
+   ...                          [3,3,np.nan]])
 
-           my_np_design = np.array([[1,1,2],
-                                    [3,3,2],
-                                    [3,3,np.nan]])
-
-   2. if the `design` parameter takes in a string, we expect it to have
-   a structure such that each line (pre "\\n") contains the same number
+   2. if the ``design`` parameter takes in a string, we expect it to have
+   a structure such that each line (pre ``\\n``) contains the same number
    of characters, and these characters must come from the first
-   (number of patches) capital alphabetical characters or the "\#" or "." sign to
-   indicate an empty square. Similar arguments w.r.t. overlap and the
-   lack of real enforcement for empty squares applies (as in 1.).
+   (number of patches) capital alphabetical characters or the ``\#`` or
+   ``.`` sign to indicate an empty square. Similar arguments w.r.t.
+   overlap and the lack of real enforcement for empty squares applies
+   (as in 1.).
 
    An example of a design of the string form could look like
 
-   .. code-block::
-
-           my_str_design = """
-           AAB
-           CCB
-           CC\#
-           """
+   >>> my_str_design = """
+   ... AAB
+   ... CCB
+   ... CC\#
+   ... """
 
    or
 
-   .. code-block::
+   >>> my_str_design = """
+   ... AAB
+   ... CCB
+   ... CC.
+   ... """
 
-           my_str_design = """
-           AAB
-           CCB
-           CC.
-           """
+   See the `Layout guide`_ for more detailed examples of functionality.
 
+   .. _Layout guide: https://benjaminleroy.github.io/cowpatch/guides/Layout.html
 
-   **Similarities to `R` cousins:**
+   *Similarities to our `R` cousins:*
 
-   This layout function is similar to `patchwork\:\:plot_layout` (with a
-   special node to `design` parameter) and helps perform similar ideas to
-   `gridExtra\:\:arrangeGrob`'s `layout_matrix` parameter, and
-   `cowplot\:\:plot_grid`'s `rel_widths` and `rel_heights` parameters
+   This layout function is similar to `patchwork\:\:plot_layout <https://patchwork.data-imaginist.com/reference/plot_layout.html>`_
+   (with a special node to ``design`` parameter) and helps perform similar
+   ideas to `gridExtra\:\:arrangeGrob <https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html>`_'s
+   ``layout_matrix`` parameter, and `cowplot\:\:plot_grid <https://wilkelab.org/cowplot/reference/plot_grid.html>`_'s
+   ``rel_widths`` and ``rel_heights`` parameters.
+
+   .. rubric:: Examples
+
+   >>> # Necessary libraries for example
+   >>> import numpy as np
+   >>> import cowpatch as cow
+   >>> import plotnine as p9
+   >>> import plotnine.data as p9_data
+
+   >>> g0 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_bar(p9.aes(x="hwy")) +\
+   ...     p9.labs(title = 'Plot 0')
+   >>> g1 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+   ...     p9.labs(title = 'Plot 1')
+   >>> g2 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+   ...     p9.labs(title = 'Plot 2')
+   >>> g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+   ...                                                      "suv",
+   ...                                                      "pickup"])]) +\
+   ...     p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
+   ...     p9.facet_wrap("class")
+
+   >>> # design matrix
+   >>> vis_obj = cow.patch(g1,g2,g3)
+   >>> vis_obj += cow.layout(design = np.array([[0,1],
+   ...                                          [2,2]]))
+   >>> vis_obj.show()
+
+   >>> # design string
+   >>> vis_obj2 = cow.patch(g1,g2,g3)
+   >>> vis_obj2 += cow.layout(design = """
+   ...                                 AB
+   ...                                 CC
+   ...                                 """)
+   >>> vis_obj2.show()
+
+   >>> # nrow, ncol, byrow
+   >>> vis_obj3 = cow.patch(g0,g1,g2,g3)
+   >>> vis_obj3 += cow.layout(nrow=2, byrow=False)
+   >>> vis_obj3.show()
+
+   >>> # rel_widths/heights
+   >>> vis_obj = cow.patch(g1,g2,g3)
+   >>> vis_obj += cow.layout(design = np.array([[0,1],
+   ...                                          [2,2]]),
+   ...                       rel_widths = np.array([1,2]))
+   >>> vis_obj.show()
+
+   .. seealso::
+
+      :obj:`area`
+          object class that helps ``layout`` define where plots will go in the arangement
+
+      :obj:`patch`
+          fundamental object class which is combined with ``layout`` to defin the overall arangement of plots
 
    .. py:attribute:: design
       
 
-      
-
-   .. py:method:: _design_string_to_mat(self, design)
-
-      Internal function to convert design string into a matrix
-
-      :param design: design in a string format
-      :type design: str
-
-      :returns: **design** -- design in np.array format
-      :rtype: np.array integer
-
-
-   .. py:method:: get_design(self, num_grobs=None)
-
-      create a design matrix if not explicit design has been provided
-
-
-   .. py:method:: _assess_mat(self, design)
-
-      Assesses if the design matrix includes at least 1 box for patches
-      indexed 0 to (number of patches - 1). This doesn't actually assume to know
-      the number of patches.
-
-      :param design: design in numpy array format
-      :type design: np.array (integer)
-
-      :returns: number of patches expected in the overall matrix.
-      :rtype: int
-
-      :raises ValueError: if design matrix doesn't include at least at least 1 box for all
-          indices between 0 to (number of patches - 1)
-
-
-   .. py:method:: _rel_structure(self, num_grobs=None)
-
-      provide rel_structure (rel_widths, rel_heights) if missing
-
-      :param num_grobs: if not None, then this value will be used to understand the number
-                        of grobs to be laid out
-      :type num_grobs: int
-
-      :returns: * **rel_widths** (*np.array vector*) -- a vector of relative widths of the columns of the layout design
-                * **rel_heights** (*np.array vector*) -- a vector of relative heights of the rows of the layout design
-
-
-   .. py:method:: _element_locations(self, width_pt, height_pt, num_grobs=None)
-
-      create a list of `area` objects associated with the location of
-      each of the layout's grobs w.r.t. a given points width and height
-
-      :param width_pt: global width (in points) of the full arangement of patches
-      :type width_pt: float
-      :param height_pt: global height (in points) of the full arangement of patches
-      :type height_pt: float
-      :param num_grobs: if not None, then this value will be used to understand the number
-                        of grobs to be laid out
-      :type num_grobs: integer
-
-      :returns: list of `area` objects describing the location for each of the
-                layout's grobs (in the order of the index in the self.design)
-      :rtype: list
-
-
-   .. py:method:: _yokogaki_ordering(self, num_grobs=None)
-
-      calculates the yokogaki (left to right, top to bottom) ordering
-      the the patches
-
-      :param num_grobs: if not None, then this value will be used to understand the number
-                        of grobs to be laid out
-      :type num_grobs: integer
-
-      :rtype: numpy array (vector) of integer index of plots in yokogaki ordering
-
-      .. rubric:: Notes
-
-      Yokogaki is a Japanese word that concisely describes the left to right,
-      top to bottom writing format. We'd like to thank `stack overflow`_.
-      for pointing this out.
-
-      .. _stack overflow:
-          https://english.stackexchange.com/questions/81520/is-there-a-word-for-left-to-right-and-top-to-bottom
-
-
-   .. py:method:: __hash__(self)
-
-      Creates a 'unique' hash for the object to help with identification
-
-      :rtype: hash integer
-
-
-   .. py:method:: __str__(self)
-
-      Return str(self).
-
-
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
-
-
-   .. py:method:: __eq__(self, value)
-
-      checks if object is equal to another object (value)
-
-      :param value: another object (that major or may not be of the layout class)
-      :type value: object
-
-      :returns: if current object and other object (value) are equal
-      :rtype: boolean
-
+      defines underlying ``design`` attribute (potentially defined relative to a
+      ``cow.patch`` object if certain structure are not extremely specific.
 
 
 .. py:class:: area(x_left, y_top, width, height, _type)
 
-   area class that stores information about what area a patch will fill
+   object that stores information about what area a ``patch`` will fill
 
    :param x_left: scalar of where the left-most point of the patch is located (impacted
-                  by the `_type` parameter)
+                  by the ``_type`` parameter)
    :type x_left: float
    :param y_top: scalar of where the top-most point of the patch is located (impacted
-                 by the `_type` parameter)
+                 by the ``_type`` parameter)
    :type y_top: float
-   :param width: scalar of the width of the patch (impacted by the `_type` parameter)
+   :param width: scalar of the width of the patch (impacted by the ``_type``
+                 parameter)
    :type width: float
-   :param height: scalar of the height of the patch (impacted by the `_type` parameter)
+   :param height: scalar of the height of the patch (impacted by the ``_type``
+                  parameter)
    :type height: float
    :param _type: describes how the parameters are stored. See Notes for more
                  information between the options.
@@ -287,7 +213,10 @@ Attributes
 
    .. rubric:: Notes
 
-   The `_type` parameter informs how to understand the other parameters:
+   These objects provide structural information about where in the overall
+   arangement individual plots / sub arangments lie.
+
+   The ``_type`` parameter informs how to understand the other parameters:
 
    1. "design" means that the values are w.r.t. to a design matrix
    relative to the `layout` class, and values are relative to the rows
@@ -298,298 +227,123 @@ Attributes
 
    3. "pt" means that values are defined relative to point values
 
-   .. py:method:: _check_info_wrt_type(self, x_left, y_top, width, height, _type)
+   .. seealso::
 
-      some logic checks of inputs relative to `_type` parameter
-
-      :param x_left: scalar of where the left-most point of the patch is located
-                     (impacted by the `_type` parameter)
-      :type x_left: float
-      :param y_top: scalar of where the top-most point of the patch is located
-                    (impacted by the `_type` parameter)
-      :type y_top: float
-      :param width: scalar of the width of the patch (impacted by the `_type`
-                    parameter)
-      :type width: float
-      :param height: scalar of the height of the patch (impacted by the `_type`
-                     parameter)
-      :type height: float
-      :param _type: describes how the parameters are stored. Options include
-                    ["design", "relative", "pt"]. See class docstring for more info
-      :type _type: str {"design", "relative", "pt"}
-
-      :raises ValueError: if any of the first four parameters don't make sense with respect
-          to the `_type` parameter
-
-
-   .. py:method:: _design_to_relative(self, rel_widths, rel_heights)
-
-      translates an area object with `_type` = "design" to area object
-      with `_type` = "relative".
-
-      :param rel_widths: list of relative widths of each column of the layout matrix
-      :type rel_widths: np.array (vector)
-      :param rel_heights: list of relative heights of each row of the layout matrix
-      :type rel_heights: np.array (vector)
-
-      :returns: area object of `_type` = "relative"
-      :rtype: area object
-
-
-   .. py:method:: _relative_to_pt(self, width_pt, height_pt)
-
-      translates an area object with `_type` = "relative" to area object
-      with `_type` = "pt".
-
-      :param width_pt: width in points
-      :type width_pt: float
-      :param height_pt: height in points
-      :type height_pt: float
-
-      :returns: area object of `_type` = "pt"
-      :rtype: area object
-
+      :obj:`layout`
+          object that incorporates multiple area definitions to define layouts.
 
    .. py:method:: pt(self, width_pt=None, height_pt=None, rel_widths=None, rel_heights=None)
 
-      Translates area object to `_type` = "pt"
+      Translates area object to ``_type`` = "pt"
 
-      :param width_pt: width in points (required if `_type` is not "pt")
+      :param width_pt: width in points (required if ``_type`` is not "pt")
       :type width_pt: float
-      :param height_pt: height in points (required if `_type` is not "pt")
+      :param height_pt: height in points (required if ``_type`` is not "pt")
       :type height_pt: float
       :param rel_widths: list of relative widths of each column of the layout matrix
-                         (required if `_type` is "design")
+                         (required if ``_type`` is "design")
       :type rel_widths: np.array (vector)
       :param rel_heights: list of relative heights of each row of the layout matrix
-                          (required if `_type` is "design")
+                          (required if ``_type`` is "design")
       :type rel_heights: np.array (vector)
 
-      :returns: area object of `_type` = "pt"
+      :returns: area object of ``_type`` = "pt"
       :rtype: area object
-
-
-   .. py:method:: _hash(self)
-
-      replacement function for `__hash__` due to equality conflicts
-
-      .. rubric:: Notes
-
-      required since we defined `__eq__` and this conflicts with the
-      standard `__hash__`
-
-
-   .. py:method:: __str__(self)
-
-      Return str(self).
-
-
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
-
-
-   .. py:method:: __eq__(self, value)
-
-      Return self==value.
 
 
 
 .. py:class:: patch(*args, grobs=None)
 
-   general object to describe a plots or arangement of plots
+   fundamental object of `cowpatch`, encapsulates plot objects and
+   can be told how to present them
 
-   :param \*args:
-   :type \*args: ggplots and patches
-   :param grobs: list of ggplot objects and patches. Either `\*args` is empty or
-                 `grobs` is `None`.
+   :param \*args: all non-named parameters are expected to be plot objects or
+                  lower-level ``cow.patch`` objects.
+   :type \*args: plot objects and patches
+   :param grobs: list of plot objects and patches. Either ``\*args`` is empty or
+                 ``grobs`` is ``None``.
    :type grobs: list
 
    .. rubric:: Notes
 
-   All patch objects can be combined with other patch objects, either inside
-   other `patch` calls or using mathematical grammar (described below).
+   *Guiding arangement:*
 
-   Additionally, patch objects's layouts can be described by adding a `layout`
-   object, can have figure labels and titles added using an addition of a
-   `annotation` object, and can have plots inset into it's grid with a
-   `inset` object addition.
+   In combination with ``cow.layout`` one can define arrangement of plots
+   and lower-level arangements.
 
-   **Mathematical Grammar**
+   For example,
 
-   Mirroring ideas in `R`'s `patchwork` package, the following methods can
-   be used to combine patch objects
+   >>> vis_obj = cow.patch(g1,g2,g3)
+   >>> vis_obj += cow.layout(design = np.array([[0,1],
+   ...                                          [2,2]]))
+   >>> vis_obj.show()
 
-   - `__add__` (`+`) of `patches` will (in the default) arange a sequence of
-       `patches` in a matrix grid (byrow)
-   - `__or__` (`|`) of `patches` will (in the default) arange a sequence of
-       `patches` in a single row
-   - `__div__` (`/`) of `patches` will (in the default) arange a sequence of
-       `patches` in a single column
+   See the `Layout guide`_ for more detailed examples of functionality.
 
-   These can also be combined to make complex layout structures. In addition,
-   these structures can define depths structures. The top layout can be
-   updated with an addition of a `layout`.
+   .. _Layout guide: https://benjaminleroy.github.io/cowpatch/guides/Layout.html
 
-   Beyond combinations with other patches, the use of
+   *Nesting:*
 
-   - `__mul__` (`*`) with a `plotnine` `theme` object will apply that theme to
-       every `plotnine` object on the top `layer` (and `text` object - see
-       document)
-   - `__and__` (`&`) with a plotnine theme object will apply that theme to
-       every `plotnine` object at any depth (and `text` object - see document)
+   One can nest `cow.patch` objects within other `cow.patch` objects. For
+   example,
+
+   >>> vis_obj2 = cow.patch(g4, vis_obj)
+   >>> vis_obj2 += cow.layout(nrow = 1)
+   >>> vis_obj2.show()
+
+   .. rubric:: Examples
+
+   >>> # Necessary libraries for example
+   >>> import numpy as np
+   >>> import cowpatch as cow
+   >>> import plotnine as p9
+   >>> import plotnine.data as p9_data
+
+   >>> g0 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_bar(p9.aes(x="hwy")) +\
+   ...     p9.labs(title = 'Plot 0')
+   >>> g1 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+   ...     p9.labs(title = 'Plot 1')
+   >>> g2 = p9.ggplot(p9_data.mpg) +\
+   ...     p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+   ...     p9.labs(title = 'Plot 2')
+   >>> g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+   ...                                                      "suv",
+   ...                                                      "pickup"])]) +\
+   ...     p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
+   ...     p9.facet_wrap("class")
+
+   >>> # Basic example:
+   >>> vis_obj = cow.patch(g0,g1,g2)
+   >>> vis_obj += cow.layout(design = np.array([[0,1],
+   ...                                          [2,2]]))
+   >>> vis_obj.show()
+
+   >>> # Nesting example:
+   >>> vis_obj2 = cow.patch(g3, vis_obj)
+   >>> vis_obj2 += cow.layout(nrow = 1)
+   >>> vis_obj2.show()
+
+   .. seealso::
+
+      :obj:`layout`
+          class objects that can aid in defining the layout of plots in ``cow.patch`` objects
 
    .. py:method:: layout(self)
       :property:
 
-      provide `__layout` default else return `__layout`
-
-      .. rubric:: Notes
-
-      This allows for the different structure of `__add__` to not be built
-      until use of the `layout` is actually needed.
-
-
-   .. py:method:: _check_layout(self)
-
-      checks layout if design matrix is fulled defined
-
-
-   .. py:method:: __or__(self, other)
-
-
-   .. py:method:: __div__(self, other)
-
-
-   .. py:method:: __add__(self, other)
-
-
-   .. py:method:: __mul__(self, other)
-
-
-   .. py:method:: __and__(self, other)
-
-
-   .. py:method:: _svg(self, width_pt, height_pt, sizes=None, num_attempts=None)
-
-      Internal function to create an svg representation of the patch
-
-      :param width_pt: desired width of svg object in points
-      :type width_pt: float
-      :param height_pt: desired height of svg object in points
-      :type height_pt: float
-
-      :returns: **svg_object**
-      :rtype: svgutils.transforms object
-
-
-   .. py:method:: _size_dive(self, parents_areas=None)
-
-      (Internal) calculate a suggested overall size that ensures a minimum
-      width and height of the smallest inner plot
-
-      :param parents_areas: list of parent's/parents' areas. If value is None it means element
-                            has no parents
-      :type parents_areas: list
-
-      :returns: * **suggested_width** (*float or list*) -- proposed width for overall size if parents_areas=None, else this
-                  is a list of relative proportion of widths of images (relative to
-                  the global width taking a value of 1)
-                * **suggested_height** (*float or*) -- proposed height for overall size if parents_areas=None, else this
-                  is a list of relative proportion of height of images (relative to
-                  the global height taking a value of 1)
-                * **depth** (*int or list*) -- maximum depth of structure if parents_areas=None, else this
-                  is a list of inner elements.
-
-      .. rubric:: Notes
-
-      The default rcParams are:
-          base_height=3.71,
-          base_aspect_ratio=1.618 # the golden ratio
-
-      This follows ideas proposed in cowplot: https://wilkelab.org/cowplot/reference/save_plot.html
-
-
-   .. py:method:: _default_size(self, width, height)
-
-      (Internal) obtain default recommended size of overall image if width or
-      height is None
-
-      :param width: width of output image in inches (this should actually be associated
-                    with the svg...)
-      :type width: float
-      :param height: height of svg in inches (this should actually be associated
-                     with the svg...)
-      :type height: float
-
-      :returns: * **width** (*float*) -- returns default width for given object if not provided (else just
-                  returns provided value). If only height is provided then width
-                  proposed is relative to a default aspect ratio for the object.
-                * **height** (*float*) -- returns default height for given object if not provided (else just
-                  returns provided value). If only width is provided then height
-                  proposed is relative to a default aspect ratio for the object.
-
-
-   .. py:method:: _svg_get_sizes(self, width_pt, height_pt)
-
-      (Internal) Calculates required sizes for plot objects to meet required
-      sizes and logics if the requested sizing was possible
-
-      :param width_pt: overall width of the image in points
-      :type width_pt: float
-      :param height_pt: overall height of the image in points
-      :type height_pt: float
-
-      :returns: * **sizes** (*nested list*) -- For each element in the patch (with nesting structure in the list),
-                  this contains width, height tuples that either capture the size
-                  to request the ggplot object to be to return the actual desired
-                  size (see gg_to_svg notes), OR it contains the fraction defined by
-                  the requested width (or height) w.r.t. the returned width
-                  (or height) from saving the plotnine object. The later option
-                  occurs when when the ggplot's sizing didn't converge to the
-                  desired size.
-                * **logics** (*nested list*) -- For each element in the patch (with nesting structure in the list),
-                  this contains a boolean value if the ggplot object was able to
-                  be correctly size.
-
-      .. rubric:: Notes
-
-      Internally this function uses rcParams's ``eps``, ``mini_size_px`` and
-      ``maxIter`` to determine the parameters to be put in
-      .svg_utils._select_correcting_size_svg.
-
-
-   .. py:method:: _process_sizes(self, sizes, logics)
-
-      (Internal) draw conclusions about the output of _svg_get_sizes.
-
-      This function assesses if any internal ggplot object failed to
-      produce an image of the requested size (w.r.t. to given interation
-      parameters)
-
-      :param sizes: sizes output of _svg_get_sizes. This is a nested list with
-                    (width,height) or (requested_width/actual_width,
-                    requested_height/actual_width), with the different being if the
-                    ggplot object was able to be presented in the requested size
-      :type sizes: nested list
-      :param logics: logics output of _svg_get_sizes. This is a nested list of boolean
-                     values w.r.t. the previous different.
-      :type logics: nested list
-
-      :returns: * **sizes** (*nested list*) -- Returned if no logics values are False. This object is the sizes
-                  nested list that was input.
-                * **max_scaling** (*float*) -- Returned if at least one of the logics values are False. This is
-                  the scaling of the original width_pt and height_pt that defined
-                  the sizes and logics that could make the requested sizes for all
-                  ggplots that failed to be correctly sized be at least as large
-                  as the returned size from a basic ggplot saving.
+      defines ``layout`` that either returns the last added ``cow.layout``
+      object or the default ``layout`` if no layout has been explicitly
+      defined
 
 
    .. py:method:: save(self, filename, width=None, height=None, dpi=96, _format=None, verbose=None)
 
       save patch to file
 
-      :param filename: local string to save the file to (this can also be at a `io.BytesIO`)
+      :param filename: local string to save the file to (this can also be at a
+                       ``io.BytesIO``)
       :type filename: str
       :param width: width of output image in inches (this should actually be associated
                     with the svg...)
@@ -600,7 +354,7 @@ Attributes
       :param dpi: dots per square inch, default is 96 (standard)
       :type dpi: int or float
       :param _format: string of format (error tells options). If provided this is the
-                      format used, if None, then we'll try to use the `filename`
+                      format used, if None, then we'll try to use the ``filename``
                       extension.
       :type _format: str
       :param verbose: If ``True``, print the saving information. The package default
@@ -620,25 +374,28 @@ Attributes
       ``verbose`` input parameter or changing
       ``cow.rcParams["save_verbose"]``.
 
+      .. seealso::
+
+         :obj:`io.BytesIO`
+             object that acts like a reading in of bytes
+
 
    .. py:method:: show(self, width=None, height=None, dpi=96, verbose=None)
 
       display object from the command line or in a jupyter notebook
 
-      Argument
-      --------
-      width : float
-          width of output image in inches (this should actually be associated
-          with the svg...)
-      height : float
-          height of svg in inches (this should actually be associated
-          with the svg...)
-      dpi : int or float
-          dots per square inch, default is 96 (standard)
-      verbose : bool
-          If ``True``, print the saving information. The package default
-          is defined by cowpatch's own rcParams (the base default is
-          ``True``), which is used if verbose is ``None``. See Notes.
+      :param width: width of output image in inches (this should actually be associated
+                    with the svg...)
+      :type width: float
+      :param height: height of svg in inches (this should actually be associated
+                     with the svg...)
+      :type height: float
+      :param dpi: dots per square inch, default is 96 (standard)
+      :type dpi: int or float
+      :param verbose: If ``True``, print the saving information. The package default
+                      is defined by cowpatch's own rcParams (the base default is
+                      ``True``), which is used if verbose is ``None``. See Notes.
+      :type verbose: bool
 
       .. rubric:: Notes
 
@@ -655,195 +412,42 @@ Attributes
       representation.
 
 
-   .. py:method:: __str__(self)
-
-      Return str(self).
-
-
-   .. py:method:: __repr__(self)
-
-      Return repr(self).
-
-
-
-.. py:class:: text(label, element_text=None, theme=None)
-
-   create a new text object
-
-   :param label: text label with desirable format (e.g. sympy, etc.)
-   :type label: string
-   :param element_text: element object from plotnine, can also be added later
-   :type element_text: plotnine.themes.elements.element_text
-   :param theme: theme object from plotnine, can be associated later
-                 should only provide a theme or element_text (as a theme
-                 contains an element_text)
-   :type theme: plotnine.theme object
-
-   .. rubric:: Notes
-
-   This class leverages matplotlib to create the text (given that
-   matplotlib can create path-style objects for text if the individual
-   is worried that the svg text visually won't be preserved - this is also
-   annoying that this is the default).
-
-   Note the function use the ``text`` attribute - NOT the
-   ``plot_title`` attribute if a theme is provided.
-
-   .. py:method:: _clean_element_text(self, element_text)
-
-      cleans element_text to make sure any element_text() is a
-      p9.themes.themeable, not just a p9.theme.elements.element_text
-
-      :param element_text: element text added to or initialized with the text object. Can
-                           be None, a p9.theme.elements.element_text or a p9.themes.themeable
-      :type element_text: p9's element_text
-
-      .. rubric:: Notes
-
-      updates i place
-
-
-   .. py:method:: __add__(self, other)
-
-      add element_text or theme to update format
-
-      TODO: make this work w.r.t patchwork approaches (edge cases #8)
-
-      :param other: theme or element_text to define the attributes of the text.
-      :type other: plotnine.themes.elements.element_text or theme
-
-      .. rubric:: Notes
-
-      Note the function use the ``text`` attribute - NOT the ``plot_title``
-      attribute if a theme is provided.
-
-
-   .. py:method:: _provide_complete_theme(self)
-
-      It should be here that the current global theme is accessed, and thing are completed...
-
-
-   .. py:method:: _inner_prep(self)
-
-      Internal function to create matplotlib figure with text and
-      provide a bounding box for the location in the plot
-
-      :returns: * **fig** (*matplotlib.figure.Figure*) -- figure with text at (0,0), no axes
-                * **bbox** (*matplotlib.transforms.Bbox*) -- bbox location of text in figure
-
-
-   .. py:method:: _create_svg_object(self, width=None, height=None)
-
-      Internal to create svg object (with text in correct location
-      and correct image size)
-
-      :param width: width of desired output (in inches)
-      :type width: float
-      :param height: height of desired output (in inches)
-      :type height: float
-
-      :returns: **svg_obj** -- svg representation of text with correct format and image size
-      :rtype: svgutils.transform.SVGFigure
-
-
-   .. py:method:: save(self, filename, width=None, height=None)
-
-      save text object as image in minimal size object
-
-      :param filename:
-      :type filename: str
-      :param width: in inches (if None, then tight (w.r.t. to margins))
-      :type width: float
-      :param height: in inches (if None, then tight (w.r.t. to margins))
-      :type height: float
-
-
-
-.. py:class:: wrapper_plotnine(gg)
-
-   Bases: :py:obj:`cowpatch.base_elements.patch`
-
-   wrapper for plotnine objects
-
-   :param gg:
-   :type gg: plotnine ggplot object
-
-   .. rubric:: Notes
-
-   You can still use the plotnine ggplot "+" to this object to continue to
-   update this object. This wrapper creates a special patch object that
-   can be combined with other patch objects.
-
-   .. py:method:: _svg(self, width_px, height_px)
-
-      convert plot to svg objecct
-
-      :param width_px: desired width of svg object in pixels
-      :type width_px: float
-      :param height_px: desired height of svg object in pixels
-      :type height_px: float
-
-      :returns: **svg_object**
-      :rtype: svgutils.transforms object
-
-
-   .. py:method:: __add__(self, other)
-
-
-
-.. py:class:: wrapper_matplotlib(fig, axes)
-
-   Bases: :py:obj:`cowpatch.base_elements.patch`
-
-   wrapper for matplotlib objects
-
-   :param fig:
-   :type fig: matplotlib figure object
-   :param axes:
-   :type axes: matplotlib axes object
-
-   .. rubric:: Notes
-
-   You can still update the plot using `object.fig.(function)` and
-   `object.fig.(function)`. This wrapper creates a special patch object that
-   can be combined with other patch objects.
-
-   .. py:method:: _svg(self, width_px, height_px)
-
-      Internal function to create an svg representation of the patch
-
-      :param width_pt: desired width of svg object in points
-      :type width_pt: float
-      :param height_pt: desired height of svg object in points
-      :type height_pt: float
-
-      :returns: **svg_object**
-      :rtype: svgutils.transforms object
-
-
-
-.. py:class:: wrapper_seaborn(fig, axes)
-
-   Bases: :py:obj:`wrapper_matplotlib`
-
-   wrapper for seaborn objects
-
-   :param fig:
-   :type fig: matplotlib figure object
-   :param axes:
-   :type axes: matplotlib axes object
-
-   .. rubric:: Notes
-
-   This is the same as the `wrapper_matplotlib` function.
-
-   You can still update the plot using `object.fig.(function)` and
-   `object.fig.(function)`. This wrapper creates a special patch object that
-   can be combined with other patch objects.
-
 
 .. py:data:: rcParams
    
 
-   
+   underlying parameters of that control the generation of the actual
+   images
+
+   maxIter : int
+       maximum number of iterations to be used to convert
+       a plotnine ggplot object output into the correct size
+   min_size_px : int
+       early stopping rule for conversion a plotnine ggplot
+       object output into the correct size, if size of image
+       goes below this value the process stops with an error
+   eps : float
+       difference between desired and converged sizes to successfully
+       stop the interation for the conversion a plotnine ggplot
+       object output into the correct size
+   save_verbose : boolean
+       logic if saving a cow.patch arangement (with .save) is is done so
+       verbosely as a default (can be overridden)
+   show_verbose : boolean
+       logic if showing a cow.patch arangement (with .show) is is done so
+       verbosely as a default (can be overridden)
+   num_attempts : int
+       Number of attempts to correct the global size of the arangment to
+       allow the plotnine ggplot objects to have the expected sizes with
+       desired aspect ratio. Minimum value is 1, which means no correction is
+       made.
+   base_height : float
+       inches for the minimum height of a plotnine ggplot object if no global
+       height of the arrangement is provided in the `.show()` and `.save()`
+       functions.
+   base_aspect_ratio : float
+       ratio that (along with base_height) defines underlying minimum width
+       of a plotnine ggplot object if no global width of the arrangement is
+       provided in the `.show()` and `.save()` functions. This ratio is the
+       golden ratio.
 

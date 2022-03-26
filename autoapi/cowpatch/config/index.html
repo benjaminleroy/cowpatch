@@ -25,9 +25,7 @@
         <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="cowpatch.exceptions" href="../exceptions/index.html" />
-    <link rel="prev" title="cowpatch.base_elements" href="../base_elements/index.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,28 +44,11 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">General</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">cowpatch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guides/guides_index.html">Guides</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../base_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.base_elements</span></code></a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../exceptions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.exceptions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../layout_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.layout_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../svg_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.svg_utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../text_elements/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.text_elements</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.utils</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../wrappers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.wrappers</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Logistics</span></p>
 <ul>
@@ -94,8 +75,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">API Reference</a> &raquo;</li>
-          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch</span></code></a> &raquo;</li>
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">cowpatch.config</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/cowpatch/config/index.rst.txt" rel="nofollow"> View page source</a>
@@ -113,7 +92,42 @@
 <dl class="py data">
 <dt class="sig sig-object py" id="cowpatch.config.rcParams">
 <span class="sig-prename descclassname"><span class="pre">cowpatch.config.</span></span><span class="sig-name descname"><span class="pre">rcParams</span></span><a class="headerlink" href="#cowpatch.config.rcParams" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>underlying parameters of that control the generation of the actual
+images</p>
+<dl class="simple">
+<dt>maxIter<span class="classifier">int</span></dt><dd><p>maximum number of iterations to be used to convert
+a plotnine ggplot object output into the correct size</p>
+</dd>
+<dt>min_size_px<span class="classifier">int</span></dt><dd><p>early stopping rule for conversion a plotnine ggplot
+object output into the correct size, if size of image
+goes below this value the process stops with an error</p>
+</dd>
+<dt>eps<span class="classifier">float</span></dt><dd><p>difference between desired and converged sizes to successfully
+stop the interation for the conversion a plotnine ggplot
+object output into the correct size</p>
+</dd>
+<dt>save_verbose<span class="classifier">boolean</span></dt><dd><p>logic if saving a cow.patch arangement (with .save) is is done so
+verbosely as a default (can be overridden)</p>
+</dd>
+<dt>show_verbose<span class="classifier">boolean</span></dt><dd><p>logic if showing a cow.patch arangement (with .show) is is done so
+verbosely as a default (can be overridden)</p>
+</dd>
+<dt>num_attempts<span class="classifier">int</span></dt><dd><p>Number of attempts to correct the global size of the arangment to
+allow the plotnine ggplot objects to have the expected sizes with
+desired aspect ratio. Minimum value is 1, which means no correction is
+made.</p>
+</dd>
+<dt>base_height<span class="classifier">float</span></dt><dd><p>inches for the minimum height of a plotnine ggplot object if no global
+height of the arrangement is provided in the <cite>.show()</cite> and <cite>.save()</cite>
+functions.</p>
+</dd>
+<dt>base_aspect_ratio<span class="classifier">float</span></dt><dd><p>ratio that (along with base_height) defines underlying minimum width
+of a plotnine ggplot object if no global width of the arrangement is
+provided in the <cite>.show()</cite> and <cite>.save()</cite> functions. This ratio is the
+golden ratio.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>
@@ -121,10 +135,7 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../base_elements/index.html" class="btn btn-neutral float-left" title="cowpatch.base_elements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../exceptions/index.html" class="btn btn-neutral float-right" title="cowpatch.exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
