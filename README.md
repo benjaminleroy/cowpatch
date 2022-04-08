@@ -7,6 +7,7 @@
 
 A package for combining/aranging multiple python ggplot visuals from [`plotnine`](https://plotnine.readthedocs.io/en/stable/)<!--, with allowances to also combined figures from [`matplotlib`](https://matplotlib.org/) and [`seaborn`](https://seaborn.pydata.org/)-->. Internally, we leverage SVG objects and descriptions to accomplish it's goals.
 
+<!--
 ## Installation
 
 Currently this project is under development and is not on
@@ -26,8 +27,7 @@ installed):
     ```bash
     $ poetry install
     ```
-
-<!-- for pip
+-->
 
 ## Installation
 
@@ -39,9 +39,6 @@ pip install cowpatch
 
 If you would like to experiment with the development version of this package
 please following the guidelines in the contributing page.
--->
-
-
 
 ## Usage
 

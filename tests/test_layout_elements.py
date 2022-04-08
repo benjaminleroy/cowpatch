@@ -488,7 +488,7 @@ def test_layout__str__(capsys):
                                                [0,0,0,2,2,2]])))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<layout \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for layout to be of <layout (num)> format (1)"
@@ -500,7 +500,7 @@ def test_layout__str__(capsys):
                                      """))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<layout \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for layout to be of <layout (num)> format (2)"
@@ -508,7 +508,7 @@ def test_layout__str__(capsys):
     print(cow.layout(ncol=3))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<layout \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for layout to be of <layout (num)> format (3)"
@@ -516,7 +516,7 @@ def test_layout__str__(capsys):
     print(cow.layout(nrow=2))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<layout \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for layout to be of <layout (num)> format (4)"
@@ -524,14 +524,14 @@ def test_layout__str__(capsys):
     print(cow.layout(nrow=2,ncol=3))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<layout \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for layout to be of <layout (num)> format (5)"
     print(cow.layout(nrow=1, rel_widths = [1,1,2]))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<layout \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for layout to be of <layout (num)> format (6)"
@@ -540,7 +540,7 @@ def test_layout__str__(capsys):
                             rel_heights = [1,2]))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<layout \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<layout \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for layout to be of <layout (num)> format (1)"
@@ -571,10 +571,10 @@ def test_layout__str__(capsys):
         captured = capsys.readouterr()
 
         # we're not checking the design info...
-        re_cap = re.search("^<layout \(-{0,1}[0-9]+\)>\\ndesign \(([0-9]+|unk), "+\
-                           "([0-9]+|unk)\):\\n\\n", captured.out)
-        re_cap_end = re.search("\\n\\nwidths:\\n(\[([0-9]*\.*[0-9]*\s*)+\]|unk)"+\
-                               "\\nheights:\\n(\[([0-9]*\.*[0-9]*\s*)+\]|unk)\\n$",
+        re_cap = re.search(r"^<layout \(-{0,1}[0-9]+\)>\ndesign \(([0-9]+|unk), "+\
+                           r"([0-9]+|unk)\):\n\n", captured.out)
+        re_cap_end = re.search(r"\n\nwidths:\n(\[([0-9]*\.*[0-9]*\s*)+\]|unk)"+\
+                               r"\nheights:\n(\[([0-9]*\.*[0-9]*\s*)+\]|unk)\n$",
                                captured.out)
         assert re_cap is not None and \
             re_cap.start() == 0 and \
@@ -949,7 +949,7 @@ def test_area__str__(capsys):
 
     captured = capsys.readouterr()
 
-    re_cap = re.search("<area \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<area \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for area to be of <area (num)> format (1)"
@@ -957,7 +957,7 @@ def test_area__str__(capsys):
     print(cow.area(1,1,1,1, "relative"))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<area \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<area \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for area to be of <area (num)> format (1)"
@@ -965,7 +965,7 @@ def test_area__str__(capsys):
     print(cow.area(1,1,1,1, "design"))
 
     captured = capsys.readouterr()
-    re_cap = re.search("<area \(-{0,1}[0-9]+\)>\\n", captured.out)
+    re_cap = re.search(r"<area \(-{0,1}[0-9]+\)>\n", captured.out)
     assert re_cap is not None and \
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for area to be of <area (num)> format (1)"
@@ -980,9 +980,9 @@ def test_area__repr__(capsys):
         print(repr(aa))
         captured = capsys.readouterr()
 
-        re_cap = re.search("<area \(-{0,1}[0-9]+\)>\\n" +\
-                           "_type: (pt|relative|design)\\n\\n"+\
-                           "x_left: 1\\ny_top: 1\\nwidth: 1\\nheight: 1\\n", captured.out)
+        re_cap = re.search(r"<area \(-{0,1}[0-9]+\)>\n" +\
+                           r"_type: (pt|relative|design)\n\n"+\
+                           r"x_left: 1\ny_top: 1\nwidth: 1\nheight: 1\n", captured.out)
         assert re_cap is not None and \
             re_cap.start() == 0 and re_cap.end() == len(captured.out),\
             "expected __str__ expression for area to be of <area (num)> format (1)"
