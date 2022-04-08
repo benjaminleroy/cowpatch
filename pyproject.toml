@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cowpatch"
-version = "0.1.0"
+version = "0.1.1"
 description = "A package for combining python ggplot visuals"
 authors = ["Benjamin LeRoy", "Mallory Wang"]
 license = "MIT"
