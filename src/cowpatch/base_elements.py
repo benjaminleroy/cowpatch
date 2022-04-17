@@ -230,6 +230,8 @@ class patch:
             desired width of svg object in points
         height_pt : float
             desired height of svg object in points
+        sizes: TODO: write description
+        num_attempts : TODO: write description
 
         Returns
         -------
@@ -600,7 +602,7 @@ class patch:
         io.BytesIO : object that acts like a reading in of bytes
         """
         # updating width and height if necessary (some combine is none)
-        width, height = self._default_size(width=width,height=height)
+        width, height = self._default_size(width=width, height=height)
 
         # global default for verbose (if not provided by the user)
         if verbose is None:
@@ -652,7 +654,7 @@ class patch:
         representation.
         """
         # updating width and height if necessary (some combine is none)
-        width, height = self._default_size(width=width,height=height)
+        width, height = self._default_size(width=width, height=height)
 
         # global default for verbose (if not provided by the user)
         if verbose is None:
