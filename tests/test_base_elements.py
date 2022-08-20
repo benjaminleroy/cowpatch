@@ -63,7 +63,7 @@ def test_patch__init__():
     assert len(mypatch_args2.grobs) == 3, \
         "grobs can be passed through the grobs parameter indirectly"
 
-def test_patch__size_dive():
+def test_patch__estimate_default_min_desired_size_NoAnnotation():
     g0 = p9.ggplot(p9_data.mpg) +\
         p9.geom_bar(p9.aes(x="hwy")) +\
         p9.labs(title = 'Plot 0')
@@ -89,8 +89,8 @@ def test_patch__size_dive():
                    rel_heights = [1,2])
 
 
-    sug_width, sug_height, max_depth = \
-        vis1._size_dive()
+    sug_width, sug_height = \
+        vis1._estimate_default_min_desired_size()
 
     assert np.allclose(sug_width,
                         (2 * # 1/ rel width of smallest width of images
@@ -103,56 +103,6 @@ def test_patch__size_dive():
                         cow.rcParams["base_height"])), \
         "suggested height incorrectly sizes the smallest height of the images (v1)"
 
-    assert max_depth == 1, \
-        "expected depth for basic cow.patch (of depth 1) is incorrect (v1)"
-
-
-    # of note: the internal uses "pt", but they're actually defined relatively...
-    image_rel_widths, image_rel_heights, depths = \
-        vis1._size_dive(parents_areas=[cow.area(width=1/6,
-                                            height=1/6,
-                                            x_left=0,
-                                            y_top=0,
-                                            _type="pt")])
-
-    assert np.allclose(image_rel_widths, [.5*1/6]*3), \
-        "expected widths if input into a smaller image incorrect "+\
-        "(v1.1, rel width to top 1/6)"
-
-    assert np.allclose(image_rel_heights, [1/6, 1/6*1/3, 1/6*2/3]), \
-        "expected heights if input into a smaller image incorrect "+\
-        "(v1.1, rel heights to top 1/6)"
-
-    assert np.allclose(depths, [1+1]*3), \
-        "expected depths in basic cow.patch (all of depth 1) input into a "+\
-        "1 level deep smaller image is incorrect (v1.1)"
-
-
-    image_rel_widths2, image_rel_heights2, depths2 = \
-        vis1._size_dive(parents_areas=[cow.area(width=1/3,
-                                            height=1/2,
-                                            x_left=0,
-                                            y_top=0,
-                                            _type="pt"),
-                                       cow.area(width=1/2,
-                                                height=1/3,
-                                                x_left=1/2,
-                                                y_top=0,
-                                                _type="pt")])
-
-    assert np.allclose(image_rel_widths2, [.5*1/6]*3), \
-        "expected widths if input into a smaller image incorrect "+\
-        "(v1.2, rel width to top 1/6)"
-
-    assert np.allclose(image_rel_heights2, [1/6, 1/6*1/3, 1/6*2/3]), \
-        "expected heights if input into a smaller image incorrect "+\
-        "(v1.2, rel heights to top 1/6)"
-
-    assert np.allclose(depths2, [1+2]*3), \
-        "expected depths in basic cow.patch (all of depth 1) input into a "+\
-        "2 levels deep smaller image is incorrect (v1.2)"
-
-
 
     # nested option --------
     vis_nested = cow.patch(g0,cow.patch(g1,g2)+\
@@ -160,8 +110,8 @@ def test_patch__size_dive():
         cow.layout(nrow=1)
 
 
-    sug_width_n, sug_height_n, max_depth_n = \
-        vis_nested._size_dive()
+    sug_width_n, sug_height_n = \
+        vis_nested._estimate_default_min_desired_size()
 
     assert np.allclose(sug_width_n,
                         (2 * # 1/ rel width of smallest width of images
@@ -176,56 +126,69 @@ def test_patch__size_dive():
         "suggested height incorrectly sizes the smallest height of the images "+\
         "(v2 - nested)"
 
-    assert max_depth_n == 2, \
-        "expected depth for nested cow.patch (of depth 1) is incorrect "+\
+def test_patch__estimate_default_min_desired_size_Annotation():
+    g0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.labs(title = 'Plot 0')
+
+    g1 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+        p9.labs(title = 'Plot 1')
+
+    g2 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+        p9.labs(title = 'Plot 2')
+
+    g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+                                                         "suv",
+                                                         "pickup"])]) +\
+        p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
+        p9.facet_wrap("class")
+
+    # basic option ----------
+    vis1 = cow.patch(g0,g1,g2) +\
+        cow.layout(design = np.array([[0,1],
+                                      [0,2]]),
+                   rel_heights = [1,2]) +\
+        cow.annotation(title = "My title")
+
+
+    sug_width, sug_height = \
+        vis1._estimate_default_min_desired_size()
+
+    assert np.allclose(sug_width,
+                        (2 * # 1/ rel width of smallest width of images
+                         cow.rcParams["base_height"] *
+                         cow.rcParams["base_aspect_ratio"])), \
+        "suggested width incorrectly sizes the smallest width of the images (v1)"
+
+    assert np.allclose(sug_height,
+                       (3 * # 1/ rel width of smallest width of images
+                        cow.rcParams["base_height"])), \
+        "suggested height incorrectly sizes the smallest height of the images (v1)"
+
+
+    # nested option --------
+    vis_nested = cow.patch(g0,cow.patch(g1,g2)+\
+                        cow.layout(ncol=1, rel_heights = [1,2])) +\
+        cow.layout(nrow=1)
+
+
+    sug_width_n, sug_height_n = \
+        vis_nested._estimate_default_min_desired_size()
+
+    assert np.allclose(sug_width_n,
+                        (2 * # 1/ rel width of smallest width of images
+                         cow.rcParams["base_height"] *
+                         cow.rcParams["base_aspect_ratio"])), \
+        "suggested width incorrectly sizes the smallest width of the images "+\
         "(v2 - nested)"
 
-
-
-    # of note: the internal uses "pt", but they're actually defined relatively...
-    image_rel_widths_n, image_rel_heights_n, depths_n = \
-        vis_nested._size_dive(parents_areas=[cow.area(width=1/6,
-                                            height=1/6,
-                                            x_left=0,
-                                            y_top=0,
-                                            _type="pt")])
-
-    assert np.allclose(image_rel_widths_n, [.5*1/6]*3), \
-        "expected widths if input into a smaller image incorrect "+\
-        "(v2.1 - nested, rel width to top 1/6)"
-
-    assert np.allclose(image_rel_heights_n, [1/6, 1/6*1/3, 1/6*2/3]), \
-        "expected heights if input into a smaller image incorrect "+\
-        "(v2.1 - nested, rel heights to top 1/6)"
-
-    assert np.allclose(depths_n, list(np.array([1,2,2])+1)), \
-        "expected depths in nested cow.patch (all of depth 1) input into a "+\
-        "1 level deep smaller image is incorrect (v2.1 - nested)"
-
-
-    image_rel_widths2_n, image_rel_heights2_n, depths2_n = \
-        vis_nested._size_dive(parents_areas=[cow.area(width=1/3,
-                                            height=1/2,
-                                            x_left=0,
-                                            y_top=0,
-                                            _type="pt"),
-                                       cow.area(width=1/2,
-                                                height=1/3,
-                                                x_left=1/2,
-                                                y_top=0,
-                                                _type="pt")])
-
-    assert np.allclose(image_rel_widths2_n, [.5*1/6]*3), \
-        "expected widths if input into a smaller image incorrect "+\
-        "(v2.2 - nested, rel width to top 1/6)"
-
-    assert np.allclose(image_rel_heights2_n, [1/6, 1/6*1/3, 1/6*2/3]), \
-        "expected heights if input into a smaller image incorrect "+\
-        "(v2.2 - nested, rel heights to top 1/6)"
-
-    assert np.allclose(depths2_n, list(np.array([1,2,2])+2)), \
-        "expected depths in nested cow.patch (all of depth 1) input into a "+\
-        "1 levels deep smaller image is incorrect (v2.2 - nested)"
+    assert np.allclose(sug_height_n,
+                       (3 * # 1/ rel width of smallest width of images
+                        cow.rcParams["base_height"])), \
+        "suggested height incorrectly sizes the smallest height of the images "+\
+        "(v2 - nested)"
 
 def test_patch__default_size__both_none():
     """
@@ -597,8 +560,158 @@ def test_patch__process_sizes(w1,h1,w2,h2,w3,h3):
         "expected max_scaling should be the max of 1/width_scale and "+\
         "1/height_scale assoicated with failed plot(s) (v2.2 - 2 plot failed)"
 
-# global savings and showing and creating ------
+def test_patch__get_grob_tag_ordering():
+    """
+    static testing of _get_grob_tag_ordering
+    """
+    g0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.labs(title = 'Plot 0')
 
+    g1 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+        p9.labs(title = 'Plot 1')
+
+    g2 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+        p9.labs(title = 'Plot 2')
+
+    g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+                                                         "suv",
+                                                         "pickup"])]) +\
+        p9.geom_histogram(p9.aes(x="hwy"), bins=10) +\
+        p9.facet_wrap("class")
+
+    my_patch = cow.patch(g0,g1,g2,g3)
+    my_layout = cow.layout(design = np.array([[0,0,0,3,3,3],
+                                               [0,0,0,2,2,2],
+                                               [1,1,1,2,2,2]]))
+
+    my_annotation1 = cow.annotation(tags = ("Fig {0}",), tags_format = ("a",),
+                                    tags_order = "auto")
+    my_annotation2 = cow.annotation(tags = ["Fig 1", "Fig 2", "Fig 3"], # notice this isn't complete...
+                                    tags_order = "auto")
+    # yokogaki ----
+    my_a_y1 = my_annotation1 + cow.annotation(tags_order = "yokogaki")
+    vis_y1 = my_patch + my_layout + my_a_y1
+
+    out_y1 = vis_y1._get_grob_tag_ordering()
+
+    assert np.all(out_y1 == np.array([0,3,2,1])), \
+        "yokogaki ordering incorrect (static example 1, tuple tags)"
+
+    my_a_y1_auto = my_annotation1
+    vis_y1_auto = my_patch + my_layout + my_a_y1_auto
+
+    out_y1_auto = vis_y1_auto._get_grob_tag_ordering()
+
+    assert np.all(out_y1_auto == np.array([0,3,2,1])), \
+        "yokogaki ordering incorrect - auto tags_order (static example "+\
+        "1_auto, tuple tags)"
+
+    my_a_y2 = my_annotation2 + cow.annotation(tags_order = "yokogaki")
+    vis_y2 = my_patch + my_layout + my_a_y2
+
+    out_y2 = vis_y2._get_grob_tag_ordering()
+
+    assert np.all(out_y2 == np.array([0,3,2,1])), \
+        "yokogaki ordering incorrect (static example 2, list tags)"
+
+    # input ----
+    my_a_i1 = my_annotation1 + cow.annotation(tags_order = "input")
+    vis_i1 = my_patch + my_layout + my_a_i1
+
+    out_i1 = vis_i1._get_grob_tag_ordering()
+
+    assert np.all(out_i1 == np.array([0,1,2,3])), \
+        "input ordering incorrect (static example 1, tuple tags)"
+
+    my_a_i2 = my_annotation2 + cow.annotation(tags_order = "input")
+    vis_i2 = my_patch + my_layout + my_a_i2
+
+    out_i2 = vis_i2._get_grob_tag_ordering()
+
+    assert np.all(out_i2 == np.array([0,1,2,3])), \
+        "input ordering incorrect (static example 2, list tags)"
+
+    my_a_i2_auto = my_annotation2 + cow.annotation(tags_order = "auto")
+    vis_i2_auto = my_patch + my_layout + my_a_i2_auto
+
+    out_i2_auto = vis_i2_auto._get_grob_tag_ordering()
+
+    assert np.all(out_i2_auto == np.array([0,1,2,3])), \
+        "input ordering incorrect - auto tag ordering (static example 2, list tags)"
+
+    # no tags (different ways) -----
+
+    my_n1_a = my_annotation1 + \
+        cow.annotation(tags = np.nan, tags_order = "auto")
+    vis_n1_a = my_patch + my_layout + my_n1_a
+    out_n1_a = vis_n1_a._get_grob_tag_ordering()
+
+    assert np.all(out_n1_a == np.array([])), \
+        "if tags are missing, we expect the _get_grob_tag_ordering to "+\
+        "return an empty array (static example 1 - np.nan override, auto)"
+
+    my_n1_y = my_annotation1 + \
+        cow.annotation(tags = np.nan, tags_order = "yokogaki")
+    vis_n1_y = my_patch + my_layout + my_n1_y
+    out_n1_y = vis_n1_y._get_grob_tag_ordering()
+
+    assert np.all(out_n1_y == np.array([])), \
+        "if tags are missing, we expect the _get_grob_tag_ordering to "+\
+        "return an empty array (static example 1 - np.nan override, yokogaki)"
+
+    my_n1_i = my_annotation1 + \
+        cow.annotation(tags = np.nan, tags_order = "input")
+    vis_n1_i = my_patch + my_layout + my_n1_i
+    out_n1_i = vis_n1_i._get_grob_tag_ordering()
+
+    assert np.all(out_n1_i == np.array([])), \
+        "if tags are missing, we expect the _get_grob_tag_ordering to "+\
+        "return an empty array (static example 1 - np.nan override, input)"
+
+
+
+
+    my_n2_a = my_annotation2 + \
+        cow.annotation(tags = np.nan, tags_order = "auto")
+    vis_n2_a = my_patch + my_layout + my_n2_a
+    out_n2_a = vis_n2_a._get_grob_tag_ordering()
+
+    assert np.all(out_n2_a == np.array([])), \
+        "if tags are missing, we expect the _get_grob_tag_ordering to "+\
+        "return an empty array (static example 2 - np.nan override, auto)"
+
+    my_n2_y = my_annotation2 + \
+        cow.annotation(tags = np.nan, tags_order = "yokogaki")
+    vis_n2_y = my_patch + my_layout + my_n2_y
+    out_n2_y = vis_n2_y._get_grob_tag_ordering()
+
+    assert np.all(out_n2_y == np.array([])), \
+        "if tags are missing, we expect the _get_grob_tag_ordering to "+\
+        "return an empty array (static example 2 - np.nan override, yokogaki)"
+
+    my_n2_i = my_annotation2 + \
+        cow.annotation(tags = np.nan, tags_order = "input")
+    vis_n2_i = my_patch + my_layout + my_n2_i
+    out_n2_i = vis_n2_i._get_grob_tag_ordering()
+
+    assert np.all(out_n2_i == np.array([])), \
+        "if tags are missing, we expect the _get_grob_tag_ordering to "+\
+        "return an empty array (static example 2 - np.nan override, input)"
+
+
+    vis_n_n = my_patch + my_layout
+    out_n_a = vis_n_n._get_grob_tag_ordering()
+
+
+    assert np.all(out_n_a == np.array([])), \
+        "if annotation objet itelf is missing, we expect the "+\
+        "_get_grob_tag_ordering to return an empty array"
+
+
+# global savings and showing and creating ------
 def _layouts_and_patches_patch_plus_layout(idx):
     # creation of some some ggplot objects
     g0 = p9.ggplot(p9_data.mpg) +\

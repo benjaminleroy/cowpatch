@@ -1,4 +1,6 @@
 import plotnine as p9
+from plotnine.themes.themeable import themeable
+from plotnine.themes.theme import theme
 import numpy as np
 import copy
 import matplotlib.pyplot as plt
@@ -12,12 +14,12 @@ from contextlib import suppress # suppress kwargs that are incorrect
 import pdb
 
 from .utils import to_pt, from_pt, to_inches, from_inches, \
-    _transform_size_to_pt
+    _transform_size_to_pt, inherits
 from .svg_utils import _show_image, _save_svg_wrapper
 from .config import rcParams
 
 class text:
-    def __init__(self, label, element_text=None):
+    def __init__(self, label, element_text=None, _type = "cow_text"):
         """
         create a new text object
 
@@ -34,9 +36,13 @@ class text:
         ^ on text vs paths for text in mathplotlib
         """
         self.label = label
-        self._type = "text"
+        self._type = _type
         self.element_text = None # prep initialization
+        self._theme = p9.theme()
         self._clean_element_text(element_text)
+
+    def _define_type(self, _type):
+        self._type = _type
 
     def _clean_element_text(self, element_text):
         """
@@ -67,6 +73,12 @@ class text:
             self.element_text.merge(element_text)
         else:
             self.element_text = element_text
+
+        # keeping theme update tracking
+        if self.element_text is not None:
+            self._theme += p9.theme(
+                            **{self._type: self.element_text.theme_element})
+
 
         return None # just a reminder
 
@@ -126,6 +138,25 @@ class text:
         #         self._clean_element_text(new_element_text)
         return new_object
 
+    def __eq__(self, other):
+        """
+        Check if current object is equal to another
+
+        Arguments
+        ---------
+        other : other object, assumed to be text object
+
+        Returns
+        -------
+        boolean if equivalent
+        """
+
+        if not inherits(other, text):
+            return False
+
+        return self.__dict__ == other.__dict__
+
+
     def _update_element_text_from_theme(self, theme, key=None):
         """
         Internal function to update .element_text description from a theme
@@ -159,37 +190,53 @@ class text:
         else:
             self.element_text = new_et
 
+        self._theme += theme
+        self._clean_element_text(self.element_text)
+
         return None # just a reminder
 
     def _get_full_element_text(self):
         """
         create a "full" element_text from base p9 theme
+
+        Notes
+        -----
+        This function will update the element_text *only with* attributes
+        that aren't currently defined (using the cow.theme_get() function)
         """
         new_self = copy.deepcopy(self)
-        new_self._update_element_text_from_theme(p9.theme_get())
-
+        new_self._update_element_text_from_theme(theme_get() + self._theme, # don't want to actually update self.element_text or self._theme
+                                                 key=self._type)
         if self.element_text is not None:
             new_self.element_text.merge(self.element_text)
 
-        return new_self.element_text
+        # full set of structure inherited from cow_text - TODO: smarter approach mirroring p9 functionality?
+        if self._type != "cow_text": # assume inherits properties
+            cow_text_et = new_self._theme.themeables.get("cow_text")
+            cow_text_et.merge(new_self.element_text)
+            return cow_text_et
+        else:
+            return new_self.element_text
 
-    def _min_size(self):
+
+
+    def _min_size(self, to_inches=False):
         """
-        calculate minimum size of bounding box around self in pt(?) and
+        calculate minimum size of bounding box around self in pt and
         creates base image of text object
 
 
         Arguments
         ---------
-        close : boolean
-            if we should close the plot after we find minimum size.
+        to_inches : boolean
+            if the output should be converted to inches before returned
 
         Returns
         -------
-        min_width_pt : float
-            minimum width for text (pt)
-        min_height_pt : float
-            minimum height for text (pt)
+        min_width : float
+            minimum width for text in pt (or inches if `to_inches` is True)
+        min_height: float
+            minimum height for text in pt (or inches if `to_inches` is True)
 
         Note
         ----
@@ -229,7 +276,15 @@ class text:
 
         plt.close()
 
-        return min_width_pt, min_height_pt
+        if to_inches:
+            min_width = to_inches(min_width_pt, units = "pt")
+            min_height = to_inches(min_height_pt, units = "pt")
+        else:
+            min_width = min_width_pt
+            min_height = min_height_pt
+
+
+        return min_width, min_height
 
     def _base_text_image(self, close=True):
         """
@@ -308,7 +363,7 @@ class text:
         ---------
         width_pt : float
             width of desired output (in pt)
-        height_t : float
+        height_pt : float
             height of desired output (in pt)
         sizes: TODO: write description & code up
         num_attempts : TODO: write description & code up
@@ -355,7 +410,7 @@ class text:
         # ^this won't be width or min_width_pt related
 
         # location correction for alignment and margins -------
-        current_element_text = self._get_full_element_text() #
+        current_element_text = self._get_full_element_text()
         ha_str = current_element_text.properties.get("ha")
         va_str = current_element_text.properties.get("va")
         margin_dict = current_element_text.properties.get("margin")
@@ -550,7 +605,122 @@ class text:
         return "<text (%d)>" % self.__hash__()
 
     def __repr__(self):
-        out = "\n_type: " + self._type +\
-              "\nlabel:\n" +  "  |" + re.sub("\n", "\n  |", self.label) +\
-              "\nelement_text:\n  |" + self.element_text.__repr__()
+        out = "label:\n" +  "  |" + re.sub("\n", "\n  |", self.label) +\
+              "\nelement_text:\n  |" + self.element_text.__repr__() +\
+              "\n_type:\n  |\"" + self._type +"\""
+
         return "<text (%d)>" % self.__hash__() + "\n" + out
+
+    def __hash__(self):
+        return hash(tuple(self.__dict__))
+
+class cow_title(themeable):
+    """
+    text class for cow.patch titles
+
+    Parameters
+    ----------
+    theme_element : element_text
+    """
+    pass
+
+class cow_subtitle(themeable):
+    """
+    text class for cow.patch subtitles
+
+    Parameters
+    ----------
+    theme_element : element_text
+    """
+    pass
+
+class cow_caption(themeable):
+    """
+    text class for cow.patch captions
+
+    Parameters
+    ----------
+    theme_element : element_text
+    """
+    pass
+
+class cow_tag(themeable):
+    """
+    text class for cow.patch tags
+
+    Parameters
+    ----------
+    theme_element : element_text
+    """
+    pass
+
+class cow_text(cow_title, cow_subtitle, cow_caption, cow_tag):
+    """
+    default text for cow.text object
+
+    Parameters
+    ----------
+    theme_element : element_text
+    """
+
+    @property
+    def rcParams(self):
+        rcParams = super().rcParams
+
+        family = self.properties.get('family')
+        style = self.properties.get('style')
+        weight = self.properties.get('weight')
+        size = self.properties.get('size')
+        color = self.properties.get('color')
+
+        if family:
+            rcParams['font.family'] = family
+        if style:
+            rcParams['font.style'] = style
+        if weight:
+            rcParams['font.weight'] = weight
+        if size:
+            rcParams['font.size'] = size
+            rcParams['xtick.labelsize'] = size
+            rcParams['ytick.labelsize'] = size
+            rcParams['legend.fontsize'] = size
+        if color:
+            rcParams['text.color'] = color
+
+        return rcParams
+
+
+
+def theme_get():
+    """
+    Creates a theme that contains defaults for cow related themeables
+    added to a p9.theme_get if needed.
+
+    From plotnine:
+
+    The default theme is the one set (using :func:`theme_set`) by
+    the user. If none has been set, then :class:`theme_gray` is
+    the default.
+    """
+    return theme_complete(p9.theme_get())
+
+
+def theme_complete(other):
+    """
+    a object that can be right added to another p9.theme and
+    will complete this p9.theme (relative to cow's default rcParms)
+
+    """
+    base = copy.deepcopy(other)
+    for cow_key in ["cow_text", "cow_title", "cow_subtitle",
+                    "cow_caption", "cow_tag"]:
+        if cow_key not in base.themeables.keys() and \
+            cow_key in rcParams.keys():
+            base += theme(**{cow_key: rcParams[cow_key]})
+        else:
+            current_et = base.themables[cow_key]
+            updated_et = rcParams[cow_key].merge(current_et)
+            base += theme(**{cow_key: updated_et})
+    return base
+
+

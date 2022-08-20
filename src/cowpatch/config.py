@@ -1,3 +1,5 @@
+import plotnine as p9
+
 rcParams = dict(maxIter=20,
                 min_size_px=10,
                 eps=1e-2,
@@ -8,7 +10,26 @@ rcParams = dict(maxIter=20,
                 num_attempts=2,
 
                 base_height=3.71,
-                base_aspect_ratio=1.618 # the golden ratio
+                base_aspect_ratio=1.618, # the golden ratio
+
+                cow_text=p9.element_text(
+                            family=p9.options.get_option("base_family"),
+                            style='normal',
+                            color='black',
+                            size=1.2*11,
+                            linespacing=0.9,
+                            ha='center',
+                            va='center',
+                            rotation=0,
+                            margin={}),
+                cow_tag=p9.element_text(size=1.2*11,
+                                        ha="left"),
+                cow_title=p9.element_text(size=1.2*11,
+                                          ha="left"),
+                cow_subtitle=p9.element_text(size=11,
+                                             ha="left"),
+                cow_caption=p9.element_text(size=.8*11,
+                                            ha="right"),
 
                 )
 """

@@ -169,6 +169,7 @@ def inherits_plotnine(other):
     return "plotnine" == parent
 
 
+
 def _transform_size_to_pt(size_string_tuple):
     """
     takes string with unit and converts it to a float w.r.t pt
@@ -238,3 +239,75 @@ def _flatten_nested_list(x):
         else:
             out.append(xi)
     return out
+
+
+_arabic_roman_map = [(1000, 'M'), (900, 'CM'), (500, 'D'), (400, 'CD'), (100, 'C'), (90, 'XC'),
+            (50, 'L'), (40, 'XL'), (10, 'X'), (9, 'IX'), (5, 'V'), (4, 'IV'), (1, 'I')]
+def _to_roman_numerials(x, caps = False):
+    """
+    Arguments
+    ---------
+    x : int
+        arabic numeral
+    caps : boolean
+        if output should be capitalized
+
+    Returns
+    -------
+    out : str
+        roman numeral
+    """
+    # from https://stackoverflow.com/a/40274588
+    out = ''
+
+    if x > 3999:
+        raise ValueError("current implimentation only works for input <= 3999")
+
+    while x > 0:
+        for i, r in _arabic_roman_map:
+            while x >= i:
+                out += r
+                x -= i
+
+    if caps:
+        return out
+    else:
+        return out.lower()
+
+_alphabet = "abcdefghijklmnopqrstuvwxyz"
+def _to_alphabet_representation(x, caps = False):
+    """
+    Arguments
+    ---------
+    x : int
+        arabic numeral
+    caps : boolean
+        if output should be capitalized
+
+    Returns
+    -------
+    out : str
+        alphabet numeric representation
+    """
+    out = ''
+    while x > 0:
+        r = x % 26
+        out = _alphabet[r-1] + out
+        x = x // 26
+
+    if caps:
+        return out.upper()
+    else:
+        return out
+
+def _string_tag_format(max_level=0):
+    out = '{0}'
+    level = 1
+    while level <= max_level:
+        out += ".{"+str(level)+"}"
+        level +=1
+
+    return out
+
+
+

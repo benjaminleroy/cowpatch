@@ -2,13 +2,16 @@ import numpy as np
 import plotnine as p9
 import matplotlib.pyplot as plt
 import svgutils.transform as sg
+import copy
 
 from .svg_utils import gg_to_svg, _save_svg_wrapper, _show_image, \
                     _raw_gg_to_svg, _select_correcting_size_svg
 from .utils import to_inches, from_inches, inherits_plotnine, inherits, \
                     _flatten_nested_list
 from .layout_elements import layout
+from .annotation_elements import annotation
 from .config import rcParams
+from .text_elements import text
 
 import pdb
 
@@ -115,6 +118,7 @@ class patch:
             self.grobs = grobs
 
         self.__layout = "patch" # this is different than None...
+        self.annotation = None
 
     @property
     def layout(self):
@@ -210,7 +214,14 @@ class patch:
             # combine with layout -------------
             self.__layout = other
         elif inherits(other, annotation):
-            raise ValueError("currently not implimented addition with annotation")
+            if self.annotation is None:
+                other_copy = copy.deepcopy(other)
+                other_copy._clean_up_attributes()
+                self.annotation = other_copy
+            else:
+                final_copy = copy.deepcopy(self.annotation + other)
+                final_copy._clean_up_attributes()
+                self.annotation = final_copy
 
         return self
 
@@ -219,6 +230,39 @@ class patch:
 
     def __and__(self, other):
         raise ValueError("currently not implimented &")
+
+    def _get_grob_tag_ordering(self):
+        """
+        get ordering of tags related to grob index
+
+        Returns
+        -------
+        numpy array of tag order for each grob
+
+        Note
+        ----
+        This function leverages the patch's layout and annotation objects
+        """
+        self._check_layout()
+
+        if self.annotation is None or self.annotation.tags is None:
+            return np.array([])
+
+        tags_order = self.annotation.tags_order
+        if tags_order == "auto":
+            if inherits(self.annotation.tags,list):
+                tags_order = "input"
+            else:
+                tags_order = "yokogaki"
+
+
+        if tags_order == "yokogaki":
+            return self.layout._yokogaki_ordering(num_grobs = len(self.grobs))
+        elif tags_order == "input":
+            return np.arange(len(self.grobs))
+        else:
+            raise ValueError("patch's annotation's tags_order is not an expected option")
+
 
     def _svg(self, width_pt, height_pt, sizes=None, num_attempts=None):
         """
@@ -244,29 +288,11 @@ class patch:
 
         self._check_layout()
 
-        if num_attempts is None:
-            num_attempts = rcParams["num_attempts"]
-
         # examine if sizing is possible and update or error if not
         # --------------------------------------------------------
         if sizes is None: # top layer
-            #pdb.set_trace()
-            while num_attempts > 0:
-                sizes, logics = self._svg_get_sizes(width_pt=width_pt,
-                                                    height_pt=height_pt)
-                out_info = self._process_sizes(sizes, logics)
+            sizes = self._svg_get_sizes(width_pt, height_pt)
 
-                if type(out_info) is list:
-                    num_attempts = -412 # strictly less than 0
-                else: # out_info is a scaling
-                    width_pt = width_pt*out_info
-                    height_pt = height_pt*out_info
-
-                num_attempts -= 1
-
-            if num_attempts == 0:
-                raise StopIteration("Attempts to find the correct sizing of inner"+\
-                            "plots failed with provided parameters")
 
         layout = self.layout
 
@@ -281,6 +307,7 @@ class patch:
         base_image.root.set("viewBox", "0 0 %s %s" % (str(width_pt), str(height_pt)))
 
         # TODO: way to make decisions about the base image...
+        # TODO: this should only be on the base layer...
         base_image.append(
             sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#FFFFFF\"/>"))
 
@@ -311,86 +338,154 @@ class patch:
 
         return base_image, (width_pt, height_pt)
 
-    def _size_dive(self, parents_areas=None):
+    def _estimate_default_min_desired_size(self, parent_index=()):
         """
-        (Internal) calculate a suggested overall size that ensures a minimum
-        width and height of the smallest inner plot
+        (Internal) Estimate default height and width of full image so that
+        inner objects (plots, text, etc.) have a minimum desirable size
+        and all titles are fully seen.
 
         Arguments
         ---------
-        parents_areas : list
-            list of parent's/parents' areas. If value is None it means element
-            has no parents
+        parent_index : int
+            parent level index information
 
         Returns
         -------
-        suggested_width : float or list
-            proposed width for overall size if parents_areas=None, else this
-            is a list of relative proportion of widths of images (relative to
-            the global width taking a value of 1)
-        suggested_height : float or
-            proposed height for overall size if parents_areas=None, else this
-            is a list of relative proportion of height of images (relative to
-            the global height taking a value of 1)
-        depth : int or list
-            maximum depth of structure if parents_areas=None, else this
-            is a list of inner elements.
-
+        suggested_width : float
+            proposed width for overall size (inches)
+        suggested_height : float
+            proposed height for overall size (inches)
 
         Notes
         -----
-        The default rcParams are:
+        ***Function's logic***:
+        In order to propose a minimum sizing to an arrangement we take two
+        things into account. Specially,
+
+        1. we assure that each plot's height & width are greater then or equal
+        to a minimum plot height and width (For text objects treated as plots,
+        we just assure they are not truncated, with no minimize sizing is
+        enforced).
+        2. and for titles (,subtitles, captions,) and tags, we ensure that
+        they will not be truncated based on the sizing of the plot/arrangement
+        they are associated with.
+
+        To accomplish this second goal, we track different dimensions of these
+        text labeling objects. For clarity, define (1) a text object’s
+        *typographic length* as the maximum width of all lines of and with
+        each line’s text’s baseline being horizontal and a text object’s
+        *typographic overall height* as the distance between the top “line” of
+        text’s ascender line and the bottom "line" of text's descender line
+        `reference <https://stackoverflow.com/questions/25520410/when-setting-a-font-size-in-css-what-is-the-real-height-of-the-letters>`_,
+        and (2) a *bounding box* for any text object is the minimum sized box
+        that can contain the text object. This bounding box has a *height* and
+        *width* which is naturally impacted by the orientation of baseline of
+        the text.
+
+
+        For titles (,subtitles, captions,) and tags of tag_type = 0 (aka the
+        tag is drawn outside the underlying plot/arrangement's space), we do
+        the following:
+
+        A. we make sure the associated plot/arangement’s requested height and
+        weight ensures that the text object's *typographic length* is not
+        truncated. To do so we assure that the plot-specific height and width
+        being larger than max(image_min_height_from_objective_1, select_bbox_heights))
+        and max(image_min_width_from_objective_1,select_bbox_widths)).  A text
+        element contributes to the select_bbox_heights if it has left or right
+        alignment and to select_bbox_widths if it has top or bottom alignment.
+        B. we make sure the "global" location for said inner plot/arrangement
+        and text greater than or equal to the the plot’s minimum sizing
+        defined in (A) plus a selected_cumulative_extra_bbox_height and _width.
+        A text element contributes to the selected_cumulative_extra_bbox_height
+        if it has top or bottom alignment and to
+        selected_cumulative_extra_bbox_width if it has  left or right
+        alignment. Note that different types of titles and tags contribute to
+        this valve in an addition sense.
+
+        If a tag has tag_type=1, then all it's bounding box’s attributes
+        contribute to the dimensions described in (A).
+
+        ***Additional info:***
+        The default rcParams are (in inches):
             base_height = 3.71,
             base_aspect_ratio = 1.618 # the golden ratio
 
-        This follows ideas proposed in cowplot: `wilkelab.org/cowplot/reference/save_plot.html <https://wilkelab.org/cowplot/reference/save_plot.html>`_.
+        The idea of a minimum size for a subplot follows ideas proposed in
+        cowplot: `wilkelab.org/cowplot/reference/save_plot.html <https://wilkelab.org/cowplot/reference/save_plot.html>`_.
+
         """
-        # basically following: https://wilkelab.org/cowplot/reference/save_plot.html
+
         min_image_height = rcParams["base_height"]
         min_image_width = rcParams["base_aspect_ratio"] * min_image_height
 
+        ## dealing with titles
+        if self.annotation is None:
+            min_desired_widths = []
+            extra_desired_widths = []
+            min_desired_heights = []
+            extra_desired_heights = []
+        else:
+            min_desired_widths, extra_desired_widths, \
+                min_desired_heights, extra_desired_heights = \
+                    self.annotation._calculate_margin_sizes(to_inches=True)
 
-        image_rel_widths = []
-        image_rel_heights = []
-        depth = []
-
+        # inner objects
         areas = self.layout._element_locations(width_pt=1,
                                                height_pt=1,
                                                num_grobs = len(self.grobs))
 
-        if parents_areas is None:
-            parents_areas = []
-            rel_width_to_parents = 1
-            rel_height_to_parents = 1
+        if (self.annotation is not None) and \
+            (self.annotation.order_type() == "yokogaki"):
+            grob_tag_ordering = self.layout._yokogaki_ordering(
+                                                num_grobs=len(self.grobs))
         else:
-            rel_width_to_parents = np.prod([a.width for a in parents_areas])
-            rel_height_to_parents = np.prod([a.height for a in parents_areas])
+            grob_tag_ordering = np.arange(len(self.grobs))
 
-        parent_depth = len(parents_areas)
 
         for g_idx in np.arange(len(self.grobs)):
             inner_area = areas[g_idx]
-
-            if inherits_plotnine(self.grobs[g_idx]):
-                inner_rw = [inner_area.width * rel_width_to_parents]
-                inner_rh = [inner_area.height * rel_height_to_parents]
-                inner_d = [parent_depth + 1]
+            current_index = tuple(list(parent_index) + \
+                                        [grob_tag_ordering[g_idx]])
+            ### tag sizing -----------
+            if self.annotation is not None:
+                tag_min_desired_widths, tag_extra_desired_widths, \
+                    tag_min_desired_heights, tag_extra_desired_heights = \
+                        self.annotation._calculate_tag_margin_sizes(
+                            index = current_index,
+                            fundamental = inherits(self.grobs[g_idx], patch),
+                            to_inches=True)
             else:
-                inner_rw, inner_rh, inner_d =\
-                    self.grobs[g_idx]._size_dive(parents_areas=parents_areas+\
-                                                    [inner_area])
-            image_rel_widths += inner_rw
-            image_rel_heights += inner_rh
-            depth += inner_d
+                tag_min_desired_widths, tag_extra_desired_widths, \
+                    tag_min_desired_heights, tag_extra_desired_heights = [0],[0],[0],[0]
 
-        if len(parents_areas) == 0:
-            return (min_image_width/np.min(image_rel_widths),
-                    min_image_height/np.min(image_rel_heights),
-                    np.max(depth))
-        else:
-            return (image_rel_widths,
-                    image_rel_heights,
-                    depth)
+
+            ### object sizing -------------
+            if inherits_plotnine(self.grobs[g_idx]):
+                inner_width = min_image_width
+                inner_height = min_image_height
+            elif inherits(self.grobs[g_idx], text):
+                inner_width, inner_height = self.grobs[g_idx]._min_size(to_inches=True)
+            else: # patch object...
+                inner_width, inner_height = \
+                    self.grobs[g_idx]._estimate_default_min_desired_size(parent_index=current_index)
+
+
+            min_desired_widths.append((np.max([inner_width]+tag_min_desired_widths) +\
+                                       tag_extra_desired_widths)*\
+                                        1/inner_area.width)
+            min_desired_heights.append((np.max([inner_height]+tag_min_desired_heights) +\
+                                        tag_extra_desired_heights) *\
+                                        1/inner_area.height)
+
+
+        # wrap it all up (zeros added to allow for empty sets)
+        min_desired_width = np.max(min_desired_widths+[0]) +\
+                                np.sum(extra_desired_widths+[0])
+        min_desired_height = np.max(min_desired_heights+[0]) +\
+                                np.sum(extra_desired_heights+[0])
+
+        return min_desired_width, min_desired_height
 
     def _default_size(self, width, height):
         """
@@ -419,7 +514,7 @@ class patch:
         """
         both_none = False
         if width is None or height is None:
-            _width, _height, _ = self._size_dive()
+            _width, _height = self._estimate_default_min_desired_size()#self._size_dive()
             if width is None and height is None:
                 both_none = True
                 width = _width
@@ -430,7 +525,7 @@ class patch:
                 width = _width / _height * height
         return width, height
 
-    def _svg_get_sizes(self, width_pt, height_pt):
+    def _inner_svg_get_sizes(self, width_pt, height_pt, tag_parent_index=()):
         """
         (Internal) Calculates required sizes for plot objects to meet required
         sizes and logics if the requested sizing was possible
@@ -441,6 +536,9 @@ class patch:
             overall width of the image in points
         height_pt : float
             overall height of the image in points
+        tags_parent_index : tuple
+            tuple of integers that contain the relative level indices of the
+            desired tag for parent.
 
         Returns
         -------
@@ -452,11 +550,14 @@ class patch:
             the requested width (or height) w.r.t. the returned width
             (or height) from saving the plotnine object. The later option
             occurs when when the ggplot's sizing didn't converge to the
-            desired size.
+            desired size. These sizing do not contain information about
+            annotations (but implicitly reflect them existing)
         logics : nested list
             For each element in the patch (with nesting structure in the list),
             this contains a boolean value if the ggplot object was able to
             be correctly size.
+        sizes_text : nested list
+        logics_text : nested list
 
         Notes
         -----
@@ -472,17 +573,17 @@ class patch:
 
         sizes = []
         logics = []
+        sizes_annotation = []
+        logics_annotation = []
 
         for p_idx in np.arange(len(self.grobs)):
             inner_area = areas[p_idx]
-
             inner_width_pt = inner_area.width
             inner_height_pt = inner_area.height
 
-            # TODO: how to deal with ggplot objects vs patch objects
             if inherits(self.grobs[p_idx], patch):
                 inner_sizes_list, logic_list = \
-                    self.grobs[p_idx]._svg_get_sizes(width_pt = inner_width_pt,
+                    self.grobs[p_idx]._inner_svg_get_sizes(width_pt = inner_width_pt,
                                                  height_pt = inner_height_pt)
                 sizes.append(inner_sizes_list)
                 logics.append(logic_list)
@@ -502,11 +603,41 @@ class patch:
                                       throw_error=False)
                 sizes.append((inner_w,inner_h))
                 logics.append(inner_logic)
+            elif inherits(self.grobs[p_idx], text):
+                raise ValueError("TODO!")
             else:
                 raise ValueError("grob idx %i is not a patch object nor"+\
                                  "a ggplot object" % p_idx)
 
         return sizes, logics
+
+    def _svg_get_sizes(self, width_pt, height_pt):
+        """
+        captures backend process of making sure the sizes requested can be
+        provided with the actual images...
+        """
+
+        if num_attempts is None:
+            num_attempts = rcParams["num_attempts"]
+
+        while num_attempts > 0:
+            sizes, logics = self._svg_get_sizes(width_pt=width_pt,
+                                                height_pt=height_pt)
+            out_info = self._process_sizes(sizes, logics)
+
+            if type(out_info) is list:
+                num_attempts = -412 # strictly less than 0
+            else: # out_info is a scaling
+                width_pt = width_pt*out_info
+                height_pt = height_pt*out_info
+
+            num_attempts -= 1
+
+        if num_attempts == 0:
+            raise StopIteration("Attempts to find the correct sizing of inner"+\
+                        "plots failed with provided parameters")
+
+        return sizes
 
     def _process_sizes(self, sizes, logics):
         """
@@ -676,6 +807,7 @@ class patch:
 
     def __repr__(self):
         out = "num_grobs: " + str(len(self.grobs)) +\
-            "\n---\nlayout:\n" + self.layout.__repr__()
+            "\n---\nlayout:\n" + self.layout.__repr__()+\
+            "\n---\nannotation:\n" + self.annotation.__repr__()
 
         return "<patch (%d)>" % self.__hash__() + "\n" + out
