@@ -460,3 +460,26 @@ def _show_image(svg, width, height, dpi=300, verbose=True):
         # jupyter notebook ------
         base_image_string = svg.to_str()
         IPython.display.display(IPython.display.SVG(data = base_image_string))
+
+
+
+def _add_to_base_image(base_image, current_image, loc = (0,0)):
+    """
+    append current image into base_image at location loc
+
+    Arguments
+    ---------
+    base_image : svg object
+        base image object
+    current_image : svg object
+        new image object to be added to the base image
+    loc : tuple
+        top left corner location for the new image to be placed (within the
+        base_image)
+    """
+    inner_root = current_image.getroot()
+    inner_root.moveto(x=loc[0],
+                      y=loc[1])
+    base_image.append(inner_root)
+
+    return None

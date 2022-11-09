@@ -219,7 +219,6 @@ class text:
             return new_self.element_text
 
 
-
     def _min_size(self, to_inches=False):
         """
         calculate minimum size of bounding box around self in pt and

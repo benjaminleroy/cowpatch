@@ -517,7 +517,7 @@ class layout:
                               "with self.num_grobs")
             num_grobs = self.num_grobs
 
-        areas = self._element_locations(1,1) # basically getting relative positions (doesn't matter) - nor does it matter about rel_height and width, but ah well
+        areas = self._element_locations(1,1, num_grobs=num_grobs) # basically getting relative positions (doesn't matter) - nor does it matter about rel_height and width, but ah well
         all_x_left = np.array([a.x_left for a in areas])
         all_y_top = np.array([a.y_top for a in areas])
 

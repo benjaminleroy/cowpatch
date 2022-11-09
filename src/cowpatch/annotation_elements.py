@@ -75,7 +75,7 @@ class annotation:
 
         Notes
         -----
-        TODO:
+        TODO (update docstring):
         Due to "tags_inherit", we need to allow updates. Potential solution
         to removing values would be to have additions say "np.nan" instead of
         None to clean something out. Annoyingly this would force updates of
@@ -93,7 +93,7 @@ class annotation:
         self.tags_order = None
         self.tags_loc = None
         self.tags_inherit = None
-        self.tags_format = None
+        self._tags_format = None
         self.tags_depth = -1
 
         self._update_all_attributes(title=title,
@@ -104,6 +104,37 @@ class annotation:
                                     tags_order=tags_order,
                                     tags_loc=tags_loc,
                                     tags_inherit=tags_inherit)
+
+    @property
+    def tags_format(self):
+        if self._tags_format is not None and self._tags_format is not np.nan:
+            _tags_format = self._tags_format
+        elif self.tags is None or self.tags is np.nan: # both tags_format and tags are None
+            _tags_format = self._tags_format
+        elif inherits(self.tags, list):
+            _tags_format = ("{0}", )
+        else:
+            _tags_format = tuple(_string_tag_format(x)
+                                 for x in np.arange(len(self.tags)))
+
+        ## making tags_format text  (same code in _update_all_attributes...)
+        if _tags_format is not None and _tags_format is not np.nan: # if None/np.nan, then tags is also None
+            new_tags_format = []
+            for e in _tags_format:
+                if inherits(e, text):
+                    e2 = copy.deepcopy(e)
+                    e2._define_type(_type = "cow_tag")
+                    new_tags_format.append(e2)
+                else: #e is string
+                    e = text(label = e, _type = "cow_tag")
+                    new_tags_format.append(e)
+            new_tags_format = tuple(new_tags_format)
+        else:
+            new_tags_format = _tags_format
+
+        return new_tags_format
+
+
 
     def _clean_up_attributes(self):
         """
@@ -281,17 +312,20 @@ class annotation:
             else:
                 new_tags_format = tags_format
 
-            self.tags_format = new_tags_format
+            self._tags_format = new_tags_format
 
         # tags_depth definition --------------------
         if inherits(self.tags, list):
-            self.tags_depth = 0
-        elif self.tags_format is None or self.tags_format is np.nan:
+            self.tags_depth = 1
+        elif (self.tags_format is None or self.tags_format is np.nan) and \
+            (self.tags is None or self.tags is np.nan):
             self.tags_depth = -1
+        elif self.tags_format is None or self.tags_format is np.nan:
+            self.tags_depth = len(self.tags)
         else:
-            self.tags_depth = len(self.tags_format) - 1
+            self.tags_depth = len(self.tags_format)
 
-    def _get_tag(self, index=0):
+    def _get_tag(self, index=(0,)):
         """
         Create text of tag for given level and index
 
@@ -309,6 +343,7 @@ class annotation:
         -----
         this should return objects relative to correct rotation...
         """
+        pdb.set_trace()
         if inherits(index, int):
             index = (index,)
 
@@ -390,7 +425,7 @@ class annotation:
                                     fundamental=False,
                                     to_inches=False):
         """
-        calculate tag's margin sizes
+        (Internal) calculate tag's margin sizes
 
         Arguments
         ---------
@@ -404,49 +439,126 @@ class annotation:
 
         Returns
         -------
-        min_desired_widths : float
-        extra_desired_widths : float
-        min_desired_heights : float
-        extra_desired_heights : float
+        dictatiory with following keys/ objects
+        min_inner_width : float
+            minimum width required for title & subtitles on top or bottom
+        min_full_width : float
+            minium width required for caption (spans all of width). This
+            will always be zero for the tag structure
+        extra_used_width : float
+            extra width required for title & subtitles on left or right
+        min_inner_height : float
+            minimum height required for title & subtitles on left or right
+        extra_used_height : float
+            extra height required for title & subtitles on top or bottom
+        top_left_loc : tuple
+            tuple of top left corner of inner image relative to title text
 
-        # TODO: needs to deal with rotation...
         """
 
-        # clean-ups...
+        # clean-up
+        if not inherits(index, tuple):
+            index = (index, )
+
+
+        # if we shouldn't actually make the tag
+        if self.tags_depth != len(index) and not fundamental:
+            return {"min_inner_width": 0,
+                "min_full_width": 0, # not able to be nonzero for tag
+                "extra_used_width": 0,
+                "min_inner_height": 0,
+                "extra_used_height": 0,
+                "top_left_loc": (0,0)
+                }
+
+        # getting tag -------------------
+        tag = self._get_tag(index=index)
+        tag_sizes = tag._min_size(to_inches=to_inches)
+
+        min_inner_width = tag_sizes[0] * \
+            (self.tags_loc in ["top", "bottom", "t", "b"])
+        min_inner_height = tag_sizes[1] * \
+            (self.tags_loc in ["left", "right", "l", "r"])
+
+
+        extra_used_width = tag_sizes[0] * \
+            (self.tags_loc in ["left", "right", "l", "r"])
+        extra_used_height = tag_sizes[1] * \
+            (self.tags_loc in ["top", "bottom", "t", "b"])
+
+        top_left_loc = (
+            tag_sizes[0] * (self.tags_loc in ["left", "l"]),
+            tag_sizes[1] * (self.tags_loc in ["top", "t"])
+                        )
+
+
+        return {"min_inner_width": min_inner_width,
+                "min_full_width": 0, # not able to be nonzero for tag
+                "extra_used_width": extra_used_width,
+                "min_inner_height": min_inner_height,
+                "extra_used_height": extra_used_height,
+                "top_left_loc": top_left_loc
+                }
+
+    def _get_tag_and_location(self, width, height,
+                              index = (0,),
+                              fundamental=False):
+        """
+
+        Return
+        ------
+        tag_loc : tuple
+            upper left corner location for tag
+        image_loc : tuple
+            upper left corner location for image (assoicated with tag)
+        tag_image :
+            tag text svg object
+        """
+        # clean-up
         if not inherits(index, tuple):
             index = (index, )
 
         # if we shouldn't actually make the tag
         if self.tags_depth != len(index) and not fundamental:
-            return [0],[0],[0],[0]
+            return None, None, None
 
-        # getting tag -------------------
-        tag = self._get_tag(index = index)
-        tag_sizes = tag._min_size(to_inches=to_inches)
+        tag_image = self.get_tag(index = index)
 
-        min_desired_widths = [tag_sizes[0] * \
-            (self.tags_loc in ["top", "bottom", "t", "b"])]
-        min_desired_heights = [tag_sizes[1] * \
-            (self.tags_loc in ["left", "right", "l", "r"])]
+        if self.tags_loc in ["top", "bottom"]:
+            inner_width_pt = width
+            inner_height_pt = None
+        else:
+            inner_width_pt = None
+            inner_height_pt = height
 
-        if True:#self.tags_type == 0: #outside of image box
-            extra_desired_widths = [tag_sizes[0] * \
-                (self.tags_loc in ["left", "right", "l", "r"])]
-            extra_desired_heights = [tag_sizes[1] * \
-                (self.tags_loc in ["top", "bottom", "t", "b"])]
-        # else: # inside image box
-        #     extra_desired_widths, extra_desired_heights = [0],[0]
-        #     min_desired_widths.append(tag_sizes[0] * \
-        #         (self.tags_loc in ["left", "right", "l", "r"]))
-        #     min_desired_heights.append(tag_sizes[1] * \
-        #         (self.tags_loc in ["top", "bottom", "t", "b"]))
+        tag_image, size_pt = \
+            inner_tag._svg(width_pt=inner_width_pt,
+                           height_pt=inner_height_pt)
 
-        return min_desired_widths, extra_desired_widths, \
-            min_desired_heights, extra_desired_heights
+        if self.tags_loc == "top":
+            tag_loc = (0,0)
+            image_loc = (0, size_pt[1])
+        elif self.tags_loc == "left":
+            tag_loc = (0,0)
+            image_loc = (size_pt[0], 0)
+        elif self.tags_loc == "bottom":
+            tag_loc = (0, height - size_pt[0])
+            image_loc = (0,0)
+        else: # self.tags_loc == "right":
+            tag_loc = (width - size_pt[1],0)
+            image_loc = (0,0)
+
+        return tag_loc, image_loc, tag_image
+
+
+
+
+
+
 
     def _calculate_margin_sizes(self, to_inches=False):
         """
-        calculates marginal sizes needed to be displayed for titles
+        (Internal) calculates marginal sizes needed to be displayed for titles
 
         Arguments
         ---------
@@ -455,42 +567,229 @@ class annotation:
 
         Returns
         -------
-        min_desired_widths : float
-        extra_desired_widths : float
-        min_desired_heights : float
-        extra_desired_heights : float
+        dictatiory with following keys/ objects
+        min_inner_width : float
+            minimum width required for title & subtitles on top or bottom
+        min_full_width : float
+            minium width required for caption (spans all of width)
+        extra_used_width : float
+            extra width required for title & subtitles on left or right
+        min_inner_height : float
+            minimum height required for title & subtitles on left or right
+        extra_used_height : float
+            extra height required for title & subtitles on top or bottom
+        top_left_loc : tuple
+            tuple of top left corner of inner image relative to title text
 
-        TODO: need to make sure left/right objects are correctly rotated...
+        TODO: need to make sure left/right objects are correctly rotated... [9/22 I think this is done]
         """
-        min_desired_widths = \
-            [t._min_size(to_inches=to_inches)[0] for t in [self.title.get("top"),
+        min_inner_width = \
+            np.sum([t._min_size(to_inches=to_inches)[0] for t in [self.title.get("top"),
                                         self.title.get("bottom"),
                                         self.subtitle.get("top"),
-                                        self.subtitle.get("bottom"),
-                                        self.caption]
-                if t is not None]
-        extra_desired_widths = \
-            [t._min_size(to_inches=to_inches)[0] for t in [self.title.get("left"),
-                                        self.title.get("right"),
-                                        self.subtitle.get("left"),
-                                        self.subtitle.get("right")]
-                if t is not None]
-        min_desired_heights = \
-            [t._min_size(to_inches=to_inches)[1] for t in [self.title.get("left"),
-                                        self.title.get("right"),
-                                        self.subtitle.get("left"),
-                                        self.subtitle.get("right")]
-                if t is not None]
-        extra_desired_heights = \
-            [t._min_size(to_inches=to_inches)[1] for t in [self.title.get("top"),
-                                        self.title.get("bottom"),
-                                        self.subtitle.get("top"),
-                                        self.subtitle.get("bottom"),
-                                        self.caption]
-                if t is not None]
+                                        self.subtitle.get("bottom")]
+                if t is not None] + [0])
 
-        return min_desired_widths, extra_desired_widths, \
-            min_desired_heights, extra_desired_heights
+        min_full_width = \
+            np.sum([t._min_size(to_inches=to_inches)[0] for t in [self.caption]
+                if t is not None] + [0])
+
+        extra_used_width = \
+            np.sum([t._min_size(to_inches=to_inches)[0] for t in [self.title.get("left"),
+                                        self.title.get("right"),
+                                        self.subtitle.get("left"),
+                                        self.subtitle.get("right")]
+                if t is not None]+ [0])
+
+        min_inner_height = \
+            np.sum([t._min_size(to_inches=to_inches)[1] for t in [self.title.get("left"),
+                                        self.title.get("right"),
+                                        self.subtitle.get("left"),
+                                        self.subtitle.get("right")]
+                if t is not None] +[0])
+
+        extra_used_height = \
+            np.sum([t._min_size(to_inches=to_inches)[1] for t in [self.title.get("top"),
+                                        self.title.get("bottom"),
+                                        self.subtitle.get("top"),
+                                        self.subtitle.get("bottom"),
+                                        self.caption]
+                if t is not None] + [0])
+
+        top_left_loc = (
+            np.sum([t._min_size(to_inches=to_inches)[0]
+                    for t in [self.title.get("left"), self.subtitle.get("left")]
+                        if t is not None] + [0]),
+            np.sum([t._min_size(to_inches=to_inches)[1]
+                    for t in [self.title.get("top"), self.subtitle.get("top")]
+                        if t is not None] + [0])
+
+            )
+
+        return {"min_inner_width": min_inner_width,
+                "min_full_width": min_full_width,
+                "extra_used_width": extra_used_width,
+                "min_inner_height": min_inner_height,
+                "extra_used_height": extra_used_height,
+                "top_left_loc": top_left_loc
+                }
+
+
+    def _get_titles_and_locations(self, width, height):
+        """
+        (Internal) Create title objects and locations to be placed in image
+
+        Arguments
+        ---------
+        width : float
+            width of overall image (in inches?)
+        height : float
+            height of overall image (in inches?)
+
+        Returns
+        -------
+        out_list : list
+            list of tuples of the location to place the title (top left corner)
+            and the image of the title itself
+
+        Notes
+        -----
+        Here's a visual diagram that helped define this function
+
+
+                ~~~~ width ~~~~~
+                =====b'=====    (width - b)
+                            =b= (width of 7 and 8)
+                =a=             (width of 1 and 2)
+                a1              (width of 1)
+
+                            b_1 (width of 7)
+        ~/*'       | 33333 |
+        ~/*        | 44444 |
+        ~/      ---+-------+---
+        ~/      1 2|       |7 8
+        ~/      1 2|       |7 8
+        ~/      1 2|       |7 8
+        ~/      ---+-------+---
+        ~  %$      | 55555 |
+        ~  %       | 66666 |
+        ~    &  999999999999999
+
+        ~ : height
+        / : ii'    (height - ii - iii_1)
+        * : i      (height of 3 and 4)
+        ' : i_1    (height of 3)
+        % : ii     (height of 5 and 6)
+        $ : ii_1   (height of 5)
+        & : iii_1  (height of 9)
+
+
+
+        where
+        1 : title, left
+        2 : subtitle, left
+        3 : title, top
+        4 : subtitle, top
+        5 : title, bottom
+        6 : subtitle, bottom
+        7 : title, right
+        8 : subtitle, right
+        9 : caption
+        """
+        # TODO: testing (likely just do a complex image)
+        # TODO: make sure the pt vs inch question is settled
+
+        # minimum size of each object
+        title_min_size_dict = {key : [t.min_size() if t is not None else (0,0)
+                                         for t in [self.title.get(key),
+                                                   self.subtitle.get(key)]]
+                                for key in ["top", "bottom", "left", "right"]}
+
+        if self.caption is not None:
+            title_min_size_dict["caption"] = self.caption.min_size()
+        else:
+            title_min_size_dict["caption"] = (0,0)
+
+
+        # shifts for top left positioning
+        shift_horizonal = {
+            # same value
+            ("title", "top") : np.sum([tu[0] for tu in title_min_size_dict["left"]]),
+            ("subtitle", "top") : np.sum([tu[0] for tu in title_min_size_dict["left"]]),
+            ("title", "bottom") : np.sum([tu[0] for tu in title_min_size_dict["left"]]),
+            ("subtitle", "bottom") : np.sum([tu[0] for tu in title_min_size_dict["left"]]),
+
+            "caption" : 0,
+
+            ("title", "left") : 0,
+            ("subtitle", "left") : title_min_size_dict["left"][0][0],
+            ("title", "right") : width - np.sum([tu[0] for tu in title_min_size_dict["right"]]),
+            ("subtitle", "right") : width - title_min_size_dict["right"][1][0]
+        }
+
+        shift_horizonal = {
+            # same value
+            ("title", "left") : np.sum([tu[1] for tu in title_min_size_dict["top"]]),
+            ("subtitle", "left") : np.sum([tu[1] for tu in title_min_size_dict["top"]]),
+            ("title", "right") : np.sum([tu[1] for tu in title_min_size_dict["top"]]),
+            ("subtitle", "right") : np.sum([tu[1] for tu in title_min_size_dict["top"]]),
+
+            "caption" : height - title_min_size_dict["caption"][1],
+
+            ("title", "top") : 0,
+            ("subtitle", "top") : title_min_size_dict["top"][0][1],
+            ("title", "bottom") : width - np.sum([tu[1] for tu in title_min_size_dict["right"]]) -\
+                                    title_min_size_dict["caption"][1],
+            ("subtitle", "bottom") : width - title_min_size_dict["bottom"][1][1] -\
+                                    title_min_size_dict["caption"][1]
+        }
+
+        # sizes to create each title element with
+        inner_width = np.sum([tu[0] for tu in title_min_size_dict["left"] +\
+                                     title_min_size_dict["right"]])
+        inner_height = np.sum([tu[1] for tu in title_min_size_dict["top"] +\
+                                     title_min_size_dict["bottom"]])
+
+        size_request = {
+            ("title","top") : (inner_width, None),
+            ("title","bottom") : (inner_width, None),
+            ("title","left") : (None, inner_height),
+            ("title","right") : (None, inner_height),
+            ("subtitle","top") : (inner_width, None),
+            ("subtitle","bottom") : (inner_width, None),
+            ("subtitle","left") : (None, inner_height),
+            ("subtitle","right") : (None, inner_height),
+            "caption" : (width, None)
+        }
+
+
+        out_list = []
+        out_list += [ ( (shift_horizontal[("title",key)], \
+                            shift_vertical[("title",key)]), \
+                        self.title.get(key)._svg(width_pt = size_request[("title", key)][0],
+                                                 height_pt = size_request[("title", key)][1])
+                        ) for key in ["top", "bottom", "left", "right"]
+                            if self.title.get(key) is not None]
+
+        out_list += [ ( (shift_horizontal[("subtitle",key)], \
+                            shift_vertical[("subtitle",key)]), \
+                        self.subtitle.get(key)._svg(width_pt = size_request[("subtitle", key)][0],
+                                                 height_pt = size_request[("subtitle", key)][1])
+                        ) for key in ["top", "bottom", "left", "right"]
+                            if self.subtitle.get(key) is not None]
+
+        out_list += [((shift_horizontal[key], shift_vertical[key]), \
+                        self.caption._svg(width_pt = size_request[key][0], \
+                                         height_pt = size_request[key][1])
+                        ) for key in ["caption"] if
+                            self.caption is not None]
+
+
+        return out_list
+
+
+
+
 
 
     def _update_tdict_info(self, t, current_t = dict(), _type = "title"):
@@ -624,7 +923,7 @@ class annotation:
                                     subtitle = other.subtitle,
                                     caption = other.caption,
                                     tags=other.tags,
-                                    tags_format=other.tags_format,
+                                    tags_format=other._tags_format,
                                     tags_order=other.tags_order,
                                     tags_loc=other.tags_loc,
                                     tags_inherit=other.tags_inherit)

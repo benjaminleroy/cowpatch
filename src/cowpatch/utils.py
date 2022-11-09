@@ -311,3 +311,111 @@ def _string_tag_format(max_level=0):
 
 
 
+def _overall_scale_recommendation_single(image_new_size,
+                                         text_inner_size,
+                                         text_extra_size,
+                                         original_overall_size):
+    """
+    proposal an overall size based on inner image needs and text annotation
+    sizes
+
+    Arguments
+    ---------
+    image_new_size : tuple
+        size 2 float tuple with the requested minimum size the inner image can
+        be (relative to the image)
+    text_inner_size : tuple
+        size 2 float tuple with the requested minimum size the inner image can
+        be (relative to the surrounding text)
+    text_extra_size : tuple
+        size 2 float tuple with extra width and height for surrounding text,
+        beyond the inner image
+    original_overall_size : tuple
+        size 2 float tuple of original size provided for the overall image
+
+    Returns
+    -------
+    out1 : tuple
+        size 2 length tuple of newly requested size
+    out2 : float
+        fraction scaling of new size to old size
+
+    Notes
+    -----
+    This function assumes ate least one of the new image_new_size values are
+    greater than the original requested size (original_overall_size -
+    text_extra_sizes)
+    """
+
+    min_inner_size_needed = (np.max([image_new_size[i], text_inner_size[i]])
+                                for i in [0,1])
+
+    min_overall_size_needed = tuple(np.array(min_inner_size_needed) +\
+        np.array(text_extra_size))
+
+    size_ratio = orginal_overall_size[0] / orginal_overall_size[0]
+
+    out_array = np.zeros(2)
+
+    if min_overall_size_needed[1] < 1/size_ratio * min_overall_size_needed[0]:
+        out_array[1] = min_overall_size_needed[1]
+        out_array[0] = size_ratio * min_overall_size_needed[1]
+    else:
+        out_array[0] = min_overall_size_needed[0]
+        out_array[1] = 1/size_ratio * min_overall_size_needed[0]
+
+    return tuple(out_array), out_array[0]/original_overall_size[0]
+
+def _overall_scale_recommendation_patch(interior_image_scalings,
+                                        text_inner_size,
+                                        text_extra_size,
+                                        original_overall_size):
+    """
+    proposal an overall size for an arangement based on information about
+    interior image and overall text
+
+    Arguments
+    ---------
+    interior_image_scalings : list
+        list of floats. Each value is the requested scaling of a inner image
+        (as a function of the image and the associated tag information)
+    text_inner_size : tuple
+        size 2 float tuple with the requested minimum size the inner image can
+        be (relative to the surrounding text)
+    text_extra_size : tuple
+        size 2 float tuple with extra width and height for surrounding text,
+        beyond the inner image
+    original_overall_size : tuple
+        size 2 float tuple of original size provided for the overall image
+
+    Returns
+    -------
+    out1 : tuple
+        size 2 length tuple of newly requested size
+    out2 : float
+        fraction scaling of new size to old size
+
+    Notes
+    -----
+    This function assumes ate least one of the new image_new_size values are
+    greater than the original requested size (original_overall_size -
+    text_extra_sizes)
+    """
+    original_inner_size = tuple(np.array(original_overall_size) - \
+                                    np.array(text_extra_size))
+
+    inner_new_size_request = \
+        np.array(original_inner_size) * np.max(interior_image_scalings + [1])
+
+    out = \
+        _overall_scale_recommendation_single(inner_new_size_request,
+                                         text_inner_size,
+                                         text_extra_size,
+                                         original_overall_size)
+
+    return out
+
+
+
+
+
