@@ -695,12 +695,18 @@ def test__calculate_tag_margin_sizes(location):
 
 
 def test__get_tag_and_location():
+    # to test we need to make some tags,
+    # get a good undestanding of the size of the tag (height & width)
+    # look through 4 different locations for the tag
+    # also look depths down
+    # and fundamental-ness
+    # identify where it should land and where the image should land
+    # create a similar tag and
     raise ValueError("Not Tested")
 
 def test__get_titles_and_locations():
+    # create a set of static combinations of
+    # titles, subtitles, captions (in different locations)
+    # identify expected locations and potentially try to create
+    # svg objects of the image themselves to compare the output too
     raise ValueError("Not Tested")
-
-def test__step_down_tags_info():
-    raise ValueError("Not Tested")
-
-

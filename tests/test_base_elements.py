@@ -427,13 +427,13 @@ def test_patch__estimate_default_min_desired_size_NoAnnotation():
                          cow.rcParams["base_height"] *
                          cow.rcParams["base_aspect_ratio"])), \
         "suggested width incorrectly sizes the smallest width of the images "+\
-        "(v1)"
+        "(v1, no annotation)"
 
     assert np.allclose(sug_height,
                        (3 * # 1/ rel width of smallest width of images
                         cow.rcParams["base_height"])), \
         "suggested height incorrectly sizes the smallest height of the images "+\
-        "- rel_heights example (v1)"
+        "- rel_heights example (v1, no annotation)"
 
 
     # nested option --------
@@ -450,16 +450,17 @@ def test_patch__estimate_default_min_desired_size_NoAnnotation():
                          cow.rcParams["base_height"] *
                          cow.rcParams["base_aspect_ratio"])), \
         "suggested width incorrectly sizes the smallest width of the images "+\
-        "(v2 - nested)"
+        "(v2 - nested, no annotation)"
 
     assert np.allclose(sug_height_n,
                        (3 * # 1/ rel width of smallest width of images
                         cow.rcParams["base_height"])), \
         "suggested height incorrectly sizes the smallest height of the images "+\
-        "(v2 - nested)"
+        "(v2 - nested, no annotation)"
 
 # TODO: test when some plots have tags, others don't
 # TODO: this test (below) still needs to be examined
+# See "TODO FIX" inside plot
 def test_patch__estimate_default_min_desired_size_Annotation():
     g0 = p9.ggplot(p9_data.mpg) +\
         p9.geom_bar(p9.aes(x="hwy")) +\
@@ -473,12 +474,6 @@ def test_patch__estimate_default_min_desired_size_Annotation():
         p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
         p9.labs(title = 'Plot 2')
 
-    g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
-                                                         "suv",
-                                                         "pickup"])]) +\
-        p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
-        p9.facet_wrap("class")
-
     # basic option ----------
     vis1 = cow.patch(g0,g1,g2) +\
         cow.layout(design = np.array([[0,1],
@@ -486,7 +481,6 @@ def test_patch__estimate_default_min_desired_size_Annotation():
                    rel_heights = [1,2]) +\
         cow.annotation(title = "My title")
 
-    #TODO FIX
     sug_width, sug_height = \
         vis1._hierarchical_general_process(approach="default-size")
 
@@ -494,35 +488,73 @@ def test_patch__estimate_default_min_desired_size_Annotation():
                         (2 * # 1/ rel width of smallest width of images
                          cow.rcParams["base_height"] *
                          cow.rcParams["base_aspect_ratio"])), \
-        "suggested width incorrectly sizes the smallest width of the images (v1)"
+        "suggested width incorrectly sizes the smallest width of the images (v1, annotation)"
 
     assert np.allclose(sug_height,
                        (3 * # 1/ rel width of smallest width of images
-                        cow.rcParams["base_height"])), \
-        "suggested height incorrectly sizes the smallest height of the images (v1)"
+                        cow.rcParams["base_height"] +\
+                        cow.text("My title", _type="cow_title").\
+                            _min_size(to_inches=True)[1]
+                       )
+                        ), \
+        "suggested height incorrectly sizes the smallest height of the images (v1, annotation)"
 
 
     # nested option --------
     vis_nested = cow.patch(g0,cow.patch(g1,g2)+\
                         cow.layout(ncol=1, rel_heights = [1,2])) +\
-        cow.layout(nrow=1)
+        cow.layout(nrow=1) +\
+        cow.annotation(subtitle = "My subtitle")
 
 
     sug_width_n, sug_height_n = \
-        vis_nested._estimate_default_min_desired_size()
+        vis_nested._hierarchical_general_process(approach="default-size")
 
     assert np.allclose(sug_width_n,
                         (2 * # 1/ rel width of smallest width of images
                          cow.rcParams["base_height"] *
                          cow.rcParams["base_aspect_ratio"])), \
         "suggested width incorrectly sizes the smallest width of the images "+\
-        "(v2 - nested)"
+        "(v2 - nested, annotation)"
 
     assert np.allclose(sug_height_n,
                        (3 * # 1/ rel width of smallest width of images
-                        cow.rcParams["base_height"])), \
+                        cow.rcParams["base_height"] +\
+                        cow.text("My subtitle", _type="cow_subtitle").\
+                            _min_size(to_inches=True)[1]
+                        )), \
         "suggested height incorrectly sizes the smallest height of the images "+\
-        "(v2 - nested)"
+        "(v2 - nested, annotation)"
+    
+    # tag nested option -----------
+    vis_nested_tag = cow.patch(g0,cow.patch(g1,g2)+\
+                        cow.layout(ncol=1, rel_heights = [1,2]) +\
+                        cow.annotation(tags_inherit="override")) +\
+        cow.layout(nrow=1) +\
+        cow.annotation(caption = "My caption") +\
+        cow.annotation(tags=("0", "a"), tags_format=("Fig {0}", "Fig {0}.{1}"),
+                       tags_loc="top")
+
+    sug_width_nt, sug_height_nt = \
+        vis_nested_tag._hierarchical_general_process(approach="default-size")
+
+    assert np.allclose(sug_width_nt,
+                        (2 * # 1/ rel width of smallest width of images
+                         cow.rcParams["base_height"] *
+                         cow.rcParams["base_aspect_ratio"])), \
+        "suggested width incorrectly sizes the smallest width of the images "+\
+        "(v2 - nested + tagged, annotation)"
+
+    # TODO: this looks like the tag structure isn't being correctly taken into acount
+    assert np.allclose(sug_height_nt,
+                       (3 * # 1/ rel width of smallest width of images (and include the caption and 1 tag)
+                        (cow.rcParams["base_height"] +\
+                        cow.text("Fig 01ab", _type="cow_tag").\
+                            _min_size(to_inches=True)[1]) +\
+                        cow.text("My caption", _type="cow_caption").\
+                            _min_size(to_inches=True)[1])), \
+        "suggested height incorrectly sizes the smallest height of the images "+\
+        "(v2 - nested + tagged, annotation)"               
 
 def test_patch__default_size__both_none():
     """

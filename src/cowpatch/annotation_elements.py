@@ -59,9 +59,9 @@ class annotation:
             or ("0","0"). The default, if tags on auto-constructed, is
             ("{0}", "{0}.{1}", "{0}.{1}.{2}", "{0}.{1}.{2}.{3}", ...)
         tags_order : str ["auto", "input", "yokogaki"]
-            How we the tags. If auto, the default is by "input" if you provide
-            your own labels and "yokogaki" if you don't. "Input" means that the
-            tags ordering will be assoicated with the grobs ordering.
+            How we orderthe tags. If auto, the default is by "input" if you
+            provide your own labels and "yokogaki" if you don't. "Input" means
+            that the tags ordering will be assoicated with the grobs ordering.
             "Yokogaki" means that the tags will be associated with the
             top-to-bottom, left-to-right ordering of the grobs.
         tags_loc : str ["top", "left", "right", "bottom"]
@@ -245,7 +245,7 @@ class annotation:
         elif not inherits(tags, list) and not inherits(tags, tuple) and tags is not None:
             raise ValueError("tags should be either a list or tuple")
         elif inherits(tags, list):
-            self.tags = (tags)
+            self.tags = (tags,)
         elif tags is not None:
             self.tags = tags
 
@@ -343,7 +343,6 @@ class annotation:
         -----
         this should return objects relative to correct rotation...
         """
-        pdb.set_trace()
         if inherits(index, int):
             index = (index,)
 
@@ -356,13 +355,22 @@ class annotation:
         if np.max(indices_used) > len(index)-1:
             raise ValueError("tags_format has more indices than the tag hierarchy has.")
 
-        et = copy.deepcopy(self.tags_format[len(index)-1])
-        et.label = et.label.format(
-                    *[self._get_index_value(i,x) for i,x in enumerate(index)])
-
+        if np.all([True if not inherits(self.tags[i], list)
+                    else True if len(self.tags[i]) > x
+                    else False for i, x in enumerate(index)]):
+            et = copy.deepcopy(self.tags_format[len(index)-1])
+            et.label = et.label.format(
+                        *[self._get_index_value(i,x) if not inherits(self.tags[i], list)
+                        else self.tags[i][x] if len(self.tags[i]) > x
+                        else "" for i,x in enumerate(index)
+                        ])
+        else:
+            et = text(label = "", _type = "cow_tag")
 
 
         return et
+
+
 
     def _get_index_value(self, level=0, index=0):
         """
@@ -455,14 +463,9 @@ class annotation:
             tuple of top left corner of inner image relative to title text
 
         """
-
-        # clean-up
-        if not inherits(index, tuple):
-            index = (index, )
-
-
         # if we shouldn't actually make the tag
-        if self.tags_depth != len(index) and not fundamental:
+        if index is None or \
+            (self.tags_depth != len(index) and not fundamental):
             return {"min_inner_width": 0,
                 "min_full_width": 0, # not able to be nonzero for tag
                 "extra_used_width": 0,
@@ -470,6 +473,10 @@ class annotation:
                 "extra_used_height": 0,
                 "top_left_loc": (0,0)
                 }
+
+        # clean-up
+        if not inherits(index, tuple):
+            index = (index, )
 
         # getting tag -------------------
         tag = self._get_tag(index=index)
@@ -504,13 +511,27 @@ class annotation:
                               index = (0,),
                               fundamental=False):
         """
+        create desired tag and identify location to place tag and associated
+        image
+
+        Arguments
+        ---------
+        width : float
+            width in pt
+        height : float
+            height in pt
+        index : tuple
+            index of the tag. The size of the tuple captures
+            depth.
 
         Return
         ------
         tag_loc : tuple
             upper left corner location for tag
         image_loc : tuple
-            upper left corner location for image (assoicated with tag)
+            upper left corner location for image (assoicated with tag). If
+            the tag is on the top, this means where the corner of the image
+            should be placed to correctly be below the tag.
         tag_image :
             tag text svg object
         """
@@ -650,7 +671,10 @@ class annotation:
         -------
         out_list : list
             list of tuples of the location to place the title (top left corner)
-            and the image of the title itself
+            and the image of the title itself. The list has entries for any
+            titles, then any subtitles and then the caption (if any). Each
+            entry is a tuple with (1) a tuple of the top left corner location
+            for the title and (2) the svg object of the title itself
 
         Notes
         -----
@@ -859,6 +883,7 @@ class annotation:
         return current_t
 
 
+
     def _step_down_tags_info(self, parent_index):
         """
         Create an updated version of tags_info for children
@@ -873,9 +898,9 @@ class annotation:
         annotation with all tag attributes to update for children's
         annotation.
         """
-        #TODO: likely can remove some of the other index stuff due to passing
-
-        if len(self.tags) <= 1 or len(self.tags_format) <= 1:
+        if self.tags is None or \
+            len(self.tags) <= 1 or \
+            len(self.tags_format) <= 1:
             return annotation()
 
         tags = self.tags[1:]
@@ -900,6 +925,7 @@ class annotation:
                                       tags_order = self.tags_order,
                                       tags_loc = self.tags_loc)
         return inner_annotation
+
 
 
     def __add__(self, other):

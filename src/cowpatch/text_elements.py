@@ -15,6 +15,7 @@ import pdb
 
 from .utils import to_pt, from_pt, to_inches, from_inches, \
     _transform_size_to_pt, inherits
+from .utils import to_inches as _to_inches
 from .svg_utils import _show_image, _save_svg_wrapper
 from .config import rcParams
 
@@ -276,8 +277,8 @@ class text:
         plt.close()
 
         if to_inches:
-            min_width = to_inches(min_width_pt, units = "pt")
-            min_height = to_inches(min_height_pt, units = "pt")
+            min_width = _to_inches(min_width_pt, units = "pt")
+            min_height = _to_inches(min_height_pt, units = "pt")
         else:
             min_width = min_width_pt
             min_height = min_height_pt
