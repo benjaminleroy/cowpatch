@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 import svgutils.transform as sg
 
 from .svg_utils import gg_to_svg, _save_svg_wrapper, _show_image, \
-                    _raw_gg_to_svg, _select_correcting_size_svg
+                    _raw_gg_to_svg, _select_correcting_size_svg, \
+                    _uniquify_svg_safe
 from .utils import to_inches, from_inches, inherits_plotnine, inherits, \
                     _flatten_nested_list
 from .layout_elements import layout
 from .config import rcParams
 
-import pdb
+import copy
 
 class patch:
     def __init__(self, *args, grobs=None):
@@ -195,20 +196,12 @@ class patch:
 
         if inherits(other, patch):
             # combine with other patch -------
-            if self.layout is None:
-                # only for wrappers!
-                return patch(grobs=[self, other])
-            elif self.layout == layout(design = np.array([[0]])):
-                # current self is [inner]
-                return patch(grobs=self.grobs+[other])
-            elif self.layout.nrow == 1:
-                # continuing a row
-                return patch(grobs=self.grobs+[other])
-            else:
-                return patch(grobs=[self.grobs]+[other])
+            raise ValueError("currently not implimented addition with another patch object")
         elif inherits(other, layout):
             # combine with layout -------------
-            self.__layout = other
+            new_obj = copy.deepcopy(self)
+            new_obj.__layout = other
+            return new_obj
         elif inherits(other, annotation):
             raise ValueError("currently not implimented addition with annotation")
 
@@ -220,7 +213,7 @@ class patch:
     def __and__(self, other):
         raise ValueError("currently not implimented &")
 
-    def _svg(self, width_pt, height_pt, sizes=None, num_attempts=None):
+    def _svg(self, width_pt, height_pt, sizes=None, num_attempts=None, _u_idx=None):
         """
         Internal function to create an svg representation of the patch
 
@@ -244,6 +237,12 @@ class patch:
 
         if num_attempts is None:
             num_attempts = rcParams["num_attempts"]
+
+        # prep index tracking
+        # -------------------
+        if _u_idx is None:
+            _u_idx = str(self.__hash__())
+
 
         # examine if sizing is possible and update or error if not
         # --------------------------------------------------------
@@ -284,21 +283,25 @@ class patch:
 
         for p_idx in np.arange(len(self.grobs)):
             inner_area = areas[p_idx]
+            inner_u_idx = _u_idx + "_" + str(p_idx)
             # TODO: how to deal with ggplot objects vs patch objects
             if inherits(self.grobs[p_idx], patch):
                 inner_width_pt, inner_height_pt = inner_area.width, inner_area.height
                 inner_svg, _ = self.grobs[p_idx]._svg(width_pt = inner_width_pt,
                                                    height_pt = inner_height_pt,
-                                                   sizes =  sizes[p_idx])
+                                                   sizes =  sizes[p_idx],
+                                                   _u_idx = inner_u_idx)
             elif inherits_plotnine(self.grobs[p_idx]):
                 inner_gg_width_in, inner_gg_height_in  = sizes[p_idx]
                 inner_svg = _raw_gg_to_svg(self.grobs[p_idx],
                                       width = inner_gg_width_in,
                                       height = inner_gg_height_in,
                                       dpi = 96)
+                inner_svg = _uniquify_svg_safe(inner_svg, inner_u_idx)
+
             else:
                 raise ValueError("grob idx %i is not a patch object nor"+\
-                                 "a ggplot object within patch with hash %i" % p_idx, self.__hash__)
+                                 "a ggplot object within patch with hash %i" % p_idx, self.__hash__())
 
 
             inner_root = inner_svg.getroot()

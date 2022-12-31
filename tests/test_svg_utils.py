@@ -1,15 +1,19 @@
 from pytest_regressions import image_regression
+
 import pytest
 import numpy as np
 
 import io
 import cowpatch.svg_utils
 import cowpatch.utils
+import cowpatch.layout_elements
 
 import svgutils.transform as sg
 
 import plotnine as p9
 import plotnine.data as p9_data
+
+import copy
 
 def test__save_svg_wrapper(image_regression):
     """
@@ -260,3 +264,73 @@ def test__select_correcting_size_svg():
             "epsilon and number of interations", \
         "expected error when throw_error =True (not enough interations "+\
         "to succeed) not observed"
+
+def test__uniquify_svg_safe(image_regression):
+    """
+    static test for _uniquify_svg_safe to confirm that we can have
+    multiple different legend gradients.
+    """
+
+    vis1 = p9.ggplot(p9_data.mtcars) +\
+        p9.aes('wt', 'mpg', color='hp') +\
+        p9.geom_point()
+
+
+    vis2 = p9.ggplot(p9_data.mtcars) +\
+        p9.aes('wt', 'mpg', color='hp') +\
+        p9.geom_point() +\
+        p9.scale_color_continuous('inferno')
+
+    str_update_all = ["_bpl_0", "_bpl_1"]
+
+    store_images = [cowpatch.svg_utils._raw_gg_to_svg(x,
+                        width=5,
+                        height=4,
+                        dpi=96)
+                            for x in [vis1, vis2]]
+
+    store_images_updated = [cowpatch.svg_utils._uniquify_svg_safe(
+                                store_images[idx],
+                                str_update_all[idx])
+                                    for idx in [0,1]]
+
+    width_pt = 72*10
+    height_pt = 72*4
+
+    store_location = [cowpatch.layout_elements.area(x_left=0.0,
+                                           y_top=0.0,
+                                           width=360.0,
+                                           height=288.0,
+                                           _type="pt"),
+                      cowpatch.layout_elements.area(x_left=360.0,
+                                           y_top=0.0,
+                                           width=360.0,
+                                           height=288.0,
+                                           _type="pt")]
+
+    base_created_image_u = sg.SVGFigure()
+    base_created_image_u.set_size((str(width_pt)+"pt", str(height_pt)+"pt"))
+    base_created_image_u.root.set("viewBox", "0 0 %s %s" % (str(width_pt), str(height_pt)))
+
+    base_created_image_u.append(
+        sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#FFFFFF\"/>"))
+
+    for p_idx in [0,1]:
+        inner_svg = copy.deepcopy(store_images_updated[p_idx])
+        inner_root = inner_svg.getroot()
+        inner_area = copy.deepcopy(store_location[p_idx])
+
+        inner_root.moveto(x=inner_area.x_left,
+                          y=inner_area.y_top)
+        base_created_image_u.append(inner_root)
+
+    with io.BytesIO() as fid:
+        cowpatch.svg_utils._save_svg_wrapper(base_created_image_u,
+                          filename=fid,
+                          _format="png",
+                          width=10,
+                          height=4,
+                          dpi=96,
+                          verbose=False)
+
+        image_regression.check(fid.getvalue(), diff_threshold=.1)
