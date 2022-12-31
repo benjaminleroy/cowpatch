@@ -142,13 +142,13 @@ class patch:
         """
         if self.layout.num_grobs is not None:
            if self.layout.num_grobs != len(self.grobs):
-            raise AttributeError("layout's number of patches does not "+\
+            raise AttributeError("layout's number of patches does not "+
                                  "matches number of patches in arangement")
 
     def __or__(self, other):
         # check proper usage -------
         if not inherits(other, patch):
-            raise ValueError("only can connect specific general patch items"+\
+            raise ValueError("only can connect specific general patch items"+
                              " with \"|\".")
 
         # combine with other -------
@@ -167,7 +167,7 @@ class patch:
     def __div__(self, other):
         # check proper usage -------
         if not inherits(other, patch):
-            raise ValueError("only can connect specific general patch items"+\
+            raise ValueError("only can connect specific general patch items"+
                              " with \"/\".")
 
         # combine with other -------
@@ -185,13 +185,13 @@ class patch:
 
     def __add__(self, other):
         # check proper usage -------
-        if not (inherits(other, patch) or \
-            inherits(other, layout) or \
+        if not (inherits(other, patch) or
+            inherits(other, layout) or
             inherits(other, annotation)):
             if inherits(other,p9.theme):
-                raise ValueError("cannot directly add a theme to a patch" +\
+                raise ValueError("cannot directly add a theme to a patch" +
                                  " object unless a wrapper, try \"&\" or \"*\"")
-            raise ValueError("only can connect specific general patch items"+\
+            raise ValueError("only can connect specific general patch items"+
                              " with \"/\".")
 
         if inherits(other, patch):
@@ -262,7 +262,7 @@ class patch:
                 num_attempts -= 1
 
             if num_attempts == 0:
-                raise StopIteration("Attempts to find the correct sizing of inner"+\
+                raise StopIteration("Attempts to find the correct sizing of inner"+
                             "plots failed with provided parameters")
 
         layout = self.layout
@@ -289,10 +289,10 @@ class patch:
                 inner_width_pt, inner_height_pt = inner_area.width, inner_area.height
                 inner_svg, _ = self.grobs[p_idx]._svg(width_pt = inner_width_pt,
                                                    height_pt = inner_height_pt,
-                                                   sizes =  sizes[p_idx],
+                                                   sizes = sizes[p_idx],
                                                    _u_idx = inner_u_idx)
             elif inherits_plotnine(self.grobs[p_idx]):
-                inner_gg_width_in, inner_gg_height_in  = sizes[p_idx]
+                inner_gg_width_in, inner_gg_height_in = sizes[p_idx]
                 inner_svg = _raw_gg_to_svg(self.grobs[p_idx],
                                       width = inner_gg_width_in,
                                       height = inner_gg_height_in,
@@ -300,7 +300,7 @@ class patch:
                 inner_svg = _uniquify_svg_safe(inner_svg, inner_u_idx)
 
             else:
-                raise ValueError("grob idx %i is not a patch object nor"+\
+                raise ValueError("grob idx %i is not a patch object nor"+
                                  "a ggplot object within patch with hash %i" % p_idx, self.__hash__())
 
 
@@ -378,7 +378,7 @@ class patch:
                 inner_d = [parent_depth + 1]
             else:
                 inner_rw, inner_rh, inner_d =\
-                    self.grobs[g_idx]._size_dive(parents_areas=parents_areas+\
+                    self.grobs[g_idx]._size_dive(parents_areas=parents_areas+
                                                     [inner_area])
             image_rel_widths += inner_rw
             image_rel_heights += inner_rh
@@ -504,7 +504,7 @@ class patch:
                 sizes.append((inner_w,inner_h))
                 logics.append(inner_logic)
             else:
-                raise ValueError("grob idx %i is not a patch object nor"+\
+                raise ValueError("grob idx %i is not a patch object nor"+
                                  "a ggplot object" % p_idx)
 
         return sizes, logics

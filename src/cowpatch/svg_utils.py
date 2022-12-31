@@ -180,7 +180,7 @@ def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
                                                         limitsize=limitsize)
         current_width *= desired_width / actual_width
         current_height *= desired_height / actual_height
-        deltas.append(abs(actual_width - desired_width) + \
+        deltas.append(abs(actual_width - desired_width) +
                       abs(actual_height - desired_height))
 
         # decisions to terminate interation

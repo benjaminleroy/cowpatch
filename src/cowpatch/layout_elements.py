@@ -178,12 +178,12 @@ class layout:
         """
         if design is not None:
             if ncol is not None or nrow is not None:
-                warnings.warn("ncol and nrow are overridden"+\
+                warnings.warn("ncol and nrow are overridden"+
                               " by the design parameter")
 
             if isinstance(design, np.ndarray):
                 if len(design.shape) == 1:
-                    warnings.warn("design matrix is 1d,"+\
+                    warnings.warn("design matrix is 1d,"+
                                   " will be seen as a 1-row design")
 
                     nrow, ncol = 1, design.shape[0]
@@ -240,11 +240,11 @@ class layout:
         # ncol/nrow and rel_widths/rel_heights correct alignment
         if ncol is not None and rel_widths is not None:
             if ncol != rel_widths.shape[0]:
-                raise ValueError("ncol (potentially from the design) and "+\
+                raise ValueError("ncol (potentially from the design) and "+
                                  "rel_widths disagree on size of layout")
         if nrow is not None and rel_heights is not None:
             if nrow != rel_heights.shape[0]:
-                raise ValueError("nrow (potentially from the design) and "+\
+                raise ValueError("nrow (potentially from the design) and "+
                                  "rel_heights disagree on size of layout")
 
         self.ncol = ncol
@@ -278,8 +278,8 @@ class layout:
         ncol_lengths = np.unique([len(x) for x in row_info])
 
         if ncol_lengths.shape != (1,):
-            raise ValueError("expect all rows in design to have the same "+\
-                             "number of entries, use # for an empty space "+\
+            raise ValueError("expect all rows in design to have the same "+
+                             "number of entries, use # for an empty space "+
                              "if using a string format.")
 
         ncol = int(ncol_lengths)
@@ -367,9 +367,9 @@ class layout:
 
         num_unique = unique_vals.shape[0]
         if not np.allclose(unique_vals, np.arange(num_unique)):
-            raise ValueError("design input requires values starting "+\
-                             "with 0/A and through integer/alphabetical "+\
-                             "value expected for the number of patches "+\
+            raise ValueError("design input requires values starting "+
+                             "with 0/A and through integer/alphabetical "+
+                             "value expected for the number of patches "+
                              "provided")
 
         return num_unique
@@ -392,11 +392,11 @@ class layout:
             a vector of relative heights of the rows of the layout design
         """
         if num_grobs is None:
-            if not (self.ncol is not None and \
+            if not (self.ncol is not None and
                     self.nrow is not None) and \
-               not (self.rel_widths is not None and \
+               not (self.rel_widths is not None and
                     self.rel_heights is not None):
-                raise ValueError("unclear number of grobs in layout -> "+\
+                raise ValueError("unclear number of grobs in layout -> "+
                                 "unable to identify relative width and height")
 
         rel_widths = self.rel_widths
@@ -448,7 +448,7 @@ class layout:
             raise ValueError("unclear number of grobs in layout...")
         if self.num_grobs is not None:
             if num_grobs is not None and num_grobs != self.num_grobs:
-                warnings.warn("_element_locations overrides num_grobs "+\
+                warnings.warn("_element_locations overrides num_grobs "+
                               "with self.num_grobs")
             num_grobs = self.num_grobs
 
@@ -513,7 +513,7 @@ class layout:
             raise ValueError("unclear number of grobs in layout...")
         if self.num_grobs is not None:
             if num_grobs is not None and num_grobs != self.num_grobs:
-                warnings.warn("_element_locations overrides num_grobs "+\
+                warnings.warn("_element_locations overrides num_grobs "+
                               "with self.num_grobs")
             num_grobs = self.num_grobs
 
@@ -717,26 +717,26 @@ class area:
         """
 
         if _type not in ["design", "relative", "pt"]:
-            raise ValueError("_type parameter not an acceptable option, see"+\
+            raise ValueError("_type parameter not an acceptable option, see"+
                              " documentation")
 
         if _type == "design" and \
-            not np.all([is_non_neg_int(val) for val in [x_left,y_top]] +\
+            not np.all([is_non_neg_int(val) for val in [x_left,y_top]] +
                        [is_pos_int(val) for val in [width,height]]) :
-            raise ValueError("with _type=\"design\", all parameters must be "+\
+            raise ValueError("with _type=\"design\", all parameters must be "+
                              "positive integers")
         elif _type == "relative" and \
             not np.all([is_proportion(val) for val in [x_left,y_top,
-                                                       width,height]] +\
+                                                       width,height]] +
                        [is_positive(val) for val in [width,height]]):
-            raise ValueError("with _type=\"relative\", all parameters should"+\
-                             " be between 0 and 1 (inclusive) and width and"+\
+            raise ValueError("with _type=\"relative\", all parameters should"+
+                             " be between 0 and 1 (inclusive) and width and"+
                              " height cannot be 0")
         elif _type == "pt" and \
-            not np.all([is_non_negative(val) for val in [x_left,y_top]] +\
+            not np.all([is_non_negative(val) for val in [x_left,y_top]] +
                        [is_positive(val) for val in [width,height]]):
-            raise ValueError("with _type=\"pt\", all x_left and y_top should"+\
-                             " be non-negative and width and height should"+\
+            raise ValueError("with _type=\"pt\", all x_left and y_top should"+
+                             " be non-negative and width and height should"+
                              " be strictly positive")
 
 
@@ -834,7 +834,7 @@ class area:
         elif self._type == "pt":
             return copy.deepcopy(self)
         else:
-            raise ValueError("_type attributes altered to a non-acceptable"+\
+            raise ValueError("_type attributes altered to a non-acceptable"+
                              " value")
 
     def _hash(self):
