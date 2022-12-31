@@ -5,8 +5,8 @@ import numpy as np
 
 import pytest
 
-@given(st.floats(min_value=0, max_value=1e10),
-       st.floats(min_value=0, max_value=1e10))
+@given(st.floats(min_value=0.1, max_value=1e10),
+       st.floats(min_value=0.1, max_value=1e10))
 def test__transform_size_to_pt(w,h):
     """
     test _transform_size,

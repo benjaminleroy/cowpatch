@@ -334,3 +334,5 @@ def test__uniquify_svg_safe(image_regression):
                           verbose=False)
 
         image_regression.check(fid.getvalue(), diff_threshold=.1)
+
+
