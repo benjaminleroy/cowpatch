@@ -6,8 +6,7 @@
   <title>cowpatch.utils &mdash; cowpatch  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/togglebutton.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -16,12 +15,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script>let toggleHintShow = 'Click to show';</script>
-        <script>let toggleHintHide = 'Click to hide';</script>
-        <script>let toggleOpenOnPrint = 'true';</script>
-        <script src="../../_static/togglebutton.js"></script>
-        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -73,9 +69,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>cowpatch.utils</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cowpatch.utils</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -118,7 +114,7 @@
 
 <span class="c1"># TODO: I&#39;m not 100% sure these conversions do the right thing (especially w.r.t to dpi notation...)</span>
 <div class="viewcode-block" id="to_pt"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.to_pt">[docs]</a><span class="k">def</span> <span class="nf">to_pt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert length from given units to pt</span>
 
 <span class="sd">    Arguments</span>
@@ -161,7 +157,7 @@
         <span class="k">return</span> <span class="n">value</span></div>
 
 <div class="viewcode-block" id="from_pt"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.from_pt">[docs]</a><span class="k">def</span> <span class="nf">from_pt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert length from pt to given units</span>
 
 <span class="sd">    Arguments</span>
@@ -204,7 +200,7 @@
         <span class="k">return</span> <span class="n">value</span></div>
 
 <div class="viewcode-block" id="to_inches"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.to_inches">[docs]</a><span class="k">def</span> <span class="nf">to_inches</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert length from given units to pt</span>
 
 <span class="sd">    Arguments</span>
@@ -225,7 +221,7 @@
 
 
 <div class="viewcode-block" id="from_inches"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.from_inches">[docs]</a><span class="k">def</span> <span class="nf">from_inches</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert length from inches to given units</span>
 
 <span class="sd">    Arguments</span>
@@ -245,7 +241,7 @@
     <span class="k">return</span> <span class="n">from_pt</span><span class="p">(</span><span class="n">pt_val</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">dpi</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="inherits_plotnine"><a class="viewcode-back" href="../../autoapi/cowpatch/utils/index.html#cowpatch.utils.inherits_plotnine">[docs]</a><span class="k">def</span> <span class="nf">inherits_plotnine</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    checks if object is a plotnine one (but really only checks if comes</span>
 <span class="sd">    from plotnine package...)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -257,7 +253,7 @@
 
 
 <span class="k">def</span> <span class="nf">_transform_size_to_pt</span><span class="p">(</span><span class="n">size_string_tuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    takes string with unit and converts it to a float w.r.t pt</span>
 
 <span class="sd">    Arguments</span>
@@ -285,7 +281,7 @@
 
 
 <span class="k">def</span> <span class="nf">_proposed_scaling_both</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">desired</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    identify a x and y scaling to make the current size into the desired size</span>
 
 <span class="sd">    Arguments</span>
@@ -306,7 +302,7 @@
     <span class="k">return</span> <span class="n">scale_x</span><span class="p">,</span> <span class="n">scale_y</span>
 
 <span class="k">def</span> <span class="nf">_flatten_nested_list</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Flatten nested list</span>
 
 <span class="sd">    Argument</span>

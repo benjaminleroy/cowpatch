@@ -232,7 +232,7 @@ Attributes
       :obj:`layout`
           object that incorporates multiple area definitions to define layouts.
 
-   .. py:method:: pt(self, width_pt=None, height_pt=None, rel_widths=None, rel_heights=None)
+   .. py:method:: pt(width_pt=None, height_pt=None, rel_widths=None, rel_heights=None)
 
       Translates area object to ``_type`` = "pt"
 
@@ -330,7 +330,7 @@ Attributes
       :obj:`layout`
           class objects that can aid in defining the layout of plots in ``cow.patch`` objects
 
-   .. py:method:: layout(self)
+   .. py:method:: layout()
       :property:
 
       defines ``layout`` that either returns the last added ``cow.layout``
@@ -338,7 +338,7 @@ Attributes
       defined
 
 
-   .. py:method:: save(self, filename, width=None, height=None, dpi=96, _format=None, verbose=None)
+   .. py:method:: save(filename, width=None, height=None, dpi=96, _format=None, verbose=None)
 
       save patch to file
 
@@ -380,7 +380,7 @@ Attributes
              object that acts like a reading in of bytes
 
 
-   .. py:method:: show(self, width=None, height=None, dpi=96, verbose=None)
+   .. py:method:: show(width=None, height=None, dpi=96, verbose=None)
 
       display object from the command line or in a jupyter notebook
 

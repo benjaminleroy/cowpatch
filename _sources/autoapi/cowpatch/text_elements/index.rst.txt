@@ -42,7 +42,7 @@ Classes
    Note the function use the ``text`` attribute - NOT the
    ``plot_title`` attribute if a theme is provided.
 
-   .. py:method:: save(self, filename, width=None, height=None)
+   .. py:method:: save(filename, width=None, height=None)
 
       save text object as image in minimal size object
 

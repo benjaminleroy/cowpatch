@@ -7,8 +7,7 @@
   <title>Layout: using layout to arrange a set of plots &mdash; cowpatch  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -17,12 +16,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script>let toggleHintShow = 'Click to show';</script>
-        <script>let toggleHintHide = 'Click to hide';</script>
-        <script>let toggleOpenOnPrint = 'true';</script>
-        <script src="../_static/togglebutton.js"></script>
-        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -99,9 +95,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="guides_index.html">Guides</a> &raquo;</li>
-      <li>Layout: using <code class="docutils literal notranslate"><span class="pre">layout</span></code> to arrange a set of plots</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="guides_index.html">Guides</a></li>
+      <li class="breadcrumb-item active">Layout: using <code class="docutils literal notranslate"><span class="pre">layout</span></code> to arrange a set of plots</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/guides/Layout.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -111,8 +107,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section class="tex2jax_ignore mathjax_ignore" id="layout-using-layout-to-arrange-a-set-of-plots">
-<h1>Layout: using <code class="docutils literal notranslate"><span class="pre">layout</span></code> to arrange a set of plots<a class="headerlink" href="#layout-using-layout-to-arrange-a-set-of-plots" title="Permalink to this headline"></a></h1>
+  <section id="layout-using-layout-to-arrange-a-set-of-plots">
+<h1>Layout: using <code class="docutils literal notranslate"><span class="pre">layout</span></code> to arrange a set of plots<a class="headerlink" href="#layout-using-layout-to-arrange-a-set-of-plots" title="Permalink to this heading"></a></h1>
 <p>The simple addition of a <code class="docutils literal notranslate"><span class="pre">cow.patch(...)</span></code> object and a <code class="docutils literal notranslate"><span class="pre">cow.layout(...)</span></code> object allows for a range of different arrangements of plots. The below document enumerates a range of these approaches.</p>
 <p><strong>Connection to our <code class="docutils literal notranslate"><span class="pre">R</span></code> cousins</strong></p>
 <p>These approaches reflect similar arrangements that are seen in <a class="reference external" href="https://www.r-project.org/"><code class="docutils literal notranslate"><span class="pre">R</span></code></a> packages like <a class="reference external" href="https://cran.r-project.org/web/packages/gridExtra/index.html"><code class="docutils literal notranslate"><span class="pre">gridExtra</span></code></a>’s <a class="reference external" href="https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html#basic-usage"><code class="docutils literal notranslate"><span class="pre">arrange.grid</span></code></a>, <a class="reference external" href="https://wilkelab.org/cowplot/index.html"><code class="docutils literal notranslate"><span class="pre">cowplot</span></code></a>’s <a class="reference external" href="https://wilkelab.org/cowplot/articles/plot_grid.html"><code class="docutils literal notranslate"><span class="pre">plot_grid</span></code></a>  and <a class="reference external" href="https://patchwork.data-imaginist.com/"><code class="docutils literal notranslate"><span class="pre">patchwork</span></code></a>’s <a class="reference external" href="https://patchwork.data-imaginist.com/articles/guides/layout.html"><code class="docutils literal notranslate"><span class="pre">plot_layout</span></code></a>.</p>
@@ -121,7 +117,7 @@
 <p><strong>A note on image sizes</strong></p>
 <p>When we call the <code class="docutils literal notranslate"><span class="pre">.show()</span></code> function, the documentation representation of the slides scales the width of the <code class="docutils literal notranslate"><span class="pre">svg</span></code> object to be 100% width of the document in it exceeds the size. This scaling won’t happen if you run the code in a standard <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span></code><a class="footnote-reference brackets" href="#id4" id="id1">2</a>.</p>
 <section id="initial-definition-of-plots">
-<h2>Initial definition of plots<a class="headerlink" href="#initial-definition-of-plots" title="Permalink to this headline"></a></h2>
+<h2>Initial definition of plots<a class="headerlink" href="#initial-definition-of-plots" title="Permalink to this heading"></a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -160,10 +156,10 @@
 </div>
 </section>
 <section id="layout-of-multiple-plots">
-<h2>Layout of multiple plots<a class="headerlink" href="#layout-of-multiple-plots" title="Permalink to this headline"></a></h2>
+<h2>Layout of multiple plots<a class="headerlink" href="#layout-of-multiple-plots" title="Permalink to this heading"></a></h2>
 <p>The examples below utilize a single <code class="docutils literal notranslate"><span class="pre">cow.patch(...)</span></code> and <code class="docutils literal notranslate"><span class="pre">cow.layout(...)</span></code> object to create complex arangements of figures.</p>
 <section id="design-matrix-approach">
-<h3>Design matrix approach<a class="headerlink" href="#design-matrix-approach" title="Permalink to this headline"></a></h3>
+<h3>Design matrix approach<a class="headerlink" href="#design-matrix-approach" title="Permalink to this heading"></a></h3>
 <p>One way to define the layout of different plots on the same level is thorugh a <code class="docutils literal notranslate"><span class="pre">design</span></code> matrix. Without specification of the relative heights and widths of each row or column they are assumed to be equivalent<a class="footnote-reference brackets" href="#id5" id="id2">1</a>.</p>
 <p><strong>Note</strong> that the values in the <code class="docutils literal notranslate"><span class="pre">design</span></code> matrix must be from <code class="docutils literal notranslate"><span class="pre">0</span></code> to the number of objects in the arrangement.</p>
 <div class="cell docutils container">
@@ -189,13 +185,13 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_8_1.svg" src="../_images/Layout_8_1.svg" /></div>
+<img alt="../_images/d8799ee9bad83ceb774e0f0214ecf24d7cd842dc847ffafaed14345229280b71.svg" src="../_images/d8799ee9bad83ceb774e0f0214ecf24d7cd842dc847ffafaed14345229280b71.svg" /></div>
 </div>
 <section id="direct-expression-of-relative-matrix-row-heights-and-column-widths">
-<h4>Direct expression of relative matrix row heights and column widths<a class="headerlink" href="#direct-expression-of-relative-matrix-row-heights-and-column-widths" title="Permalink to this headline"></a></h4>
+<h4>Direct expression of relative matrix row heights and column widths<a class="headerlink" href="#direct-expression-of-relative-matrix-row-heights-and-column-widths" title="Permalink to this heading"></a></h4>
 <p>A similar arrangement as seen above can be described with the <code class="docutils literal notranslate"><span class="pre">rel_heights</span></code> structure in combination of a smaller <code class="docutils literal notranslate"><span class="pre">design</span></code> matrix.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -208,15 +204,15 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_10_1.svg" src="../_images/Layout_10_1.svg" /></div>
+<img alt="../_images/de8ea1cf6ac911a5cb4f192d7b1dcfea74887108934576285c94ada9cb6339f7.svg" src="../_images/de8ea1cf6ac911a5cb4f192d7b1dcfea74887108934576285c94ada9cb6339f7.svg" /></div>
 </div>
 </section>
 </section>
 <section id="design-string-approach">
-<h3>Design string approach<a class="headerlink" href="#design-string-approach" title="Permalink to this headline"></a></h3>
+<h3>Design string approach<a class="headerlink" href="#design-string-approach" title="Permalink to this heading"></a></h3>
 <p>Very similar to the <code class="docutils literal notranslate"><span class="pre">design</span></code> matrix approach, the user is also welcome to describe the <code class="docutils literal notranslate"><span class="pre">design</span></code> with a string.</p>
 <p><strong>Note</strong> that in the string format, one can use “\n” characters instead of a block string, and the values need to be capital letters (starting with “A”).</p>
 <p>The following example captures the same structure of the previous example using a <code class="docutils literal notranslate"><span class="pre">design</span></code> string:</p>
@@ -233,13 +229,13 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_12_1.svg" src="../_images/Layout_12_1.svg" /></div>
+<img alt="../_images/155306dedc1763b9c1104d2b9d107e6eab4db2504996c8797f216530a177c376.svg" src="../_images/155306dedc1763b9c1104d2b9d107e6eab4db2504996c8797f216530a177c376.svg" /></div>
 </div>
 <section id="id3">
-<h4>Direct expression of relative matrix row heights and column widths<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h4>
+<h4>Direct expression of relative matrix row heights and column widths<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
 <p>In a similar manner as with the <code class="docutils literal notranslate"><span class="pre">design</span></code> matrix, a <code class="docutils literal notranslate"><span class="pre">design</span></code> string’s row heights and column heights and be altered with <code class="docutils literal notranslate"><span class="pre">rel_widths</span></code> and <code class="docutils literal notranslate"><span class="pre">rel_heights</span></code>. This is demonstrated again in the example below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -254,19 +250,19 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_14_1.svg" src="../_images/Layout_14_1.svg" /></div>
+<img alt="../_images/0b0fd74b9e791c3c779e56a1de2ee1549031bc9fca12832ad9aafe00cdd7f3bb.svg" src="../_images/0b0fd74b9e791c3c779e56a1de2ee1549031bc9fca12832ad9aafe00cdd7f3bb.svg" /></div>
 </div>
 </section>
 </section>
 <section id="empty-space-in-design-layouts">
-<h3>Empty space in design layouts<a class="headerlink" href="#empty-space-in-design-layouts" title="Permalink to this headline"></a></h3>
+<h3>Empty space in design layouts<a class="headerlink" href="#empty-space-in-design-layouts" title="Permalink to this heading"></a></h3>
 <p>In this <code class="docutils literal notranslate"><span class="pre">design</span></code> layout approach we can also define empty space. To do so, with a <code class="docutils literal notranslate"><span class="pre">design</span></code> <strong>matrix</strong> we include <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> values to denote locations without associated plots and with a <code class="docutils literal notranslate"><span class="pre">design</span></code> <strong>string</strong> we denote these empty spaces with either “<code class="docutils literal notranslate"><span class="pre">#</span></code>” or “<code class="docutils literal notranslate"><span class="pre">.</span></code>”s.</p>
 <p>Below we present examples of all these approaches.</p>
 <section id="empty-space-with-a-design-matrix">
-<h4>Empty space with a <code class="docutils literal notranslate"><span class="pre">design</span></code> matrix<a class="headerlink" href="#empty-space-with-a-design-matrix" title="Permalink to this headline"></a></h4>
+<h4>Empty space with a <code class="docutils literal notranslate"><span class="pre">design</span></code> matrix<a class="headerlink" href="#empty-space-with-a-design-matrix" title="Permalink to this heading"></a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">layout_obj_str_rh_nan</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">design</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
@@ -287,14 +283,14 @@
  [ 0.  2.  2. nan]]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 14 x 9 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 14 x 9 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_17_2.svg" src="../_images/Layout_17_2.svg" /></div>
+<img alt="../_images/fffaeb9959a79d71d5c3ecab06bec1b2edfcb4691e65573973fc7acba0a6266f.svg" src="../_images/fffaeb9959a79d71d5c3ecab06bec1b2edfcb4691e65573973fc7acba0a6266f.svg" /></div>
 </div>
 </section>
 <section id="empty-space-with-a-design-string">
-<h4>Empty space with a <code class="docutils literal notranslate"><span class="pre">design</span></code> string<a class="headerlink" href="#empty-space-with-a-design-string" title="Permalink to this headline"></a></h4>
+<h4>Empty space with a <code class="docutils literal notranslate"><span class="pre">design</span></code> string<a class="headerlink" href="#empty-space-with-a-design-string" title="Permalink to this heading"></a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">layout_obj_str_rh_hash</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">design</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -309,10 +305,10 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 14 x 9 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 14 x 9 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_19_1.svg" src="../_images/Layout_19_1.svg" /></div>
+<img alt="../_images/701f9c57b955a43ad435b3d58dd5ba4cf6263dc0f1210c6e3ce765166095984f.svg" src="../_images/701f9c57b955a43ad435b3d58dd5ba4cf6263dc0f1210c6e3ce765166095984f.svg" /></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -328,18 +324,18 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 14 x 9 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 14 x 9 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_20_1.svg" src="../_images/Layout_20_1.svg" /></div>
+<img alt="../_images/a5a9143f38d6fa0b590f0f69f8e30dc5d8d5a85c7209be84586c2a4944509661.svg" src="../_images/a5a9143f38d6fa0b590f0f69f8e30dc5d8d5a85c7209be84586c2a4944509661.svg" /></div>
 </div>
 </section>
 </section>
 <section id="layouts-defined-by-number-of-columns-and-or-rows-ncol-and-nrow">
-<h3>Layouts defined by number of columns and/or rows (<code class="docutils literal notranslate"><span class="pre">ncol</span></code> and <code class="docutils literal notranslate"><span class="pre">nrow</span></code>)<a class="headerlink" href="#layouts-defined-by-number-of-columns-and-or-rows-ncol-and-nrow" title="Permalink to this headline"></a></h3>
+<h3>Layouts defined by number of columns and/or rows (<code class="docutils literal notranslate"><span class="pre">ncol</span></code> and <code class="docutils literal notranslate"><span class="pre">nrow</span></code>)<a class="headerlink" href="#layouts-defined-by-number-of-columns-and-or-rows-ncol-and-nrow" title="Permalink to this heading"></a></h3>
 <p>Sometimes <code class="docutils literal notranslate"><span class="pre">design</span></code> matrices are overkill, and in many other plot and arrangement tools, we often see arrangement descriptions define the number of rows and/or columns (<code class="docutils literal notranslate"><span class="pre">nrow</span></code>, <code class="docutils literal notranslate"><span class="pre">ncol</span></code>). Like these approaches, <code class="docutils literal notranslate"><span class="pre">cow.layout</span></code>’s <code class="docutils literal notranslate"><span class="pre">nrow</span></code> and <code class="docutils literal notranslate"><span class="pre">ncol</span></code> define the number of rows and columns of the layout. By default the plots in the <code class="docutils literal notranslate"><span class="pre">cow.patch</span></code> are then filled in by row (alterable with the <code class="docutils literal notranslate"><span class="pre">byrow</span></code> parameter). Below we present a sequence of examples that explore the potential layouts that can be defined with these parameters.</p>
 <section id="using-both-ncol-and-nrow">
-<h4>Using both <code class="docutils literal notranslate"><span class="pre">ncol</span></code> and <code class="docutils literal notranslate"><span class="pre">nrow</span></code><a class="headerlink" href="#using-both-ncol-and-nrow" title="Permalink to this headline"></a></h4>
+<h4>Using both <code class="docutils literal notranslate"><span class="pre">ncol</span></code> and <code class="docutils literal notranslate"><span class="pre">nrow</span></code><a class="headerlink" href="#using-both-ncol-and-nrow" title="Permalink to this heading"></a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_ncol_nrow</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">,</span><span class="n">g3</span><span class="p">)</span> <span class="o">+</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nrow</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
@@ -348,10 +344,10 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_23_1.svg" src="../_images/Layout_23_1.svg" /></div>
+<img alt="../_images/7e98d1bef48f58d77e43931fe1758ae663ba4e27e1aad75c267cac0e3634d082.svg" src="../_images/7e98d1bef48f58d77e43931fe1758ae663ba4e27e1aad75c267cac0e3634d082.svg" /></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -361,10 +357,10 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 14 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 14 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_24_1.svg" src="../_images/Layout_24_1.svg" /></div>
+<img alt="../_images/051d5076d7634ba49acd36ff37abb5f05ba065e35d620fa46cd07b36722cf77e.svg" src="../_images/051d5076d7634ba49acd36ff37abb5f05ba065e35d620fa46cd07b36722cf77e.svg" /></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -374,14 +370,14 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 14 x 11 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 14 x 11 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_25_1.svg" src="../_images/Layout_25_1.svg" /></div>
+<img alt="../_images/591b057a7c2f342fc9f6008e37fc481fa2dc47755b052a2fa5afd95a7bcf1f0e.svg" src="../_images/591b057a7c2f342fc9f6008e37fc481fa2dc47755b052a2fa5afd95a7bcf1f0e.svg" /></div>
 </div>
 </section>
 <section id="using-only-ncol">
-<h4>Using only <code class="docutils literal notranslate"><span class="pre">ncol</span></code><a class="headerlink" href="#using-only-ncol" title="Permalink to this headline"></a></h4>
+<h4>Using only <code class="docutils literal notranslate"><span class="pre">ncol</span></code><a class="headerlink" href="#using-only-ncol" title="Permalink to this heading"></a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_ncol</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">)</span> <span class="o">+</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
@@ -390,10 +386,10 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_27_1.svg" src="../_images/Layout_27_1.svg" /></div>
+<img alt="../_images/c3a42ceab762e897d9e843eb7a6eed231e5c0d9b2f544ad1d5537be2134ac182.svg" src="../_images/c3a42ceab762e897d9e843eb7a6eed231e5c0d9b2f544ad1d5537be2134ac182.svg" /></div>
 </div>
 <p><strong>Using only <code class="docutils literal notranslate"><span class="pre">ncol</span></code> with <code class="docutils literal notranslate"><span class="pre">byrow</span> <span class="pre">=</span> <span class="pre">False</span></code></strong></p>
 <div class="cell docutils container">
@@ -404,14 +400,14 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_29_1.svg" src="../_images/Layout_29_1.svg" /></div>
+<img alt="../_images/7374f9b684b9714ee3769f8083c12a3906d0cd18a983254f7976da7563172f75.svg" src="../_images/7374f9b684b9714ee3769f8083c12a3906d0cd18a983254f7976da7563172f75.svg" /></div>
 </div>
 </section>
 <section id="using-only-nrow">
-<h4>Using only <code class="docutils literal notranslate"><span class="pre">nrow</span></code><a class="headerlink" href="#using-only-nrow" title="Permalink to this headline"></a></h4>
+<h4>Using only <code class="docutils literal notranslate"><span class="pre">nrow</span></code><a class="headerlink" href="#using-only-nrow" title="Permalink to this heading"></a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_ncol</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">,</span><span class="n">g3</span><span class="p">)</span> <span class="o">+</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">nrow</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
@@ -420,10 +416,10 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 11 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 11 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_31_1.svg" src="../_images/Layout_31_1.svg" /></div>
+<img alt="../_images/1608bec057a55b384c0b49786cd8047baee73796b39c85945ce5d1bd9f76e240.svg" src="../_images/1608bec057a55b384c0b49786cd8047baee73796b39c85945ce5d1bd9f76e240.svg" /></div>
 </div>
 <p><strong>Using only <code class="docutils literal notranslate"><span class="pre">nrow</span></code> with <code class="docutils literal notranslate"><span class="pre">byrow=False</span></code></strong></p>
 <div class="cell docutils container">
@@ -434,16 +430,16 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 11 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 11 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_33_1.svg" src="../_images/Layout_33_1.svg" /></div>
+<img alt="../_images/7db250305650e370cea9c5012aabba4dc0fdf6511e7dc34cd8509230398384d2.svg" src="../_images/7db250305650e370cea9c5012aabba4dc0fdf6511e7dc34cd8509230398384d2.svg" /></div>
 </div>
 </section>
 </section>
 </section>
 <section id="nesting-arrangement-of-plots">
-<h2>Nesting arrangement of plots<a class="headerlink" href="#nesting-arrangement-of-plots" title="Permalink to this headline"></a></h2>
+<h2>Nesting arrangement of plots<a class="headerlink" href="#nesting-arrangement-of-plots" title="Permalink to this heading"></a></h2>
 <p>As mentioned above, it maybe more intuitive in certain situations and also work better in certain workflows to define the arrangement of plots by nesting sub-arrangements of plots. In the following we show how one can include an arrangement as a single object in another larger arrangement and visualized as follows. We only demonstrate a single layout of nesting, but naturally more one can leverage nesting in with more levels.</p>
 <p><strong>Note</strong> that we decide to use the <code class="docutils literal notranslate"><span class="pre">cow.layout</span></code>’s <code class="docutils literal notranslate"><span class="pre">nrow</span></code> and <code class="docutils literal notranslate"><span class="pre">ncol</span></code> parameters for simplicity, but <code class="docutils literal notranslate"><span class="pre">design</span></code> approaches would naturally preform well here too.</p>
 <div class="cell docutils container">
@@ -456,13 +452,13 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_35_1.svg" src="../_images/Layout_35_1.svg" /></div>
+<img alt="../_images/85b98223d18b9489d0f59a809b48588d1fcfd0d8e81682460bf21ba1ffa34b9e.svg" src="../_images/85b98223d18b9489d0f59a809b48588d1fcfd0d8e81682460bf21ba1ffa34b9e.svg" /></div>
 </div>
 <section id="with-grobs-parameter">
-<h3>with <code class="docutils literal notranslate"><span class="pre">grobs</span></code> parameter<a class="headerlink" href="#with-grobs-parameter" title="Permalink to this headline"></a></h3>
+<h3>with <code class="docutils literal notranslate"><span class="pre">grobs</span></code> parameter<a class="headerlink" href="#with-grobs-parameter" title="Permalink to this heading"></a></h3>
 <p>It seems important enough to highlight that this approach might be cleanly approach with a list approach in <code class="docutils literal notranslate"><span class="pre">cow.patch</span></code>. Remember this can also be done with the <code class="docutils literal notranslate"><span class="pre">grobs</span></code> parameter as introduced at the beginning of this document. For example:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -472,23 +468,23 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 7 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 7 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_38_1.svg" src="../_images/Layout_38_1.svg" /></div>
+<img alt="../_images/ac90f2d55b7054abc59691017b8079ce2f5e1e4e5fd6dc6378b11297d7a66825.svg" src="../_images/ac90f2d55b7054abc59691017b8079ce2f5e1e4e5fd6dc6378b11297d7a66825.svg" /></div>
 </div>
 </section>
 </section>
 <section id="defaults-and-error-avoidance-corrections">
-<h2>Defaults and error avoidance corrections<a class="headerlink" href="#defaults-and-error-avoidance-corrections" title="Permalink to this headline"></a></h2>
+<h2>Defaults and error avoidance corrections<a class="headerlink" href="#defaults-and-error-avoidance-corrections" title="Permalink to this heading"></a></h2>
 <p>In the above examples you’ll see that we provided user defined <code class="docutils literal notranslate"><span class="pre">width</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code> values for the <code class="docutils literal notranslate"><span class="pre">.show</span></code> call. And you’ll find that a similar approach is done with <code class="docutils literal notranslate"><span class="pre">.save</span></code> class method.</p>
 <p>Underneath the hood of <code class="docutils literal notranslate"><span class="pre">cowpatch</span></code> we’ve provided a few useful additions in this area</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li><p>If you’re in a hurry and just want to see the plot you can call <code class="docutils literal notranslate"><span class="pre">.show()</span></code>. We’ll select a decent <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code>. This approach can also help you as a starting point (so you can fine tune the parameters after you see the underlying plot without your guidance on the sizing).</p></li>
 <li><p>There are underlying complications with <code class="docutils literal notranslate"><span class="pre">plotnine</span></code>’s ability to actually create a plot any size you’d like. If your requested <code class="docutils literal notranslate"><span class="pre">width</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code> parameters run into this error (for example requesting a overall graphic size too small), we’ll propose a different set of parameter values (with the same aspect ratio, and <code class="docutils literal notranslate"><span class="pre">width</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code> values as close to your requested ones as possible).</p></li>
 </ol>
 <section id="example-of-selection-of-height-and-width-if-not-provided">
-<h3>Example of selection of <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code> if not provided<a class="headerlink" href="#example-of-selection-of-height-and-width-if-not-provided" title="Permalink to this headline"></a></h3>
+<h3>Example of selection of <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code> if not provided<a class="headerlink" href="#example-of-selection-of-height-and-width-if-not-provided" title="Permalink to this heading"></a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_left</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">)</span> <span class="o">+</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rel_heights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
@@ -499,14 +495,14 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 12 x 9.3 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 12 x 9.3 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_41_1.svg" src="../_images/Layout_41_1.svg" /></div>
+<img alt="../_images/d83fe97bd35435e56cd39e849e8b5643b811b172229ed497ca247d2d41349659.svg" src="../_images/d83fe97bd35435e56cd39e849e8b5643b811b172229ed497ca247d2d41349659.svg" /></div>
 </div>
 </section>
 <section id="example-of-size-correction-if-height-and-width-don-t-work-with-plotnine-s-visualization-ability">
-<h3>Example of size correction if <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code> don’t work with <code class="docutils literal notranslate"><span class="pre">plotnine</span></code>’s visualization ability<a class="headerlink" href="#example-of-size-correction-if-height-and-width-don-t-work-with-plotnine-s-visualization-ability" title="Permalink to this headline"></a></h3>
+<h3>Example of size correction if <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code> don’t work with <code class="docutils literal notranslate"><span class="pre">plotnine</span></code>’s visualization ability<a class="headerlink" href="#example-of-size-correction-if-height-and-width-don-t-work-with-plotnine-s-visualization-ability" title="Permalink to this heading"></a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_left</span> <span class="o">=</span> <span class="n">cow</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">)</span> <span class="o">+</span> <span class="n">cow</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rel_heights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
@@ -517,14 +513,14 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:438: CowpatchWarning: Showing 5.5 x 4.1 inch image.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cowpatch/cowpatch/src/cowpatch/svg_utils.py:443: CowpatchWarning: Showing 5.5 x 4.1 inch image.
 </pre></div>
 </div>
-<img alt="../_images/Layout_43_1.svg" src="../_images/Layout_43_1.svg" /></div>
+<img alt="../_images/f5134938f46af7eb4618148f6290a88ee062a6b51872abadeebcfa5cbf8e78f7.svg" src="../_images/f5134938f46af7eb4618148f6290a88ee062a6b51872abadeebcfa5cbf8e78f7.svg" /></div>
 </div>
 </section>
 <section id="avoiding-sizing-correction">
-<h3>Avoiding sizing correction<a class="headerlink" href="#avoiding-sizing-correction" title="Permalink to this headline"></a></h3>
+<h3>Avoiding sizing correction<a class="headerlink" href="#avoiding-sizing-correction" title="Permalink to this heading"></a></h3>
 <p>If you want to throw an error when you request a size that is not ability to be delivered (as opposed to the default approach of overriding your request), you can change the global <code class="docutils literal notranslate"><span class="pre">rcParams</span></code>’s <code class="docutils literal notranslate"><span class="pre">num_attempts</span></code>. Specifically, by setting <code class="docutils literal notranslate"><span class="pre">cow.rcParams[&quot;num_attempts&quot;]</span> <span class="pre">=</span> <span class="pre">1</span></code> you’ll observe an error thrown if you define an unobtainable size.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

@@ -225,7 +225,7 @@ Classes
       :obj:`layout`
           object that incorporates multiple area definitions to define layouts.
 
-   .. py:method:: pt(self, width_pt=None, height_pt=None, rel_widths=None, rel_heights=None)
+   .. py:method:: pt(width_pt=None, height_pt=None, rel_widths=None, rel_heights=None)
 
       Translates area object to ``_type`` = "pt"
 

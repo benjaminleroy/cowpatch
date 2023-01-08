@@ -7,8 +7,7 @@
   <title>cowpatch &mdash; cowpatch  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
       <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -17,12 +16,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script>let toggleHintShow = 'Click to show';</script>
-        <script>let toggleHintHide = 'Click to hide';</script>
-        <script>let toggleOpenOnPrint = 'true';</script>
-        <script src="_static/togglebutton.js"></script>
-        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -75,8 +71,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>cowpatch</li>
+      <li><a href="#" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">cowpatch</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -86,8 +82,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section class="tex2jax_ignore mathjax_ignore" id="cowpatch">
-<h1>cowpatch<a class="headerlink" href="#cowpatch" title="Permalink to this headline"></a></h1>
+  <section id="cowpatch">
+<h1>cowpatch<a class="headerlink" href="#cowpatch" title="Permalink to this heading"></a></h1>
 <p><a class="reference external" href="https://github.com/benjaminleroy/cowpatch/actions/workflows/ci.yml"><img alt="test and codecov" src="https://github.com/benjaminleroy/cowpatch/actions/workflows/ci.yml/badge.svg" /></a>
 <a class="reference external" href="https://codecov.io/gh/benjaminleroy/cowpatch"><img alt="codecov" src="https://codecov.io/gh/benjaminleroy/cowpatch/branch/main/graph/badge.svg?token=QM5G5WV7AE" /></a>
 <a class="reference external" href="https://www.codefactor.io/repository/github/benjaminleroy/cowpatch"><img alt="CodeFactor" src="https://www.codefactor.io/repository/github/benjaminleroy/cowpatch/badge" /></a></p>
@@ -114,7 +110,7 @@ installed):
     ```
 -->
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
 <p>To install the current version of this package, please run</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">cowpatch</span>
 </pre></div>
@@ -123,7 +119,7 @@ installed):
 please following the guidelines in the contributing page.</p>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cowpatch</span> <span class="k">as</span> <span class="nn">cow</span>
 <span class="kn">import</span> <span class="nn">plotnine</span> <span class="k">as</span> <span class="nn">p9</span>
 <span class="kn">import</span> <span class="nn">plotnine.data</span> <span class="k">as</span> <span class="nn">p9_data</span>
@@ -161,7 +157,7 @@ vis_patch.save(width=11, height=7, filename="images/readme.svg")
 individual pages on different plot arrangement strategies.</p>
 </section>
 <section id="future-goals">
-<h2>Future Goals<a class="headerlink" href="#future-goals" title="Permalink to this headline"></a></h2>
+<h2>Future Goals<a class="headerlink" href="#future-goals" title="Permalink to this heading"></a></h2>
 <p>This package is currently in development (please feel welcome to contribute, with code, examples, issues, publicity, etc.). We envision a sequence of versions coming out with different added features in each. The order of the features will look something like the following</p>
 <ul class="simple">
 <li><p>[x] MVP #1: base implimentation (reflecting <code class="docutils literal notranslate"><span class="pre">cowplot</span></code> and <code class="docutils literal notranslate"><span class="pre">gridExtra</span></code> functionality, minus labeling and titles)</p></li>
@@ -177,23 +173,23 @@ individual pages on different plot arrangement strategies.</p>
 <p>For the interested reader, a lot of these ideas have been sketched in our <code class="docutils literal notranslate"><span class="pre">notes/</span></code> folder as “proof of concepts”.</p>
 </section>
 <section id="package-logistics">
-<h2>Package Logistics<a class="headerlink" href="#package-logistics" title="Permalink to this headline"></a></h2>
+<h2>Package Logistics<a class="headerlink" href="#package-logistics" title="Permalink to this heading"></a></h2>
 <section id="background-and-history">
-<h3>Background and history<a class="headerlink" href="#background-and-history" title="Permalink to this headline"></a></h3>
+<h3>Background and history<a class="headerlink" href="#background-and-history" title="Permalink to this heading"></a></h3>
 <p>This package’s name is a merging of the names of <code class="docutils literal notranslate"><span class="pre">R</span></code> packages’ <code class="docutils literal notranslate"><span class="pre">cowplot</span></code> and <code class="docutils literal notranslate"><span class="pre">patchwork</span></code>. It attempts to provide similar plot arrangement and combination tools as <code class="docutils literal notranslate"><span class="pre">gridExtra</span></code>, <code class="docutils literal notranslate"><span class="pre">cowplot</span></code> and <code class="docutils literal notranslate"><span class="pre">patchwork</span></code> for the <code class="docutils literal notranslate"><span class="pre">plotnine</span></code>’s <code class="docutils literal notranslate"><span class="pre">ggplot</span></code> objects.</p>
 <p>This package is not directly related to any of aforementioned packages (including the <a class="reference external" href="https://wilkelab.org/">Wilke Lab</a>, lead by Claus O. Wilke) but naturally stands on the shoulders of the contributions each of the packages made.</p>
 <p>This package leverages a SVG backend to create the arangements. This may make the actual package a bit more “hacky” then some may like, but we hope it can still be of use to the community.</p>
 </section>
 <section id="contributing">
-<h3>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline"></a></h3>
+<h3>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h3>
 <p>Interested in contributing? Check out the contributing guidelines. Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.</p>
 </section>
 <section id="license">
-<h3>License<a class="headerlink" href="#license" title="Permalink to this headline"></a></h3>
+<h3>License<a class="headerlink" href="#license" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">cowpatch</span></code> was created by <a class="reference external" href="https://benjaminleroy.github.io/">Benjamin LeRoy</a> (<a class="reference external" href="https://github.com/benjaminleroy">benjaminleroy</a>) and Mallory Wang (<a class="reference external" href="https://github.com/wangmallory">wangmallory</a>). It is licensed under the terms of the MIT license.</p>
 </section>
 <section id="credits">
-<h3>Credits<a class="headerlink" href="#credits" title="Permalink to this headline"></a></h3>
+<h3>Credits<a class="headerlink" href="#credits" title="Permalink to this heading"></a></h3>
 <p>This <code class="docutils literal notranslate"><span class="pre">python</span></code> package stands on the shoulders of many open-source tools, <code class="docutils literal notranslate"><span class="pre">cowpatch</span></code> structure was created with <a class="reference external" href="https://cookiecutter.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">cookiecutter</span></code></a> and the <code class="docutils literal notranslate"><span class="pre">py-pkgs-cookiecutter</span></code> <a class="reference external" href="https://github.com/py-pkgs/py-pkgs-cookiecutter">template</a>, the documentation leverages <a class="reference external" href="https://www.sphinx-doc.org/en/master/"><code class="docutils literal notranslate"><span class="pre">sphinx</span></code></a>, and underlying testing leverages <a class="reference external" href="https://docs.pytest.org/en/7.0.x/"><code class="docutils literal notranslate"><span class="pre">pytest</span></code></a>, <a class="reference external" href="https://hypothesis.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">hypothesis</span></code></a> and <a class="reference external" href="https://pytest-regressions.readthedocs.io/en/latest/overview.html"><code class="docutils literal notranslate"><span class="pre">pytest-regression</span></code></a>. See the full list of package dependencies on <a class="reference external" href="https://github.com/benjaminleroy/cowpatch/blob/main/pyproject.toml">Github</a>.</p>
 <div class="toctree-wrapper compound">
 </div>

@@ -6,8 +6,7 @@
   <title>cowpatch.text_elements &mdash; cowpatch  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/togglebutton.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -16,12 +15,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script>let toggleHintShow = 'Click to show';</script>
-        <script>let toggleHintHide = 'Click to hide';</script>
-        <script>let toggleOpenOnPrint = 'true';</script>
-        <script src="../../_static/togglebutton.js"></script>
-        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -73,9 +69,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>cowpatch.text_elements</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cowpatch.text_elements</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -90,7 +86,7 @@
 
 <div class="viewcode-block" id="text"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text_elements.text">[docs]</a><span class="k">class</span> <span class="nc">text</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">element_text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        create a new text object</span>
 
 <span class="sd">        Arguments</span>
@@ -117,14 +113,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
 
         <span class="k">if</span> <span class="n">element_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">theme</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;please provide only a theme or element_text, &quot;</span><span class="o">+</span>\
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;please provide only a theme or element_text, &quot;</span><span class="o">+</span>
                              <span class="s2">&quot;not both&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">element_text</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># prep initialization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clean_element_text</span><span class="p">(</span><span class="n">element_text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="n">theme</span>
 
     <span class="k">def</span> <span class="nf">_clean_element_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        cleans element_text to make sure any element_text() is a</span>
 <span class="sd">        p9.themes.themeable, not just a p9.theme.elements.element_text</span>
 
@@ -157,7 +153,7 @@
         <span class="k">return</span> <span class="kc">None</span> <span class="c1"># just a reminder</span>
 
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        add element_text or theme to update format</span>
 
 <span class="sd">        TODO: make this work w.r.t patchwork approaches (edge cases #8)</span>
@@ -175,7 +171,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">themes</span><span class="o">.</span><span class="n">themeable</span><span class="o">.</span><span class="n">element_text</span><span class="p">)</span> <span class="ow">and</span> \
            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;text objects are only allowed to be combined &quot;</span><span class="o">+</span>\
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;text objects are only allowed to be combined &quot;</span><span class="o">+</span>
                              <span class="s2">&quot;with element_text objects.&quot;</span><span class="p">)</span>
         <span class="c1"># need to update theme or element_text...</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">themes</span><span class="o">.</span><span class="n">themeable</span><span class="o">.</span><span class="n">element_text</span><span class="p">):</span>
@@ -197,7 +193,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">_provide_complete_theme</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It should be here that the current global theme is accessed, and thing are completed...</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -212,7 +208,7 @@
         <span class="k">return</span> <span class="n">current_theme</span>
 
     <span class="k">def</span> <span class="nf">_inner_prep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Internal function to create matplotlib figure with text and</span>
 <span class="sd">        provide a bounding box for the location in the plot</span>
 
@@ -264,7 +260,7 @@
 
 
     <span class="k">def</span> <span class="nf">_create_svg_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Internal to create svg object (with text in correct location</span>
 <span class="sd">        and correct image size)</span>
 
@@ -370,13 +366,12 @@
         <span class="c1"># remove path (xml.etree.ElementTree) ---------</span>
         <span class="n">img_root2_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">img_root_str</span><span class="p">)</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="n">img_root2_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//{http://www.w3.org/2000/svg}g[@id=</span><span class="se">\&quot;</span><span class="s2">patch_1</span><span class="se">\&quot;</span><span class="s2">]&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">to_remove</span> <span class="o">=</span>  <span class="n">img_root2_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//{http://www.w3.org/2000/svg}path&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">to_remove</span> <span class="o">=</span> <span class="n">img_root2_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//{http://www.w3.org/2000/svg}path&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">parent</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">to_remove</span><span class="p">)</span>
         <span class="n">img_root2_xml_str</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">img_root2_xml</span><span class="p">)</span>
         <span class="n">img2</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">img_root2_xml_str</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
 
         <span class="n">new_image</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img2</span><span class="p">)</span>
-
 
         <span class="c1"># closing plot</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -385,7 +380,7 @@
 
 
 <div class="viewcode-block" id="text.save"><a class="viewcode-back" href="../../autoapi/cowpatch/text_elements/index.html#cowpatch.text_elements.text.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        save text object as image in minimal size object</span>
 
 <span class="sd">        Arguments</span>
