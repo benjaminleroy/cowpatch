@@ -546,6 +546,8 @@ def test_patch__estimate_default_min_desired_size_Annotation():
         "(v2 - nested + tagged, annotation)"
 
     # TODO: this looks like the tag structure isn't being correctly taken into acount
+    # it looks like it's not stepping down correctly (tags_format versus index)
+    # probably associated with _step_down_tags_info
     assert np.allclose(sug_height_nt,
                        (3 * # 1/ rel width of smallest width of images (and include the caption and 1 tag)
                         (cow.rcParams["base_height"] +\

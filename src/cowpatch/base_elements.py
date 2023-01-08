@@ -939,10 +939,14 @@ class patch:
                     grob_tag_index = None
                     current_index = ()
                 
-                
+                # TODO: should it be index=grob_tag_index or index=current_index?
+                # due to the function _step_down_tags_info, I think we need to
+                # update the _calculate_tag_margin_sizes to actual depth
+                # (say length of current_index), but should only use
+                # the _step_down_tags_info
                 tag_margin_dict = cur_annotation._calculate_tag_margin_sizes(
                                         fundamental=fundamental_tag,
-                                        index=grob_tag_index,
+                                        index=current_index,
                                         to_inches=True) 
                 
 
@@ -966,7 +970,7 @@ class patch:
             if inherits(image, patch):
                 ### default sizing
                 data_dict_pass_through = data_dict.copy()
-                data_dict_pass_through["parent-index"] = current_index
+                data_dict_pass_through["parent-index"] =
                 data_dict_pass_through["parent-guided-annotation-update"] = \
                     cur_annotation._step_down_tags_info(parent_index = current_index)
 

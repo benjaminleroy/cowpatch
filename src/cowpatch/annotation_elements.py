@@ -346,6 +346,7 @@ class annotation:
         if inherits(index, int):
             index = (index,)
 
+        pdb.set_trace()
         if len(self.tags_format) < len(index):
             raise ValueError("tags_format tuple has less indices than _get_tag index suggests")
 
