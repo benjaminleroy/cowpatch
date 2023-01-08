@@ -14,7 +14,8 @@ import plotnine.data as p9_data
 import re
 import matplotlib.pyplot as plt
 
-import pdb
+import svgutils.transform as sg
+
 
 # inner functions -----
 
@@ -779,6 +780,11 @@ def test_patch__svg():
 # printing ----------
 
 def test_patch__repr__(monkeypatch,capsys):
+    """
+    test patch .__repr__, static
+
+    print(.) also creates the figure
+    """
     monkeypatch.setattr(plt, "show", lambda:None)
 
     g0 = p9.ggplot(p9_data.mpg) +\
@@ -866,3 +872,133 @@ def test_patch__and__(image_regression):
     # g012 = g0p + g1p + g2p
     # g012_2 = g01 + g2p
     pass
+
+
+def test_patch_svg_uniquify1(image_regression):
+    """
+    test 1: patch _svg creation use of svg_utils._unquify_svg_str
+
+    1 x 2 direct use of cowpatch example
+    """
+    mtcars = p9_data.mtcars
+
+    a = (p9.ggplot(mtcars)
+        + p9.aes('wt', 'mpg', color='hp')
+        + p9.geom_point()
+        + p9.theme(figure_size=(3, 2))
+        )
+
+    b = (p9.ggplot(mtcars)
+        + p9.aes('wt', 'mpg', color='hp')
+        + p9.geom_point()
+        + p9.scale_color_continuous('inferno')
+        + p9.theme(figure_size=(3, 2))
+        )
+
+    combi_plot = cow.patch(a, b) + cow.layout(ncol=2)
+
+    with io.BytesIO() as fid:
+        combi_plot.save(filename=fid, width=8, height=3,
+                       dpi=96, _format="png", verbose = False)
+
+        image_regression.check(fid.getvalue(), diff_threshold=.1)
+
+
+def test_patch_svg_uniquify2(image_regression):
+    """
+    test 2: patch _svg creation use of svg_utils._unquify_svg_str
+
+    2 x 2 nested cowpatch example
+    """
+    mtcars = p9_data.mtcars
+
+    a = (p9.ggplot(mtcars)
+        + p9.aes('wt', 'mpg', color='hp')
+        + p9.geom_point()
+        + p9.theme(figure_size=(3, 2))
+        )
+
+    b = (p9.ggplot(mtcars)
+        + p9.aes('wt', 'mpg', color='hp')
+        + p9.geom_point()
+        + p9.scale_color_continuous('inferno')
+        + p9.theme(figure_size=(3, 2))
+        )
+
+    combi_plot = cow.patch(a, b) + cow.layout(ncol=2)
+
+    combi_plot2 = combi_plot + cow.layout(design = np.array([[1,0]]))
+
+    combo_combi = cow.patch(combi_plot, combi_plot2) + cow.layout(nrow = 2)
+
+    with io.BytesIO() as fid:
+        combo_combi.save(filename=fid, width=8, height=6,
+                       dpi=96, _format="png", verbose = False)
+
+        image_regression.check(fid.getvalue(), diff_threshold=.1)
+
+
+
+def test_patch_svg_uniquify3(image_regression):
+    """
+    test 3: patch _svg creation use of svg_utils._unquify_svg_str
+
+    2 x 2 manual cowpatch example
+    """
+    mtcars = p9_data.mtcars
+
+    a = (p9.ggplot(mtcars)
+        + p9.aes('wt', 'mpg', color='hp')
+        + p9.geom_point()
+        + p9.theme(figure_size=(3, 2))
+        )
+
+    b = (p9.ggplot(mtcars)
+        + p9.aes('wt', 'mpg', color='hp')
+        + p9.geom_point()
+        + p9.scale_color_continuous('inferno')
+        + p9.theme(figure_size=(3, 2))
+        )
+
+    base_image = sg.SVGFigure()
+    base_image.set_size((str(8*72)+"pt", str(6*72)+"pt"))
+    # add a view box... (set_size doesn't correctly update this...)
+    # maybe should have used px instead of px....
+    base_image.root.set("viewBox", "0 0 %s %s" % (str(8*72), str(6*72)))
+
+    # TODO: way to make decisions about the base image...
+    base_image.append(
+        sg.fromstring("<rect width=\"100%\" height=\"100%\" fill=\"#FFFFFF\"/>"))
+
+
+    combi_plot = cow.patch(a, b) + cow.layout(ncol=2)
+    svg_obj, _ = combi_plot._svg(width_pt=8*72,
+                              height_pt=3*72)
+
+    svg_root = svg_obj.getroot()
+    svg_root.moveto(x=0,
+                    y=0)
+    base_image.append(svg_root)
+
+    combi_plot2 = combi_plot + cow.layout(design = np.array([[1,0]]))
+    svg_obj2, _ = combi_plot2._svg(width_pt=8*72,
+                               height_pt=3*72)
+
+    svg_root2 = svg_obj2.getroot()
+    svg_root2.moveto(x=0,
+                    y=3*72)
+    base_image.append(svg_root2)
+
+    with io.BytesIO() as fid:
+        cow.svg_utils._save_svg_wrapper(base_image,
+                           filename=fid,
+                           width=8,
+                           height=6,
+                           dpi=96,
+                           _format="png",
+                           verbose=False)
+
+        image_regression.check(fid.getvalue(), diff_threshold=.1)
+
+
+

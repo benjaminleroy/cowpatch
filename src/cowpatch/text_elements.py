@@ -30,7 +30,7 @@ class text:
         self.label = label
 
         if element_text is not None and theme is not None:
-            raise ValueError("please provide only a theme or element_text, "+\
+            raise ValueError("please provide only a theme or element_text, "+
                              "not both")
         self.element_text = None # prep initialization
         self._clean_element_text(element_text)
@@ -88,7 +88,7 @@ class text:
 
         if not isinstance(other, p9.themes.themeable.element_text) and \
            not isinstance(other, p9.theme):
-            raise ValueError("text objects are only allowed to be combined "+\
+            raise ValueError("text objects are only allowed to be combined "+
                              "with element_text objects.")
         # need to update theme or element_text...
         if isinstance(other, p9.themes.themeable.element_text):
@@ -283,13 +283,12 @@ class text:
         # remove path (xml.etree.ElementTree) ---------
         img_root2_xml = ET.fromstring(img_root_str)
         parent = img_root2_xml.findall(".//{http://www.w3.org/2000/svg}g[@id=\"patch_1\"]")[0]
-        to_remove =  img_root2_xml.findall(".//{http://www.w3.org/2000/svg}path")[0]
+        to_remove = img_root2_xml.findall(".//{http://www.w3.org/2000/svg}path")[0]
         parent.remove(to_remove)
         img_root2_xml_str = ET.tostring(img_root2_xml)
         img2 = sg.fromstring(img_root2_xml_str.decode("utf-8"))
 
         new_image.append(img2)
-
 
         # closing plot
         plt.close()
