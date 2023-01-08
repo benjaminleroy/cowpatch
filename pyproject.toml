@@ -28,6 +28,9 @@ hypothesis = "^6.36.2"
 jupyter-contrib-nbextensions = "^0.5.1"
 jupyter_nbextensions_configurator = "^0.4.1"
 
+[tool.poetry.group.dev.dependencies]
+myst-nb = {version = "^0.17.1", python = "^3.8"}
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

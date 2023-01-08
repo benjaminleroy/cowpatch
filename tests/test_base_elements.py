@@ -780,6 +780,11 @@ def test_patch__svg():
 # printing ----------
 
 def test_patch__repr__(monkeypatch,capsys):
+    """
+    test patch .__repr__, static
+
+    print(.) also creates the figure
+    """
     monkeypatch.setattr(plt, "show", lambda:None)
 
     g0 = p9.ggplot(p9_data.mpg) +\
@@ -991,7 +996,7 @@ def test_patch_svg_uniquify3(image_regression):
                            height=6,
                            dpi=96,
                            _format="png",
-                           verbose=True)
+                           verbose=False)
 
         image_regression.check(fid.getvalue(), diff_threshold=.1)
 
