@@ -602,8 +602,6 @@ class annotation:
             extra height required for title & subtitles on top or bottom
         top_left_loc : tuple
             tuple of top left corner of inner image relative to title text
-
-        TODO: need to make sure left/right objects are correctly rotated... [9/22 I think this is done]
         """
         min_inner_width = \
             np.sum([t._min_size(to_inches=to_inches)[0] for t in [self.title.get("top"),
