@@ -6,7 +6,7 @@ import copy
 
 from .svg_utils import gg_to_svg, _save_svg_wrapper, _show_image, \
                     _raw_gg_to_svg, _select_correcting_size_svg, \
-                    _add_to_base_image
+                    _add_to_base_image, _uniquify_svg_safe
 from .utils import to_inches, from_inches, inherits_plotnine, inherits, \
                     _flatten_nested_list
 from .layout_elements import layout
@@ -14,7 +14,7 @@ from .annotation_elements import annotation
 from .config import rcParams
 from .text_elements import text
 
-import pdb
+import copy
 
 class patch:
     def __init__(self, *args, grobs=None):
@@ -149,7 +149,7 @@ class patch:
 
         Details
         -------
-        if no annotation is provide, we do make sure that 
+        if no annotation is provide, we do make sure that
         "tags_inherit='override'"
         """
         if self.__annotation is None:
@@ -164,13 +164,13 @@ class patch:
         """
         if self.layout.num_grobs is not None:
            if self.layout.num_grobs != len(self.grobs):
-            raise AttributeError("layout's number of patches does not "+\
+            raise AttributeError("layout's number of patches does not "+
                                  "matches number of patches in arangement")
 
     def __or__(self, other):
         # check proper usage -------
         if not inherits(other, patch):
-            raise ValueError("only can connect specific general patch items"+\
+            raise ValueError("only can connect specific general patch items"+
                              " with \"|\".")
 
         # combine with other -------
@@ -189,7 +189,7 @@ class patch:
     def __div__(self, other):
         # check proper usage -------
         if not inherits(other, patch):
-            raise ValueError("only can connect specific general patch items"+\
+            raise ValueError("only can connect specific general patch items"+
                              " with \"/\".")
 
         # combine with other -------
@@ -207,28 +207,18 @@ class patch:
 
     def __add__(self, other):
         # check proper usage -------
-        if not (inherits(other, patch) or \
-            inherits(other, layout) or \
+        if not (inherits(other, patch) or
+            inherits(other, layout) or
             inherits(other, annotation)):
             if inherits(other,p9.theme):
-                raise ValueError("cannot directly add a theme to a patch" +\
+                raise ValueError("cannot directly add a theme to a patch" +
                                  " object unless a wrapper, try \"&\" or \"*\"")
-            raise ValueError("only can connect specific general patch items"+\
+            raise ValueError("only can connect specific general patch items"+
                              " with \"/\".")
 
         if inherits(other, patch):
             # combine with other patch -------
-            if self.layout is None:
-                # only for wrappers!
-                return patch(grobs=[self, other])
-            elif self.layout == layout(design = np.array([[0]])):
-                # current self is [inner]
-                return patch(grobs=self.grobs+[other])
-            elif self.layout.nrow == 1:
-                # continuing a row
-                return patch(grobs=self.grobs+[other])
-            else:
-                return patch(grobs=[self.grobs]+[other])
+            raise ValueError("currently not implimented addition with another patch object")
         elif inherits(other, layout):
             # combine with layout -------------
             object_copy = copy.deepcopy(self)
@@ -255,6 +245,7 @@ class patch:
     def __and__(self, other):
         raise ValueError("currently not implimented &")
 
+
     def _get_grob_tag_ordering(self, cur_annotation=None):
         """
         get ordering of tags related to grob index
@@ -262,9 +253,9 @@ class patch:
         Arguments
         ---------
         cur_annotation : annotation object
-            annotation object if we are not going to use the patch's own 
-            annotation object but some alternation from a parent. If this 
-            is None, we shall be using the internal annotation object 
+            annotation object if we are not going to use the patch's own
+            annotation object but some alternation from a parent. If this
+            is None, we shall be using the internal annotation object
             associated with the patch.
 
         Returns
@@ -290,7 +281,6 @@ class patch:
                 tags_order = "input"
             else:
                 tags_order = "yokogaki"
-
 
         if tags_order == "yokogaki":
             out_array = self.layout._yokogaki_ordering(num_grobs = len(self.grobs))
@@ -754,36 +744,36 @@ class patch:
 
         Details
         -------
-        This internal function is likely hard to read, and can be used to 
+        This internal function is likely hard to read, and can be used to
         accomplish 3 different tasks that require depth-search style progression
-        through grobs. For easier read, we would recommend selecting one of the 
-        approaches and then folding / code-collapsing all the conditional 
-        statements that refer to the other approaches. Below are details about 
+        through grobs. For easier read, we would recommend selecting one of the
+        approaches and then folding / code-collapsing all the conditional
+        statements that refer to the other approaches. Below are details about
         each of the approaches including information about how the parameters
         are used.
-                
+
         "default-size":
 
-        This approach calculates a default-size for the patch to observe a 
+        This approach calculates a default-size for the patch to observe a
         minimum width and height of a images (as stored in rcParams) and for all
-        titles, subtitles, captions, and tags to have enough space to be 
-        correctly presented. For the 
-        arguments, (width, height) are ___ and the data_dict may have the 
+        titles, subtitles, captions, and tags to have enough space to be
+        correctly presented. For the
+        arguments, (width, height) are ___ and the data_dict may have the
         attribute "default-size-proportion" which should be a tuple of positive
         floats (less than or equal to 1) that captures the relative size of this
         patch to the overall.
 
         The math for the "default-size" is pretty basic, and based on the idea
         that for each plot and associated captions/titles one could describe
-        the associated `smallest_overall_size` would be the maximum of (the 
-        required minimum size of the plot + `required_size_of_text`) times 
+        the associated `smallest_overall_size` would be the maximum of (the
+        required minimum size of the plot + `required_size_of_text`) times
         the scaling factory to get from the overall patch to the interior plot.
         Note that this is does for height and width separately.
 
         all:
 
-        The data_dict can include an attribute "parent-index" which should be 
-        a tuple of the parent's index (used for tag tracking). The data_dict can 
+        The data_dict can include an attribute "parent-index" which should be
+        a tuple of the parent's index (used for tag tracking). The data_dict can
         include an attribute "parent-guided-annotation-update" which contains
         an annotation object that the parent is providing.
 
@@ -796,7 +786,7 @@ class patch:
         if data_dict is not None and \
             data_dict.get("parent-guided-annotation-update") is not None:
 
-            # should only actually update if tags_inherit="override" within 
+            # should only actually update if tags_inherit="override" within
             # cur_annotation
             cur_annotation += data_dict["parent-guided-annotation-update"]
 
@@ -819,7 +809,7 @@ class patch:
                 if data_dict is None:
                     data_dict = dict()
                 data_dict["default-size-proportion"] = (1,1)
-            
+
             # data_dict check
             if not inherits(data_dict["default-size-proportion"], tuple) or \
                 len(data_dict["default-size-proportion"]) != 2 or \
@@ -938,7 +928,7 @@ class patch:
                     fundamental_tag = False
                     grob_tag_index = None
                     current_index = ()
-                
+
                 # TODO: should it be index=grob_tag_index or index=current_index?
                 # due to the function _step_down_tags_info, I think we need to
                 # update the _calculate_tag_margin_sizes to actual depth
@@ -947,8 +937,8 @@ class patch:
                 tag_margin_dict = cur_annotation._calculate_tag_margin_sizes(
                                         fundamental=fundamental_tag,
                                         index=current_index,
-                                        to_inches=True) 
-                
+                                        to_inches=True)
+
 
             if approach in ["create", "size"]:
                 grob_width, grob_height = \
@@ -978,8 +968,8 @@ class patch:
                     default_size_prop = (inner_area.width, inner_area.height)
                     data_dict_pass_through["default-size-proportion"] = \
                         default_size_prop
-                    
-                    
+
+
                     default_inner_size = self.grobs[p_idx]._hierarchical_general_process(
                                     data_dict=data_dict_pass_through,
                                     approach="default-size")
@@ -987,7 +977,7 @@ class patch:
                 if approach == "size":
                     data_dict_pass_through["size-node-level"] = \
                         data_dict["size-node-level"] + 1
-                    
+
                     inner_sizes, inner_size_multiplier = \
                         image._hierarchical_general_process(
                                     width=grob_width,
@@ -1151,6 +1141,32 @@ class patch:
 
 
 
+            # TODO: how to deal with ggplot objects vs patch objects
+            if inherits(self.grobs[p_idx], patch):
+                inner_sizes_list, logic_list = \
+                    self.grobs[p_idx]._svg_get_sizes(width_pt = inner_width_pt,
+                                                 height_pt = inner_height_pt)
+                sizes.append(inner_sizes_list)
+                logics.append(logic_list)
+            elif inherits_plotnine(self.grobs[p_idx]):
+                inner_w, inner_h, inner_logic = \
+                    _select_correcting_size_svg(self.grobs[p_idx],
+                                      width=to_inches(inner_width_pt,
+                                                        units="pt",
+                                                        dpi=96),
+                                      height=to_inches(inner_height_pt,
+                                                        units="pt",
+                                                        dpi=96),
+                                      dpi=96,
+                                      eps=rcParams["eps"],
+                                      min_size_px=rcParams["min_size_px"],
+                                      maxIter=rcParams["maxIter"],
+                                      throw_error=False)
+                sizes.append((inner_w,inner_h))
+                logics.append(inner_logic)
+            else:
+                raise ValueError("grob idx %i is not a patch object nor"+
+                                 "a ggplot object" % p_idx)
 
 
 

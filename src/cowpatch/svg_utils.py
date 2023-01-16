@@ -16,6 +16,11 @@ from .utils import _transform_size_to_pt, _proposed_scaling_both, \
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+import numpy as np
+import copy
+
+import pdb
+
 def _raw_gg_to_svg(gg, width, height, dpi, limitsize=True):
     """
     Convert plotnine ggplot figure to svg and return it (pass width, height
@@ -175,7 +180,7 @@ def _select_correcting_size_svg(gg, height, width, dpi, limitsize=True,
                                                         limitsize=limitsize)
         current_width *= desired_width / actual_width
         current_height *= desired_height / actual_height
-        deltas.append(abs(actual_width - desired_width) + \
+        deltas.append(abs(actual_width - desired_width) +
                       abs(actual_height - desired_height))
 
         # decisions to terminate interation
@@ -330,7 +335,7 @@ def _save_svg_wrapper(svg, filename, width, height, dpi=300,
         with the svg...)
     dpi : int or float
         dots per square inch, default is 300
-    format : str
+    _format : str
         string of format (error tells options). If provided this is the format
         used, if None, then we'll try to use the filename extension.
     verbose : bool
@@ -483,3 +488,80 @@ def _add_to_base_image(base_image, current_image, loc = (0,0)):
     base_image.append(inner_root)
 
     return None
+
+def _uniquify_svg_safe(svg_obj, str_update):
+    """
+    Update svg code to 'uniquify' svg but by making sure 'url(#___)'
+
+    Arguments
+    ---------
+    svg_obj : svg object
+        svg object, svgutils.transform.SVGFigure
+    str_update : str
+        string addition for ids (required to include '_' if desired it)
+
+    Return
+    ------
+    svg_obj : svg object
+        updated svg object, svgutils.transform.SVGFigure
+
+
+    Details
+    -------
+    Internally this function calls "_uniquify_svg_str_safe" for
+    the vast majority of the heavy lifting
+    """
+
+    # string collection
+    inner_svg = copy.deepcopy(svg_obj)
+    svg_str = str(inner_svg.to_str())
+
+    # updating string
+    updated_svg_str = _uniquify_svg_str_safe(svg_str, str_update=str_update)
+
+    # need to identify start and end of svg to re-convert it to and svg_object
+    start = re.search("<svg", updated_svg_str)
+    end = re.search("</svg>", updated_svg_str)
+
+    updated_end_svg = sg.fromstring(updated_svg_str[start.start():end.end()])
+
+    return updated_end_svg
+
+def _uniquify_svg_str_safe(svg_str, str_update):
+    """
+    Update svg code to 'uniquify' svg but by making sure 'url(#___)'
+
+    Arguments
+    ---------
+    svg_str : str
+        svg string presentation
+    str_update : str
+        string addition for ids (required to include '_' if desired it)
+
+    Return
+    ------
+    svg_str : str
+        updated svg code
+    """
+
+    # identify which ids are linked to "url(#___)" and must be extended
+    ids_to_extend = \
+        np.unique(
+            [re.sub("(url\(\#)|(\))", "", x)
+             for x in re.findall("url\(\#[A-Za-z0-9\_]+\)", svg_str)])
+
+
+    for old_id_name in ids_to_extend:
+        new_id_name = old_id_name + str_update
+        # id
+        svg_str = re.sub("id=\"{0}\"".format(old_id_name),
+                       "id=\"{0}\"".format(new_id_name),
+                       svg_str)
+
+        # url(#)
+        svg_str = re.sub("url\(\#{0}\)".format(old_id_name),
+                      "url(#{0})".format(new_id_name),
+                       svg_str)
+
+    return svg_str
+

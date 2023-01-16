@@ -469,7 +469,7 @@ class text:
         # above other objects)
         img_root2_xml = ET.fromstring(img_root_str)
         parent = img_root2_xml.findall(".//{http://www.w3.org/2000/svg}g[@id=\"patch_1\"]")[0]
-        to_remove =  img_root2_xml.findall(".//{http://www.w3.org/2000/svg}path")[0]
+        to_remove = img_root2_xml.findall(".//{http://www.w3.org/2000/svg}path")[0]
         parent.remove(to_remove)
         img_root2_xml_str = ET.tostring(img_root2_xml)
         img2 = sg.fromstring(img_root2_xml_str.decode("utf-8"))
