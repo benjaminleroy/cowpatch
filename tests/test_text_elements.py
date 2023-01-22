@@ -5,11 +5,25 @@ import pytest
 import copy
 import numpy as np
 
-def test__clean_element_text():
+from pytest_regressions import data_regression, image_regression
+from hypothesis import given, strategies as st, settings
+from datetime import timedelta
+
+import io
+import re
+import matplotlib.pyplot as plt
+
+import pdb
+
+# text object ---------------------
+
+def test_text__clean_element_text():
     """
     test that element_text stored inside is always a p9.themes.themeable (static)
 
     Both through initialization and addition
+
+    tests __init__ and _clean_element_text
     """
 
     et_simple = p9.element_text(size = 12)
@@ -31,7 +45,7 @@ def test__clean_element_text():
         "internal saving of element_text is expected to be a themable.text "+\
         "(not a element_text) - updated with addition"
 
-def test__add__():
+def test_text__add__():
     """
     test addition (static)
 
@@ -57,7 +71,7 @@ def test__add__():
         "expected that the __add__ updates and creates a new object and " +\
         "doesn't update the previous text object directly"
 
-def test__update_element_text_from_theme():
+def test_text__update_element_text_from_theme():
     """
     test of _update_element_text_from_theme (static test)
     """
@@ -91,7 +105,7 @@ def test__update_element_text_from_theme():
         "expected theme to update element_text of text object "+\
         "(with element_text default)"
 
-def test__update_element_text_from_theme2():
+def test_text__update_element_text_from_theme2():
     """
     test _update_element_text_from_theme
 
@@ -225,7 +239,7 @@ def test__update_element_text_from_theme2():
             "text object, so we expect an error (c, theme 2)"
 
 
-def test__get_full_element_text():
+def test_text__get_full_element_text():
     """
     test _get_full_element_text (static test - using _type text not cow_text, etc.)
     """
@@ -253,7 +267,7 @@ def test__get_full_element_text():
                 (("expected all properties but key=size (key = %s) to match "+\
                  "if all inherits properties from global theme") % key)
 
-def test__get_full_element_text2():
+def test_text__get_full_element_text2():
     """
     test _get_full_element_text, static
 
@@ -304,16 +318,304 @@ def test__get_full_element_text2():
                 "with default size information (_type :%s, key: %s)" % (_type, key)
 
 
-def test__min_size():
+def test_text__min_size():
     """
     test _min_size (static)
 
     This function only checks relative sizes reported from _min_size
     """
-    pass
+
+    for _type in ["cow_tag", "cow_caption", "cow_text",
+                "cow_title", "cow_subtitle"]:
+
+        # base option
+        a = cow.text("Fig 1", _type = _type)
+
+        out = a._min_size()
+        out_in = a._min_size(to_inches=True)
+
+        assert np.all([np.allclose(cow.utils.to_inches(out[i], "pt"), out_in[i])
+                      for i in [0,1]]), \
+            ("error in _min_size's application of `to_inches` parameter "+
+             "type: %s, test 1" % _type)
+
+        a_long = cow.text("Fig 1 Fig 1", _type = _type)
+        out_long = a_long._min_size()
+
+        assert (3 * out[0]> out_long[0] > 2 * out[0]) and \
+                np.allclose(out_long[1], out[1]), \
+            ("if text size 2x+ in length, relative sizes should match, " +
+             "type: %s, text 1" % _type)
+
+        a_tall = cow.text("Fig 1\nFig 1", _type = _type)
+        out_tall = a_tall._min_size()
+
+        assert (2.5 * out[1] > out_tall[1] > 1.5 * out[1]) and \
+                np.allclose(out_tall[0], out[0]), \
+            ("if text size ~2x in height, relative sizes should match, " +
+             "type: %s, text 1" % _type)
+
+        # rotated text 90 degrees
+        a2 = a + p9.element_text(angle = 90)
+
+        out2 = a2._min_size()
+        out2_in = a2._min_size(to_inches=True)
+
+        assert np.all([np.allclose(cow.utils.to_inches(out2[i], "pt"), out2_in[i])
+                      for i in [0,1]]), \
+            ("error in _min_size's application of `to_inches` parameter "+
+             "type: %s, test 2" % _type)
+
+        assert np.allclose(out, out2[::-1]), \
+            ("expected a rotation of 90 degrees to text to directly flip " +
+             "required size, type : %s, test 1+2" % _type)
 
 
-# printing ----------
+        a2_long = cow.text("Fig 1 Fig 1", _type = _type) +\
+            p9.element_text(angle = 90)
+        out2_long = a2_long._min_size()
 
+        assert (3 * out2[1]> out2_long[1] > 2 * out2[1]) and \
+                np.allclose(out2_long[0], out2[0]), \
+            ("if text size 2x+ in length (and rotated 90 degrees), " +
+             "relative sizes should match, type: %s, text 2" % _type)
+
+        a2_tall = cow.text("Fig 1\nFig 1", _type = _type) +\
+            p9.element_text(angle = 90)
+        out2_tall = a2_tall._min_size()
+
+        assert (2.5 * out2[0] > out2_tall[0] > 1.5 * out2[0]) and \
+                np.allclose(out2_tall[1], out2[1]), \
+            ("if text size ~2x in height (and rotated 90 degrees), "+
+             "relative sizes should match, type: %s, text 2" % _type)
+
+def test_text__min_size2(data_regression):
+    """
+    _min_size data regression test on sizing for different base types
+
+    Notes
+    -----
+    the usage of data_regression requires ensuring the saved
+    dictionary is "yaml"-ifable (which is why we do things like
+    converting the values to strings).
+    """
+    static_min_size_data = {}
+
+    for _type in ["cow_tag", "cow_caption", "cow_text",
+                "cow_title", "cow_subtitle"]:
+
+        a = cow.text("Fig 1", _type = _type)
+        out = a._min_size()
+        inner_dict_list = [str(x) for x in out]
+        static_min_size_data[_type] = inner_dict_list
+
+    data_regression.check(static_min_size_data)
+
+
+@pytest.mark.parametrize("_type", ["cow_tag", "cow_caption", "cow_text",
+                "cow_title", "cow_subtitle"])
+def test_text__base_text_image(image_regression, _type):
+    """
+    tests for _base_text_image (regression for image,
+        and bbox versus _min_size check)
+    """
+    # base option
+    a = cow.text("Fig 1", _type = _type)
+    fig, bbox = a._base_text_image()
+
+    # matchin with min_size
+    ms_out = a._min_size()
+    assert (bbox.width > ms_out[0] > .5 * bbox.width) and \
+            (bbox.height > ms_out[1] > .5 * bbox.height), \
+        ("expect that bbox is slightly bigger than min_sizing, " +
+         "type = %s, test 1" % _type)
+
+    with io.BytesIO() as fid2:
+        fig.savefig(fname=fid2, format = "png")
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+
+@pytest.mark.parametrize("_type", ["cow_tag", "cow_caption", "cow_text",
+                "cow_title", "cow_subtitle"])
+def test_text__base_text_image2(image_regression, _type):
+    """
+    tests for _base_text_image (regression for image,
+        and bbox versus _min_size check)
+
+    test rotated 90 degrees
+    """
+    # rotated option
+    a = cow.text("Fig 1", _type = _type) +\
+        p9.element_text(angle = 90)
+    fig, bbox = a._base_text_image()
+
+    # matchin with min_size
+    ms_out = a._min_size()
+    assert (bbox.width > ms_out[0] > .5 * bbox.width) and \
+            (bbox.height > ms_out[1] > .5 * bbox.height), \
+        ("expect that bbox is slightly bigger than min_sizing, " +
+         "type = %s, test 1" % _type)
+
+    with io.BytesIO() as fid2:
+        fig.savefig(fname=fid2, format = "png")
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+@pytest.mark.parametrize("_type", ["cow_tag", "cow_caption", "cow_text",
+                "cow_title", "cow_subtitle"])
+@given(st.floats(min_value=.5, max_value=49),
+    st.floats(min_value=.5, max_value=49))
+@settings(max_examples=4, deadline=timedelta(milliseconds=1000))
+def test_text__default_size(_type, height, width):
+    """
+    test for _default_size function
+    """
+    # base option
+    a = cow.text("Fig 1", _type = _type)
+    ms_out = a._min_size(to_inches = True)
+
+    assert np.allclose(a._default_size(), ms_out), \
+        ("if width & height input are none, expect to return " +
+         "_min_size(to_inches=True), type = %s, test 1" % _type)
+
+    ds_out = a._default_size(width=width)
+
+    assert np.allclose(ds_out, (width, ms_out[1])), \
+        ("if width is non-none, height none, expected return " +
+         "(width, min_size(to_inches=True)[1]), type = %s, test 1" % _type)
+
+    ds_out2 = a._default_size(height=height)
+
+    assert np.allclose(ds_out2, (ms_out[0], height)), \
+        ("if height is non-none, width none, expected return " +
+         "(min_size(to_inches=True)[0], height), type = %s, test 1" % _type)
+
+    ds_out3 = a._default_size(height=height, width=width)
+
+    assert np.allclose(ds_out3, (width, height)), \
+        ("if height is non-none, width non-none, expected return " +
+         "(width, height), type = %s, test 1" % _type)
+
+
+    # long option
+    a_long = cow.text("Fig 1 Fig 1", _type = _type)
+    ms_out_long = a_long._min_size(to_inches = True)
+
+    assert np.allclose(a_long._default_size(), ms_out_long), \
+        ("if width & height input are none, expect to return " +
+         "_min_size(to_inches=True), type = %s, test 2" % _type)
+
+    assert np.allclose(a_long._default_size(), ms_out_long), \
+        ("if width & height input are none, expect to return " +
+         "_min_size(to_inches=True), type = %s, test 2" % _type)
+
+    ds_out_long = a_long._default_size(width=width)
+
+    assert np.allclose(ds_out_long, (width, ms_out_long[1])), \
+        ("if width is non-none, height none, expected return " +
+         "(width, min_size(to_inches=True)[1]), type = %s, test 2" % _type)
+
+    ds_out2_long = a_long._default_size(height=height)
+
+    assert np.allclose(ds_out2_long, (ms_out_long[0], height)), \
+        ("if height is non-none, width none, expected return " +
+         "(min_size(to_inches=True)[0], height), type = %s, test 2" % _type)
+
+    ds_out3_long = a_long._default_size(height=height, width=width)
+
+    assert np.allclose(ds_out3_long, (width, height)), \
+        ("if height is non-none, width non-none, expected return " +
+         "(width, height), type = %s, test 2" % _type)
+
+
+
+
+    # 2x height option
+    a_tall = cow.text("Fig 1\nFig 1", _type = _type)
+    ms_out_tall = a_tall._min_size(to_inches = True)
+
+    assert np.allclose(a_tall._default_size(), ms_out_tall), \
+        ("if width & height input are none, expect to return " +
+         "_min_size(to_inches=True), type = %s, test 3" % _type)
+
+    ds_out_tall = a_tall._default_size(width=width)
+
+    assert np.allclose(ds_out_tall, (width, ms_out_tall[1])), \
+        ("if width is non-none, height none, expected return " +
+         "(width, min_size(to_inches=True)[1]), type = %s, test 3" % _type)
+
+    ds_out2_tall = a_tall._default_size(height=height)
+
+    assert np.allclose(ds_out2_tall, (ms_out_tall[0], height)), \
+        ("if height is non-none, width none, expected return " +
+         "(min_size(to_inches=True)[0], height), type = %s, test 3" % _type)
+
+    ds_out3_tall = a_tall._default_size(height=height, width=width)
+
+    assert np.allclose(ds_out3_tall, (width, height)), \
+        ("if height is non-none, width non-none, expected return " +
+         "(width, height), type = %s, test 3" % _type)
+
+
+def test_text__svg():
+    raise ValueError("Not Tested")
+
+
+def test_text_save():
+    raise ValueError("Not Tested")
+
+
+def test_text_show():
+    raise ValueError("Not Tested")
+
+
+# printing -------------
+@pytest.mark.parametrize("_type", ["cow_tag", "cow_caption", "cow_text",
+                "cow_title", "cow_subtitle"])
+def test_text__str__(monkeypatch, capsys, _type):
+    """
+    test text.__str__, static
+
+    print(.) also creates the figure
+    """
+    monkeypatch.setattr(plt, "show", lambda:None)
+
+    a = cow.text("Fig 1", _type = _type)
+
+    print(a)
+    captured = capsys.readouterr()
+
+    re_cap = re.search("<text \(-{0,1}[0-9]+\)>\\n", captured.out)
+    assert re_cap is not None and \
+        re_cap.start() == 0 and re_cap.end() == len(captured.out),\
+        "expected __str__ expression for text to be of <text (num)> format"
+
+
+@pytest.mark.parametrize("_type", ["cow_tag", "cow_caption", "cow_text",
+                "cow_title", "cow_subtitle"])
+def test_text__repr__(monkeypatch, capsys, _type):
+    """
+    test text.__repr__, static
+    """
+    monkeypatch.setattr(plt, "show", lambda:None)
+
+    a = cow.text("Fig 1", _type = _type)
+
+    print(repr(a))
+    captured = capsys.readouterr()
+    lines = re.split("\\n", captured.out)
+
+    re_cap = re.search("<text \(-{0,1}[0-9]+\)>\\n", captured.out)
+    assert re_cap is not None and \
+        re_cap.start() == 0 and re_cap.end() == (len(lines[0]) + 1),\
+        "expected __repr__ first line expression for text to be "+\
+        "of <text (num)> format"
+
+
+    assert ((lines[1] == "label:") and
+        (lines[2] == "  |" + a.label) and
+        (lines[3] == "element_text:") and
+        (lines[5] == "_type:") and
+        (lines[6] == "  |\"%s\"" % _type)), \
+        "expected overall __repr__ expression to follow a specific format"
 
 

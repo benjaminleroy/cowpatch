@@ -288,6 +288,22 @@ class text:
 
     def _base_text_image(self, close=True):
         """
+        Create base figure and obtain bbox structure that contains
+        the image in the figure
+
+        Arguments
+        ---------
+        close : boolean
+            if we should close the matplotlib plt instance (default True)
+
+        Returns
+        -------
+        fig : matplotlib figure
+            figure of the text (in the smallest area possible)
+        bbox : matplotlib bbox object
+            bbox for the associated figure (describing bounding box
+            of text object in the image)
+
         Note
         ----
         this code is simlar to that in _min_size
@@ -317,7 +333,7 @@ class text:
 
         return fig, bbox
 
-    def _default_size(self, width, height):
+    def _default_size(self, width=None, height=None):
         """
         (Internal) obtain default recommended size of overall text object if
         width or height is None
@@ -336,11 +352,17 @@ class text:
         width : float
             returns default width for given object if not provided (else just
             returns provided value). If only height is provided then width
-            proposed is the minimum width (including margins).
+            proposed is the minimum width (including margins). THIS IS IN INCHES
         height : float
             returns default height for given object if not provided (else just
             returns provided value). If only width is provided then height
-            proposed is the minimum height (including margins).
+            proposed is the minimum height (including margins). THIS IS IN INCHES
+
+        Notes
+        -----
+        This function is internal, it does assume that in width/height is not
+        None that you've done your homework and not set width or height as too
+        small.
         """
         if width is not None and height is not None:
             return width, height
