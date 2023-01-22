@@ -289,7 +289,7 @@ class patch:
         else:
             raise ValueError("patch's annotation's tags_order is not an expected option")
 
-        # list correction
+        # list correction (length of output)
         if cur_annotation is not None and \
             inherits(cur_annotation.tags[0], list) and \
             len(cur_annotation.tags[0]) < len(self.grobs):
@@ -786,9 +786,11 @@ class patch:
         if data_dict is not None and \
             data_dict.get("parent-guided-annotation-update") is not None:
 
-            # should only actually update if tags_inherit="override" within
-            # cur_annotation
-            cur_annotation += data_dict["parent-guided-annotation-update"]
+            # Note: this addition allows for the keeping of titles but the
+            # update of tags
+            if cur_annotation.inheritance_type() == "override":
+                cur_annotation += data_dict["parent-guided-annotation-update"]
+
 
 
         # prep section: annotation global size corrections --------------------
@@ -889,10 +891,17 @@ class patch:
                 sizes = self._hierarchical_general_process(width = 1,
                                                            height = 1,
                                                            approach = "size")
+            else:
+                sizes = data_dict["sizes"]
+
+            #### prep index tracking (for uniquification of svg objections):
+            if data_dict is None or data_dict.get("u_idx") is None:
+                _u_idx = str(self.__hash__())
+            else:
+                _u_idx = data_dict["u_idx"]
+
             #### TODO?: maybe track the time it takes to calculate sizes and if it takes to
             #### long provide user with progressbar for the actual plot creation?
-
-
 
 
         ### prep for grob processing
@@ -912,6 +921,7 @@ class patch:
                 inner_area = areas[p_idx]
 
                 # TODO: start here
+                # (1/16) what if within this space we check more things?
                 if tag_index_array[p_idx] is not None:
                     grob_tag_index = tag_index_array[p_idx]
 
@@ -924,7 +934,7 @@ class patch:
                                               [grob_tag_index])
 
 
-                else:
+                else: # no tag required
                     fundamental_tag = False
                     grob_tag_index = None
                     current_index = ()
@@ -936,7 +946,8 @@ class patch:
                 # the _step_down_tags_info
                 tag_margin_dict = cur_annotation._calculate_tag_margin_sizes(
                                         fundamental=fundamental_tag,
-                                        index=current_index,
+                                        index=grob_tag_index,
+                                        full_index=current_index,
                                         to_inches=True)
 
 
@@ -947,6 +958,7 @@ class patch:
 
             ### create tag
             if approach == "create":
+                inner_u_idx = _u_idx + "_" + str(p_idx)
                 tag_loc, image_loc, tag_image = \
                     cur_annotation._get_tag_and_location(
                                             width=inner_area.width,
@@ -960,7 +972,7 @@ class patch:
             if inherits(image, patch):
                 ### default sizing
                 data_dict_pass_through = data_dict.copy()
-                data_dict_pass_through["parent-index"] =
+                data_dict_pass_through["parent-index"] = current_index
                 data_dict_pass_through["parent-guided-annotation-update"] = \
                     cur_annotation._step_down_tags_info(parent_index = current_index)
 
@@ -989,6 +1001,7 @@ class patch:
 
                 ### saving / showing
                 if approach == "create":
+                    data_dict_pass_through["u_idx"] = inner_u_idx
                     data_dict_pass_through["size"] = sizes[p_idx]
                     grob_image = image._hierarchical_general_process(
                                     width=grob_width,
@@ -1036,6 +1049,7 @@ class patch:
                                         width = sizes[p_idx][0],
                                         height = sizes[p_idx][1],
                                         dpi = 96)
+                    grob_image = _uniquify_svg_safe(grob_image, inner_u_idx)
 
             elif inherits(image, text):
                 ### default sizing

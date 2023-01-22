@@ -241,6 +241,25 @@ def test__add__():
         assert a2_expected == a1_updated, \
             ("updating with addition failed to perform as expected (attribute %s)" % inner_key)
 
+def test__get_tag_full():
+    mya = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
+                     subtitle = {"top":"my very special plot",
+                                 "bottom":"below my plot's bottom is the subtitle"},
+                     caption = "this is an example figure",
+                     tags_format = ("Fig {0}", "Fig {0}.{1}"), tags = ("1", "a"),
+                     tags_loc = "top")
+
+    assert mya._get_tag_full(0) == cow.text("Fig 1", _type = "cow_tag"), \
+        "expect tag creation to match tags_format structure (level 0), int"
+    assert mya._get_tag_full((0,)) == cow.text("Fig 1", _type = "cow_tag"), \
+        "expect tag creation to match tags_format structure (level 0), tuple"
+
+    assert mya._get_tag_full((1,2)) == cow.text("Fig 2.c", _type = "cow_tag"), \
+        "expect tag creation to match tags_format structure (level 1)"
+
+    with pytest.raises(Exception) as e_info:
+        mya._get_tag((1,2,3))
+        # can't obtain a tag when we don't have formats that far down
 def test__get_tag():
     mya = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
                      subtitle = {"top":"my very special plot",
@@ -251,15 +270,70 @@ def test__get_tag():
 
     assert mya._get_tag(0) == cow.text("Fig 1", _type = "cow_tag"), \
         "expect tag creation to match tags_format structure (level 0), int"
-    assert mya._get_tag((0,)) == cow.text("Fig 1", _type = "cow_tag"), \
+
+    index = np.random.choice(100)
+    assert mya._get_tag(index) == cow.text("Fig %i" % (index+1), _type = "cow_tag"), \
+        "expect tag creation to match tags_format structure (level 0), int"
+
+
+    # can't obtain a tag when we don't have formats that far down
+    with pytest.raises(Exception) as e_info:
+        mya._get_tag((0,))
+
+    with pytest.raises(Exception) as e_info:
+        mya._get_tag((1,2))
+
+    with pytest.raises(Exception) as e_info:
+        mya._get_tag((1,2,3))
+
+    # list structure
+    mya2 = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
+                     subtitle = {"top":"my very special plot",
+                                 "bottom":"below my plot's bottom is the subtitle"},
+                     caption = "this is an example figure",
+                     tags = (["banana", "apple"],),
+                     tags_loc = "top")
+
+    assert (mya2._get_tag(0) == cow.text("banana", _type = "cow_tag")) & \
+            (mya2._get_tag(1) == cow.text("apple", _type = "cow_tag")), \
+        "expect tag creation to match list structure (level 0), int"
+
+    assert mya2._get_tag(3) == cow.text("", _type = "cow_tag"), \
+        "expected tag of index beyond list length to be an empty tag "+\
+        "(but not raise an error)"
+
+    with pytest.raises(Exception) as e_info:
+        mya2._get_tag((0,))
+
+    with pytest.raises(Exception) as e_info:
+        mya2._get_tag((0,0))
+
+
+def test__get_tag_full_rotations():
+    """
+    test that ._get_tag works correctly with rotation informatin
+
+    """
+
+    mya = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
+                     subtitle = {"top":"my very special plot",
+                                 "bottom":"below my plot's bottom is the subtitle"},
+                     caption = "this is an example figure",
+                     tags_format = ("Fig {0}", "Fig {0}.{1}"), tags = ("1", "a"),
+                     tags_loc = "left")
+
+    assert mya._get_tag_full(0) == cow.text("Fig 1", _type = "cow_tag"), \
+        "expect tag creation to match tags_format structure (level 0), int"
+    assert mya._get_tag_full((0,)) == cow.text("Fig 1", _type = "cow_tag"), \
         "expect tag creation to match tags_format structure (level 0), tuple"
 
-    assert mya._get_tag((1,2)) == cow.text("Fig 2.c", _type = "cow_tag"), \
+    assert mya._get_tag_full((1,2)) == cow.text("Fig 2.c", _type = "cow_tag"), \
         "expect tag creation to match tags_format structure (level 1)"
 
     with pytest.raises(Exception) as e_info:
         mya._get_tag((1,2,3))
         # can't obtain a tag when we don't have formats that far down
+
 
 def test__get_tag_rotations():
     """
@@ -276,15 +350,45 @@ def test__get_tag_rotations():
 
     assert mya._get_tag(0) == cow.text("Fig 1", _type = "cow_tag"), \
         "expect tag creation to match tags_format structure (level 0), int"
-    assert mya._get_tag((0,)) == cow.text("Fig 1", _type = "cow_tag"), \
-        "expect tag creation to match tags_format structure (level 0), tuple"
 
-    assert mya._get_tag((1,2)) == cow.text("Fig 2.c", _type = "cow_tag"), \
-        "expect tag creation to match tags_format structure (level 1)"
+
+    index = np.random.choice(100)
+    assert mya._get_tag(index) == cow.text("Fig %i" % (index+1), _type = "cow_tag"), \
+        "expect tag creation to match tags_format structure (level 0), int"
+
+
+    # can't obtain a tag when we don't have formats that far down
+    with pytest.raises(Exception) as e_info:
+        mya._get_tag((0,))
+
+    with pytest.raises(Exception) as e_info:
+        mya._get_tag((1,2))
 
     with pytest.raises(Exception) as e_info:
         mya._get_tag((1,2,3))
-        # can't obtain a tag when we don't have formats that far down
+
+    # list structure
+    mya2 = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
+                     subtitle = {"top":"my very special plot",
+                                 "bottom":"below my plot's bottom is the subtitle"},
+                     caption = "this is an example figure",
+                     tags = (["banana", "apple"],),
+                     tags_loc = "left")
+
+    assert (mya2._get_tag(0) == cow.text("banana", _type = "cow_tag")) & \
+            (mya2._get_tag(1) == cow.text("apple", _type = "cow_tag")), \
+        "expect tag creation to match list structure (level 0), int"
+
+    assert mya2._get_tag(3) == cow.text("", _type = "cow_tag"), \
+        "expected tag of index beyond list length to be an empty tag "+\
+        "(but not raise an error)"
+
+    with pytest.raises(Exception) as e_info:
+        mya2._get_tag((0,))
+
+    with pytest.raises(Exception) as e_info:
+        mya2._get_tag((0,0))
+
 
 def test__step_down_tags_info():
     junk_dict = dict(title = {"top":cow.text("banana", _type = "cow_title")},
@@ -579,7 +683,8 @@ def test__calculate_tag_margin_sizes(location):
                              tags_loc = location)
     a0_list_nest = cow.annotation(tags = (["young", "old"],
                                           ["harry", "hermione", "ron"]),
-                             tags_loc = location)
+                             tags_loc = location,
+                             tags_format = ("{0}", "{0}{1}"))
 
     a0_tuple_nest = cow.annotation(tags_format = ("Fig {0}", "Fig {0}.{1}"),
                            tags = ("1", "a"),
@@ -591,22 +696,30 @@ def test__calculate_tag_margin_sizes(location):
     for a_idx, a0 in enumerate(a0_all):
         a0_title = a0 + cow.annotation(title = "Conformal Inference")
 
-        if a0.tags_depth == 1:
-            base = a0._calculate_tag_margin_sizes(index = (1,))
-            base_plus_title = a0_title._calculate_tag_margin_sizes(index = (1,))
-        else:
-            base = a0._calculate_tag_margin_sizes(index = (1,0))
-            base_plus_title = a0_title._calculate_tag_margin_sizes(index = (1,0))
+
+        base = a0._calculate_tag_margin_sizes(index = 1)
+        base_plus_title = a0_title._calculate_tag_margin_sizes(index = 1)
 
         assert base == base_plus_title, \
             ("title attributes shouldn't impact the sizing structure for a "+\
             "tag (structure: %s, loc %s)") % (a_info_str[a_idx], location)
 
-        # fundamental
         if a0.tags_depth == 2:
-            base_f = a0._calculate_tag_margin_sizes(index = (1,),
+            # not title
+            a0_s = a0._step_down_tags_info(1)
+            a0_title_s = a0_title._step_down_tags_info(1)
+
+            base_s = a0_s._calculate_tag_margin_sizes(index = 0)
+            base_plus_title_s = a0_title_s._calculate_tag_margin_sizes(index = 0)
+
+            assert base_s == base_plus_title_s, \
+                ("title attributes shouldn't impact the sizing structure for a "+\
+                "tag - stepdown (structure: %s, loc %s)") % (a_info_str[a_idx], location)
+
+        # fundamental
+            base_f = a0._calculate_tag_margin_sizes(index = 1,
                                                   fundamental=True)
-            base_plus_title_f = a0_title._calculate_tag_margin_sizes(index = (1,),
+            base_plus_title_f = a0_title._calculate_tag_margin_sizes(index = 1,
                                                   fundamental=True)
 
             assert base_f == base_plus_title_f and \
@@ -622,11 +735,15 @@ def test__calculate_tag_margin_sizes(location):
 
         # when a tag shouldn't be created
         if a0.tags_depth == 1:
-            base_e = a0._calculate_tag_margin_sizes(index = (1,0))
-            base_plus_title_e = a0_title._calculate_tag_margin_sizes(index = (1,0))
+            a0_s = a0._step_down_tags_info(1)
+            a0_title_s = a0_title._step_down_tags_info(1)
+            base_e = a0_s._calculate_tag_margin_sizes(index = 0)
+            base_plus_title_e = a0_title_s._calculate_tag_margin_sizes(index = 0)
         else:
-            base_e = a0._calculate_tag_margin_sizes(index = (1,0,1))
-            base_plus_title_e = a0_title._calculate_tag_margin_sizes(index = (1,0,1))
+            a0_s = a0._step_down_tags_info(1)._step_down_tags_info(0)
+            a0_title_s = a0_title._step_down_tags_info(1)._step_down_tags_info(0)
+            base_e = a0._calculate_tag_margin_sizes(index = 1)
+            base_plus_title_e = a0_title._calculate_tag_margin_sizes(index = 1)
 
         assert base_e == base_plus_title_e and \
                 base_e == {'min_inner_width': 0,
@@ -641,9 +758,9 @@ def test__calculate_tag_margin_sizes(location):
 
         # not fundamental
         if a0.tags_depth == 2:
-            base_nf = a0._calculate_tag_margin_sizes(index = (1,),
+            base_nf = a0._calculate_tag_margin_sizes(index = 1,
                                                   fundamental=False)
-            base_plus_title_nf = a0_title._calculate_tag_margin_sizes(index = (1,),
+            base_plus_title_nf = a0_title._calculate_tag_margin_sizes(index = 1,
                                                   fundamental=False)
 
             assert base_nf == base_plus_title_nf and \
@@ -662,8 +779,10 @@ def test__calculate_tag_margin_sizes(location):
     a0 = a0_list_nest
     a0_title = a0 + cow.annotation(title = "Conformal Inference")
 
-    base_le = a0._calculate_tag_margin_sizes(index = (1,5))
-    base_plus_title_le = a0_title._calculate_tag_margin_sizes(index = (1,5))
+    a0_s = a0._step_down_tags_info(1)
+    a0_title_s = a0_title._step_down_tags_info(1)
+    base_le = a0_s._calculate_tag_margin_sizes(index = 5)
+    base_plus_title_le = a0_title_s._calculate_tag_margin_sizes(index = 5)
 
     assert base_le == base_plus_title_le and \
         base_le == {'min_inner_width': 0,
@@ -680,8 +799,10 @@ def test__calculate_tag_margin_sizes(location):
     a0_title = a0 + cow.annotation(title = "Conformal Inference")
 
     for t_idx in np.random.choice(100,2):
-        base_t = a0._calculate_tag_margin_sizes(index = (1,t_idx))
-        base_plus_title_t = a0_title._calculate_tag_margin_sizes(index = (1,t_idx))
+        a0_s = a0._step_down_tags_info(1)
+        a0_title_s = a0_title._step_down_tags_info(1)
+        base_t = a0_s._calculate_tag_margin_sizes(index = t_idx)
+        base_plus_title_t = a0_title_s._calculate_tag_margin_sizes(index = t_idx)
 
         assert base_t == base_plus_title_t and \
             base_t != {'min_inner_width': 0,
@@ -710,3 +831,5 @@ def test__get_titles_and_locations():
     # identify expected locations and potentially try to create
     # svg objects of the image themselves to compare the output too
     raise ValueError("Not Tested")
+
+

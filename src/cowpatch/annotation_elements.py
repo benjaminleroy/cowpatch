@@ -94,7 +94,7 @@ class annotation:
         self.tags_loc = None
         self.tags_inherit = None
         self._tags_format = None
-        self.tags_depth = -1
+        #self.tags_depth = -1
 
         self._update_all_attributes(title=title,
                                     subtitle=subtitle,
@@ -134,7 +134,22 @@ class annotation:
 
         return new_tags_format
 
+    @property
+    def tags_depth(self):
+        """
+        tags_depth definition
+        """
+        if inherits(self.tags, list):
+            tags_depth = 1
+        elif (self.tags_format is None or self.tags_format is np.nan) and \
+            (self.tags is None or self.tags is np.nan):
+            tags_depth = -1
+        elif self.tags_format is None or self.tags_format is np.nan:
+            tags_depth = len(self.tags)
+        else:
+            tags_depth = len(self.tags_format)
 
+        return tags_depth
 
     def _clean_up_attributes(self):
         """
@@ -314,20 +329,22 @@ class annotation:
 
             self._tags_format = new_tags_format
 
-        # tags_depth definition --------------------
-        if inherits(self.tags, list):
-            self.tags_depth = 1
-        elif (self.tags_format is None or self.tags_format is np.nan) and \
-            (self.tags is None or self.tags is np.nan):
-            self.tags_depth = -1
-        elif self.tags_format is None or self.tags_format is np.nan:
-            self.tags_depth = len(self.tags)
-        else:
-            self.tags_depth = len(self.tags_format)
+        # # tags_depth definition --------------------
+        # if inherits(self.tags, list):
+        #     self.tags_depth = 1
+        # elif (self.tags_format is None or self.tags_format is np.nan) and \
+        #     (self.tags is None or self.tags is np.nan):
+        #     self.tags_depth = -1
+        # elif self.tags_format is None or self.tags_format is np.nan:
+        #     self.tags_depth = len(self.tags)
+        # else:
+        #     self.tags_depth = len(self.tags_format)
 
-    def _get_tag(self, index=(0,)):
+
+
+    def _get_tag_full(self, index=(0,)):
         """
-        Create text of tag for given level and index
+        Create text of tag for given level and index (fully goes down)
 
         Arguments
         ---------
@@ -341,12 +358,11 @@ class annotation:
 
         Notes
         -----
-        this should return objects relative to correct rotation...
+        TODO: need to update to just deal with 1 level of index?
         """
         if inherits(index, int):
             index = (index,)
 
-        pdb.set_trace()
         if len(self.tags_format) < len(index):
             raise ValueError("tags_format tuple has less indices than _get_tag index suggests")
 
@@ -371,6 +387,48 @@ class annotation:
 
         return et
 
+    def _get_tag(self, index=0):
+        """
+        Create text of tag for given level and index
+
+        Arguments
+        ---------
+        index : integer
+            current index for desired tag
+
+        Returns
+        -------
+        cow.text object for tag
+        """
+
+        level_format = self.tags_format[0].label
+        indices_used = [int(re.findall("[0-9]+", x)[0])
+                            for x in re.findall("\{[0-9]+\}",
+                                                level_format)]
+
+        if np.max(indices_used) > 0:
+            raise ValueError("current tags_format structure %s has more "+
+                             "indices than the level expected" % level_format)
+
+        if self.tags is None:
+            return text(label = "", _type = "cow_tag")
+
+        if inherits(self.tags[0], list):
+            if index < len(self.tags[0]):
+                index_string = self.tags[0][index]
+            else:
+                #index_string = ""
+                # in doesn't have index - return empty element
+                return text(label = "", _type = "cow_tag")
+        else:
+            index_string = self._get_index_value(level=0,index=index)
+
+        et = copy.deepcopy(self.tags_format[0])
+        et.label = et.label.format(index_string)
+
+        return et
+
+
 
 
     def _get_index_value(self, level=0, index=0):
@@ -385,6 +443,10 @@ class annotation:
             tuple of integers that contain the relative level indices of the
             desired tag.
 
+        Note
+        ----
+        For developers: this function is overkill as we now create child
+        annotation objects so "level=0" should always be the case
         """
         if len(self.tags) < level:
             return ""
@@ -430,15 +492,18 @@ class annotation:
             raise ValueError('type of auto-tags must be in '+\
                              '["0","1", "a", "A", "i", "I"]')
 
-    def _calculate_tag_margin_sizes(self, index=(0,),
+    def _calculate_tag_margin_sizes(self, index=0, full_index=None,
                                     fundamental=False,
                                     to_inches=False):
         """
-        (Internal) calculate tag's margin sizes
+        (Internal) calculate tag's margin sizes (all zeros if not actually
+        creating object)
 
         Arguments
         ---------
-        index : int or tuple
+        index : int
+            integer of current level index (the last value of the full_index)
+        full_index : int or tuple
             tuple of indices relative to the hierarchical ordering of the tag
         fundamental : boolean
             if the associated object being "tagged" is a fundamental object,
@@ -448,7 +513,7 @@ class annotation:
 
         Returns
         -------
-        dictatiory with following keys/ objects
+        dictionary with following keys/ objects
         min_inner_width : float
             minimum width required for title & subtitles on top or bottom
         min_full_width : float
@@ -463,10 +528,27 @@ class annotation:
         top_left_loc : tuple
             tuple of top left corner of inner image relative to title text
 
+        Notes
+        -----
+        For developers: this function also returns the above dictionary with
+        all zeros if there will be no tag created (which is a function of the
+        `fundamental` argument and `full_index` argument)
+
         """
+        # clean-up
+        if full_index is None:
+            full_index = (index, )
+
+        if not inherits(full_index, tuple):
+            full_index = (full_index, )
+
+        if index != full_index[-1]:
+            raise ValueError("structure between arguments `index` and "+
+                             "`full_index` disagree.")
+
         # if we shouldn't actually make the tag
         if index is None or \
-            (self.tags_depth != len(index) and not fundamental):
+            (self.tags_depth != len(full_index) and not fundamental):
             return {"min_inner_width": 0,
                 "min_full_width": 0, # not able to be nonzero for tag
                 "extra_used_width": 0,
@@ -475,9 +557,6 @@ class annotation:
                 "top_left_loc": (0,0)
                 }
 
-        # clean-up
-        if not inherits(index, tuple):
-            index = (index, )
 
         # getting tag -------------------
         tag = self._get_tag(index=index)
@@ -509,7 +588,8 @@ class annotation:
                 }
 
     def _get_tag_and_location(self, width, height,
-                              index = (0,),
+                              index=0,
+                              full_index=None,
                               fundamental=False):
         """
         create desired tag and identify location to place tag and associated
@@ -524,6 +604,11 @@ class annotation:
         index : tuple
             index of the tag. The size of the tuple captures
             depth.
+        full_index : int or tuple
+            tuple of indices relative to the hierarchical ordering of the tag
+        fundamental : boolean
+            if the associated object being "tagged" is a fundamental object,
+            if not, a tag is only made if the tags_depth is at the final level.
 
         Return
         ------
@@ -537,14 +622,23 @@ class annotation:
             tag text svg object
         """
         # clean-up
-        if not inherits(index, tuple):
-            index = (index, )
+        if full_index is None:
+            full_index = (index, )
+
+        if not inherits(full_index, tuple):
+            full_index = (full_index, )
+
+        if index != full_index[-1]:
+            raise ValueError("structure between arguments `index` and "+
+                             "`full_index` disagree.")
+
 
         # if we shouldn't actually make the tag
-        if self.tags_depth != len(index) and not fundamental:
+        if index is None or \
+            (self.tags_depth != len(full_index) and not fundamental):
             return None, None, None
 
-        tag_image = self.get_tag(index = index)
+        tag_image = self._get_tag(index=index)
 
         if self.tags_loc in ["top", "bottom"]:
             inner_width_pt = width
@@ -896,6 +990,11 @@ class annotation:
         -------
         annotation with all tag attributes to update for children's
         annotation.
+
+        Notes
+        -----
+        For developers: we step down both the the `tags` and `tags_format`
+        parameters of the annotation object.
         """
         if self.tags is None or \
             len(self.tags) <= 1 or \
@@ -925,6 +1024,9 @@ class annotation:
                                       tags_loc = self.tags_loc)
         return inner_annotation
 
+
+    def inheritance_type(self):
+        return self.tag_inherit
 
 
     def __add__(self, other):
