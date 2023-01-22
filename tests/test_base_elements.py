@@ -526,7 +526,7 @@ def test_patch__estimate_default_min_desired_size_Annotation():
                         )), \
         "suggested height incorrectly sizes the smallest height of the images "+\
         "(v2 - nested, annotation)"
-    
+
     # tag nested option -----------
     vis_nested_tag = cow.patch(g0,cow.patch(g1,g2)+\
                         cow.layout(ncol=1, rel_heights = [1,2]) +\
@@ -557,7 +557,7 @@ def test_patch__estimate_default_min_desired_size_Annotation():
                         cow.text("My caption", _type="cow_caption").\
                             _min_size(to_inches=True)[1])), \
         "suggested height incorrectly sizes the smallest height of the images "+\
-        "(v2 - nested + tagged, annotation)"               
+        "(v2 - nested + tagged, annotation)"
 
 def test_patch__default_size__both_none():
     """
@@ -1108,9 +1108,9 @@ def test_patch__svg():
 
 # printing ----------
 
-def test_patch__repr__(monkeypatch,capsys):
+def test_patch__str__(monkeypatch,capsys):
     """
-    test patch .__repr__, static
+    test patch .__str__, static
 
     print(.) also creates the figure
     """
@@ -1140,7 +1140,7 @@ def test_patch__repr__(monkeypatch,capsys):
         re_cap.start() == 0 and re_cap.end() == len(captured.out),\
         "expected __str__ expression for patch to be of <patch (num)> format"
 
-def test_patch__str__(capsys):
+def test_patch__repr__(capsys):
 
     g0 = p9.ggplot(p9_data.mpg) +\
         p9.geom_bar(p9.aes(x="hwy")) +\
