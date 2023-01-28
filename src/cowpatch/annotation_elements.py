@@ -341,7 +341,6 @@ class annotation:
         #     self.tags_depth = len(self.tags_format)
 
 
-
     def _get_tag_full(self, index=(0,)):
         """
         Create text of tag for given level and index (fully goes down)
@@ -358,7 +357,11 @@ class annotation:
 
         Notes
         -----
-        TODO: need to update to just deal with 1 level of index?
+        *IMPORTANT*: the `_get_tag` function is likely the function you actually
+        want to use!
+
+        This function does process rotation expectation from `self.tag_loc`
+        attribute.
         """
         if inherits(index, int):
             index = (index,)
@@ -385,6 +388,10 @@ class annotation:
             et = text(label = "", _type = "cow_tag")
 
 
+        if self.tags_loc in ["left", "right"]:
+            et = et._additional_rotation(angle=90)
+
+
         return et
 
     def _get_tag(self, index=0):
@@ -399,6 +406,14 @@ class annotation:
         Returns
         -------
         cow.text object for tag
+
+        Notes
+        -----
+        If the annotation level is described with a list, then we
+        return an emtpy string, even if tags_format suggests otherwise.
+
+        This function does process rotation expectation from `self.tag_loc`
+        attribute.
         """
 
         level_format = self.tags_format[0].label
@@ -420,15 +435,17 @@ class annotation:
                 #index_string = ""
                 # in doesn't have index - return empty element
                 return text(label = "", _type = "cow_tag")
+
         else:
             index_string = self._get_index_value(level=0,index=index)
 
         et = copy.deepcopy(self.tags_format[0])
         et.label = et.label.format(index_string)
 
+        if self.tags_loc in ["left", "right"]:
+            et = et._additional_rotation(angle=90)
+
         return et
-
-
 
 
     def _get_index_value(self, level=0, index=0):
@@ -598,11 +615,15 @@ class annotation:
         Arguments
         ---------
         width : float
-            width in pt
+            width in pt. If to small, request will auto-correct as this is
+            an internal function - the assessment should probably happen before
+            if you want to throw a warning.
         height : float
-            height in pt
-        index : tuple
-            index of the tag. The size of the tuple captures
+            height in pt. If to small, request will auto-correct as this is
+            an internal function - the assessment should probably happen before
+            if you want to throw a warning.
+        index : int
+            index of the tag. The annotation object should already capture
             depth.
         full_index : int or tuple
             tuple of indices relative to the hierarchical ordering of the tag
@@ -615,11 +636,16 @@ class annotation:
         tag_loc : tuple
             upper left corner location for tag
         image_loc : tuple
-            upper left corner location for image (assoicated with tag). If
-            the tag is on the top, this means where the corner of the image
-            should be placed to correctly be below the tag.
+            upper left corner location for image (associated with tag - NOT
+            THE TAG). If the tag is on the top, this means where the corner of
+            the image should be placed to correctly be below the tag.
         tag_image :
             tag text svg object
+
+        Notes
+        -----
+        TODO: This function does process rotation expectation from `self.tag_loc`
+        attribute.
         """
         # clean-up
         if full_index is None:
@@ -640,6 +666,10 @@ class annotation:
 
         tag_image = self._get_tag(index=index)
 
+        # if we shouldn't make the tag since it is an empty string
+        if tag_image.label == '':
+            return None, None, None
+
         if self.tags_loc in ["top", "bottom"]:
             inner_width_pt = width
             inner_height_pt = None
@@ -648,7 +678,7 @@ class annotation:
             inner_height_pt = height
 
         tag_image, size_pt = \
-            inner_tag._svg(width_pt=inner_width_pt,
+            tag_image._svg(width_pt=inner_width_pt,
                            height_pt=inner_height_pt)
 
         if self.tags_loc == "top":
@@ -658,16 +688,13 @@ class annotation:
             tag_loc = (0,0)
             image_loc = (size_pt[0], 0)
         elif self.tags_loc == "bottom":
-            tag_loc = (0, height - size_pt[0])
+            tag_loc = (0, height - size_pt[1])
             image_loc = (0,0)
         else: # self.tags_loc == "right":
-            tag_loc = (width - size_pt[1],0)
+            tag_loc = (width - size_pt[0],0)
             image_loc = (0,0)
 
         return tag_loc, image_loc, tag_image
-
-
-
 
 
 

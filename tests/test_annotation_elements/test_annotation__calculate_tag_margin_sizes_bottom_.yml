@@ -1,0 +1,35 @@
+0_base:
+  extra_used_height: '13.5'
+  extra_used_width: '0.0'
+  min_full_width: '0'
+  min_inner_height: '0.0'
+  min_inner_width: '36.84375'
+  top_left_loc: (0.0, 0.0)
+1_base:
+  extra_used_height: '0'
+  extra_used_width: '0'
+  min_full_width: '0'
+  min_inner_height: '0'
+  min_inner_width: '0'
+  top_left_loc: (0, 0)
+1_base_s:
+  extra_used_height: '13.5'
+  extra_used_width: '0.0'
+  min_full_width: '0'
+  min_inner_height: '0.0'
+  min_inner_width: '55.40625'
+  top_left_loc: (0.0, 0.0)
+2_base:
+  extra_used_height: '0'
+  extra_used_width: '0'
+  min_full_width: '0'
+  min_inner_height: '0'
+  min_inner_width: '0'
+  top_left_loc: (0, 0)
+2_base_s:
+  extra_used_height: '13.5'
+  extra_used_width: '0.0'
+  min_full_width: '0'
+  min_inner_height: '0.0'
+  min_inner_width: '43.59375'
+  top_left_loc: (0.0, 0.0)

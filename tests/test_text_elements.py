@@ -239,6 +239,94 @@ def test_text__update_element_text_from_theme2():
             "text object, so we expect an error (c, theme 2)"
 
 
+def test_text__additional_rotation0(image_regression):
+    """
+    test text's _additional_rotation function
+
+    ensure that 0 angle rotation returns the same object
+    """
+    # no angle change means that same object
+    myt = cow.text(label="Portland",
+                   element_text=p9.element_text(size=15,angle=15),
+                   _type="cow_text")
+
+    myt2 = myt._additional_rotation()
+
+    assert myt2 == myt, \
+        "default rotation of 0 should return the same text element"
+
+    myt2_2 = myt._additional_rotation(angle=0)
+
+    assert myt2_2 == myt, \
+        "explicit rotation of 0 should return the same text element"
+
+    # no element text pre-defined (this highlights the function shouldn't
+    # be used outside internal functions
+
+    myt_b = cow.text(label="Portland",
+                   _type="cow_text")
+
+    myt_b2 = myt_b._additional_rotation()
+
+    assert myt_b2 == myt_b, \
+        ("default rotation of 0 should return the same text element, " +
+        "initial has non element_text defined")
+
+    myt_b2_2 = myt_b._additional_rotation(angle=0)
+
+    assert myt_b2_2 == myt_b, \
+        ("explicit rotation of 0 should return the same text element, " +
+        "initial has non element_text defined")
+
+    # image regression for partially rotated object
+    with io.BytesIO() as fid2:
+        myt.save(filename=fid2, _format = "png")
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+def test_text__additional_rotation(image_regression):
+    """
+    test text's _additional_rotation function
+
+    ensures correct addition of rotation without overwriting other
+    parmeters
+    """
+    # additional parameters not lost
+    myt = cow.text(label="Portland",
+               element_text=p9.element_text(size=15,angle=15,color="blue"),
+               _type="cow_text")
+
+    myt2 = myt._additional_rotation(angle = 20)
+
+    old = myt.element_text.theme_element.properties
+    new_expected = old.copy()
+    new_expected["rotation"] = 35
+
+    assert myt2.element_text.theme_element.properties == new_expected, \
+        ("_additional_rotation should only impact the angle, not other "+
+        "element attributes")
+
+    # beyond 360 only does a max of 360 degrees
+    myt2_b = myt._additional_rotation(angle = 350)
+
+    assert np.allclose(myt2_b.element_text.theme_element.properties["rotation"], 5), \
+        "_additional_rotation should keep angle betwen [0, 360)"
+
+    myt2_b2 = myt._additional_rotation(angle = 345)
+
+    assert (myt2_b2.element_text.theme_element.properties["rotation"] < 360) and \
+        (np.allclose(myt2_b2.element_text.theme_element.properties["rotation"], 0) or
+         np.allclose(myt2_b2.element_text.theme_element.properties["rotation"], 360)), \
+        "_additional_rotation should keep angle betwen [0, 360), 360 strict"
+
+
+    # image regression for partially rotated object
+    with io.BytesIO() as fid2:
+        myt2.save(filename=fid2, _format = "png")
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+
+
+
 def test_text__get_full_element_text():
     """
     test _get_full_element_text (static test - using _type text not cow_text, etc.)

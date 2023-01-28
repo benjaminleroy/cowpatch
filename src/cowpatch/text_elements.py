@@ -30,6 +30,10 @@ class text:
             text label with desirable format (e.g. sympy, etc.)
         element_text : plotnine.themes.elements.element_text
             element object from plotnine
+        _type : string
+            string of which cowpatch text object should inherit attributes
+            from, if element_text argument doesn't competely define the text
+            attributes
 
         Notes
         -----
@@ -156,6 +160,41 @@ class text:
             return False
 
         return self.__dict__ == other.__dict__
+
+    def _additional_rotation(self, angle=0):
+        """
+        (internal function) to create a rotation of the original object
+
+        Arguments
+        ---------
+        angle : float
+            angle in degrees (0-360) to rotate the current text
+
+        Returns
+        -------
+        new text object that is a rotation of the current one
+        """
+
+        new_text_object = copy.deepcopy(self)
+
+        if angle == 0: # not alterations done
+            return new_text_object
+
+        if new_text_object.element_text is None:
+            new_text_object += p9.element_text(angle = angle)
+        else:
+            # grab the elment_text from text object
+            et = new_text_object.element_text.theme_element
+            current_angle = et.properties["rotation"]
+            et.properties["rotation"] = \
+                (((current_angle + angle) / 360.) -
+                    np.floor(((current_angle + angle) / 360.))) * 360
+
+            new_text_object += et
+
+        return new_text_object
+
+
 
 
     def _update_element_text_from_theme(self, theme, key=None):
@@ -407,6 +446,7 @@ class text:
         # TODO: update to the "correction proposal approach"
         if width_pt is not None:
             if width_pt < min_width_pt - 1e-10: # eps needed
+                plt.close()
                 raise ValueError("requested width of text object isn't "+\
                                  "large enough for text")
         else: #if width is None
@@ -415,6 +455,7 @@ class text:
 
         if height_pt is not None:
             if height_pt < min_height_pt - 1e-10: # eps needed
+                plt.close()
                 raise ValueError("requested height of text object isn't "+\
                                  "large enough for text")
         else: #if height is None

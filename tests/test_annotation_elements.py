@@ -1,4 +1,6 @@
 import cowpatch as cow
+from cowpatch.svg_utils import _save_svg_wrapper
+from cowpatch.utils import to_inches
 import numpy as np
 import pandas as pd
 import copy
@@ -7,9 +9,11 @@ import plotnine.data as p9_data
 
 import pytest
 from hypothesis import given, strategies as st, settings
+from pytest_regressions import image_regression, data_regression
 import itertools
+import io
 
-def test__update_tdict_info():
+def test_annotation__update_tdict_info():
     """
     tests annotation._update_tdict_info function
     """
@@ -196,7 +200,7 @@ def test__update_tdict_info():
         "if subtitle in dictionary is np.nan, we expect the subtitle to be erased "+\
         "(other updates should still happen)"
 
-def test__add__():
+def test_annotation__add__():
     """
     test addition update for annotation objects
     """
@@ -241,7 +245,10 @@ def test__add__():
         assert a2_expected == a1_updated, \
             ("updating with addition failed to perform as expected (attribute %s)" % inner_key)
 
-def test__get_tag_full():
+def test_annotation__get_tag_full():
+    """
+    test annotation's _get_tag_full
+    """
     mya = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
                      subtitle = {"top":"my very special plot",
                                  "bottom":"below my plot's bottom is the subtitle"},
@@ -258,9 +265,13 @@ def test__get_tag_full():
         "expect tag creation to match tags_format structure (level 1)"
 
     with pytest.raises(Exception) as e_info:
-        mya._get_tag((1,2,3))
+        mya._get_tag_full((1,2,3))
         # can't obtain a tag when we don't have formats that far down
-def test__get_tag():
+
+def test_annotation__get_tag():
+    """
+    test annotation's _get_tag function
+    """
     mya = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
                      subtitle = {"top":"my very special plot",
                                  "bottom":"below my plot's bottom is the subtitle"},
@@ -309,9 +320,9 @@ def test__get_tag():
         mya2._get_tag((0,0))
 
 
-def test__get_tag_full_rotations():
+def test_annotation__get_tag_full_rotations():
     """
-    test that ._get_tag works correctly with rotation informatin
+    test that annotation's _get_tag works correctly with rotation informatin
 
     """
 
@@ -322,23 +333,28 @@ def test__get_tag_full_rotations():
                      tags_format = ("Fig {0}", "Fig {0}.{1}"), tags = ("1", "a"),
                      tags_loc = "left")
 
-    assert mya._get_tag_full(0) == cow.text("Fig 1", _type = "cow_tag"), \
-        "expect tag creation to match tags_format structure (level 0), int"
-    assert mya._get_tag_full((0,)) == cow.text("Fig 1", _type = "cow_tag"), \
-        "expect tag creation to match tags_format structure (level 0), tuple"
+    assert mya._get_tag_full(0) == \
+        cow.text("Fig 1", _type = "cow_tag")._additional_rotation(angle=90), \
+        ("expect tag creation to match tags_format structure (level 0), int "+
+        "(left rotation)")
+    assert mya._get_tag_full((0,)) == \
+        cow.text("Fig 1", _type = "cow_tag")._additional_rotation(angle=90), \
+        ("expect tag creation to match tags_format structure (level 0), tuple "+
+        "(left rotation)")
 
-    assert mya._get_tag_full((1,2)) == cow.text("Fig 2.c", _type = "cow_tag"), \
-        "expect tag creation to match tags_format structure (level 1)"
+    assert mya._get_tag_full((1,2)) == \
+        cow.text("Fig 2.c", _type = "cow_tag")._additional_rotation(angle=90), \
+        ("expect tag creation to match tags_format structure (level 1) "+
+        "(left rotation)")
 
     with pytest.raises(Exception) as e_info:
-        mya._get_tag((1,2,3))
+        mya._get_tag_full((1,2,3))
         # can't obtain a tag when we don't have formats that far down
 
 
-def test__get_tag_rotations():
+def test_annotation__get_tag_rotations():
     """
-    test that ._get_tag works correctly with rotation informatin
-
+    test that annotation's _get_tag works correctly with rotation informatin
     """
 
     mya = cow.annotation(title = {"top":"my plot", "bottom":"my plot's bottom"},
@@ -348,13 +364,17 @@ def test__get_tag_rotations():
                      tags_format = ("Fig {0}", "Fig {0}.{1}"), tags = ("1", "a"),
                      tags_loc = "left")
 
-    assert mya._get_tag(0) == cow.text("Fig 1", _type = "cow_tag"), \
-        "expect tag creation to match tags_format structure (level 0), int"
+    assert mya._get_tag(0) == \
+        cow.text("Fig 1", _type = "cow_tag")._additional_rotation(angle=90), \
+        ("expect tag creation to match tags_format structure (level 0), int "+
+        "(left rotation)")
 
 
     index = np.random.choice(100)
-    assert mya._get_tag(index) == cow.text("Fig %i" % (index+1), _type = "cow_tag"), \
-        "expect tag creation to match tags_format structure (level 0), int"
+    assert mya._get_tag(index) == \
+        cow.text("Fig %i" % (index+1), _type = "cow_tag")._additional_rotation(angle=90), \
+        ("expect tag creation to match tags_format structure (level 0), int "+
+        "(left rotation)")
 
 
     # can't obtain a tag when we don't have formats that far down
@@ -375,13 +395,18 @@ def test__get_tag_rotations():
                      tags = (["banana", "apple"],),
                      tags_loc = "left")
 
-    assert (mya2._get_tag(0) == cow.text("banana", _type = "cow_tag")) & \
-            (mya2._get_tag(1) == cow.text("apple", _type = "cow_tag")), \
-        "expect tag creation to match list structure (level 0), int"
+    assert (mya2._get_tag(0) ==
+            cow.text("banana", _type = "cow_tag")._additional_rotation(angle=90)) & \
+            (mya2._get_tag(1) ==
+             cow.text("apple", _type = "cow_tag")._additional_rotation(angle=90)), \
+        ("expect tag creation to match list structure (level 0), int "+
+        "(left rotation)")
 
-    assert mya2._get_tag(3) == cow.text("", _type = "cow_tag"), \
-        "expected tag of index beyond list length to be an empty tag "+\
-        "(but not raise an error)"
+    assert mya2._get_tag(3) == \
+        cow.text("", _type = "cow_tag"), \
+        ("expected tag of index beyond list length to be an empty tag "+
+        "(but not raise an error)  "+
+        "(left rotation)")
 
     with pytest.raises(Exception) as e_info:
         mya2._get_tag((0,))
@@ -389,8 +414,10 @@ def test__get_tag_rotations():
     with pytest.raises(Exception) as e_info:
         mya2._get_tag((0,0))
 
-
-def test__step_down_tags_info():
+def test_annotation__step_down_tags_info():
+    """
+    test for annnotation's _step_down_tags_info functionality
+    """
     junk_dict = dict(title = {"top":cow.text("banana", _type = "cow_title")},
                      caption = "minion")
     tag_dict = dict(tags = (["apple", "pear"], "i", "a"),
@@ -493,9 +520,9 @@ def test_annotation_passing():
                        title = "no pass through, top defined, bottom generated")
     # see docs for expectation...
 
-def test__clean_up_attributes():
+def test_annotation__clean_up_attributes():
     """
-    test _clean_up_attributes
+    test annotation's _clean_up_attributes
     """
 
 
@@ -544,9 +571,9 @@ def test__clean_up_attributes():
                 "(key = %s)" % key
 
 @pytest.mark.parametrize("location", ["title", "subtitle", "caption"])
-def test__calculate_margin_sizes_basic(location):
+def test_annontation__calculate_margin_sizes_basic(location):
     """
-    test _calculate_margin_sizes, static
+    test annotation's _calculate_margin_sizes, static / basic
     """
     a0 = cow.annotation(**{location:"example title"})
     a0_size_dict = a0._calculate_margin_sizes(to_inches=False)
@@ -609,7 +636,10 @@ def test__calculate_margin_sizes_basic(location):
                                  ["top", "bottom", "left", "right"],
                                  ["top", "bottom", "left", "right"]))
                          )
-def test__calculate_margin_sizes_non_basic(types, location1, location2):
+def test_annotation__calculate_margin_sizes_non_basic(types, location1, location2):
+    """
+    test annnotation's _calculate_margin_sizes (non-basic)
+    """
     # lets of left, right, top, bottom + some other option.
     # allow for overrides and combinations
 
@@ -672,12 +702,17 @@ def test__calculate_margin_sizes_non_basic(types, location1, location2):
                    l1=locations[0], l2=locations[1])
 
 @pytest.mark.parametrize("location", ["top", "bottom", "left", "right"])
-def test__calculate_tag_margin_sizes(location):
+def test_annotation__calculate_tag_margin_sizes(data_regression, location):
     """
-    test _calculate_tag_margin_sizes
+    test annotation's_calculate_tag_margin_sizes
+
+    Details
+    -------
+    Deals with
+    (1) if a tag should be created,
+    (2) nested versus non-nested
+    (3) different location types [TODO] rotation structures
     """
-    # test if tag should actually be created
-    # nesting
 
     a0_list = cow.annotation(tags = ["banana", "apple"],
                              tags_loc = location)
@@ -690,9 +725,11 @@ def test__calculate_tag_margin_sizes(location):
                            tags = ("1", "a"),
                            tags_loc = location)
 
-    # check that tags don't impact __calculate_margin_sizes
+    # check that titles don't impact __calculate_tag_margin_sizes
     a0_all = [a0_list, a0_list_nest, a0_tuple_nest]
     a_info_str = ["list", "nested-list", "nested-tuple"]
+
+    data_reg_dict = {}
     for a_idx, a0 in enumerate(a0_all):
         a0_title = a0 + cow.annotation(title = "Conformal Inference")
 
@@ -703,6 +740,10 @@ def test__calculate_tag_margin_sizes(location):
         assert base == base_plus_title, \
             ("title attributes shouldn't impact the sizing structure for a "+\
             "tag (structure: %s, loc %s)") % (a_info_str[a_idx], location)
+
+        # data regression tracking
+        data_reg_dict[str(a_idx)+"_base"] = \
+            {key:str(value) for key, value in base.items()}
 
         if a0.tags_depth == 2:
             # not title
@@ -716,7 +757,12 @@ def test__calculate_tag_margin_sizes(location):
                 ("title attributes shouldn't impact the sizing structure for a "+\
                 "tag - stepdown (structure: %s, loc %s)") % (a_info_str[a_idx], location)
 
-        # fundamental
+            # data regression tracking
+            data_reg_dict[str(a_idx)+"_base_s"] = \
+                {key:str(value) for key, value in base_s.items()}
+
+
+            # fundamental
             base_f = a0._calculate_tag_margin_sizes(index = 1,
                                                   fundamental=True)
             base_plus_title_f = a0_title._calculate_tag_margin_sizes(index = 1,
@@ -814,16 +860,355 @@ def test__calculate_tag_margin_sizes(location):
             ("tags based in auto creation shouldn't have finite length of "+\
             "non-zero tags (structure: %s, loc %s, t_idx: %i)") % (a_info_str[a_idx], location, t_idx)
 
+    data_regression.check(data_reg_dict)
 
-def test__get_tag_and_location():
-    # to test we need to make some tags,
-    # get a good undestanding of the size of the tag (height & width)
-    # look through 4 different locations for the tag
-    # also look depths down
-    # and fundamental-ness
-    # identify where it should land and where the image should land
-    # create a similar tag and
-    raise ValueError("Not Tested")
+
+def test_annotation__get_tag_and_location():
+    """
+    test annotation's _get_tag_and_location
+
+    Details
+    -------
+    This group of tests is static, but examines a range of cases:
+    1. nested versus single depth tags
+    2. list versus infinite length tags
+    3. all 4 location descriptions (and correctly deals with 90 degree rotation)
+    4. across fundamental & non-fundamental tags
+
+    We also look at 4 specical cases:
+    1. [Non-error] full_index is None (fundamental & not)
+    2. [Non-error] full_index type is integer (fundamental & not)
+
+    3. [Error] index != full_index[-1]
+    4. [Error] width and/or height is too small
+
+    Additional Notes
+    ----------------
+    We also check manual regression tests on some min_sizing of text objects
+    """
+
+    a0_list_t = cow.text("banana", _type = "cow_tag")
+    a0_list_nest_t = cow.text("Age: old, Name: harry", _type = "cow_tag")
+    a0_tuple_nest_t = cow.text("Fig 5.b", _type = "cow_tag")
+
+    ms_a0_list_t = a0_list_t._min_size()
+    ms_a0_list_nest_t = a0_list_nest_t._min_size()
+    ms_a0_tuple_nest_t = a0_tuple_nest_t._min_size()
+
+    # "regression check" for default tag elements
+    assert np.allclose(ms_a0_list_t, (49.5, 13.5)) and \
+        np.allclose(ms_a0_list_nest_t, (146.25, 13.5)) and \
+        np.allclose(ms_a0_tuple_nest_t, (43.96875, 13.5)), \
+        ("min_sizes of static examples should be fixed against " +
+        "current value (simple regression check)")
+
+    # rotationed objects for left/right structure definition
+    a0_list_t_r = a0_list_t._additional_rotation(angle=90)
+    a0_list_nest_t_r = a0_list_nest_t._additional_rotation(angle=90)
+    a0_tuple_nest_t_r = a0_tuple_nest_t._additional_rotation(angle=90)
+
+    ms_a0_list_t_r = a0_list_t_r._min_size()
+    ms_a0_list_nest_t_r = a0_list_nest_t_r._min_size()
+    ms_a0_tuple_nest_t_r = a0_tuple_nest_t_r._min_size()
+
+    # another check on rotation sizes
+    assert np.allclose(ms_a0_list_t, ms_a0_list_t_r[::-1]) and \
+        np.allclose(ms_a0_list_nest_t, ms_a0_list_nest_t_r[::-1]) and \
+        np.allclose(ms_a0_tuple_nest_t, ms_a0_tuple_nest_t_r[::-1]), \
+        ("static examples sizes post 90 degree rotation should just be" +
+        "flipped")
+
+
+    # actual checks set-up
+    standard_width, standard_height = 175, 175
+
+    tag_loc_d = {
+        "a0_list_d": {"top": (0,0), "left": (0,0),
+                      "right": (standard_width - ms_a0_list_t_r[0],0),
+                      "bottom": (0, standard_height - ms_a0_list_t[1])},
+        "a0_list_nest_d": {"top": (0,0), "left": (0,0),
+                      "right": (standard_width - ms_a0_list_nest_t_r[0],0),
+                      "bottom": (0, standard_height - ms_a0_list_nest_t[1])},
+        "a0_tuple_nest_d": {"top": (0,0), "left": (0,0),
+                      "right": (standard_width - ms_a0_tuple_nest_t_r[0],0),
+                      "bottom": (0, standard_height - ms_a0_tuple_nest_t[1])}
+        }
+
+    image_loc_d = {
+        "a0_list_d": {"bottom": (0,0), "right": (0,0),
+                    "left": (ms_a0_list_t_r[0], 0),
+                    "top": (0, ms_a0_list_t[1])},
+        "a0_list_nest_d": {"bottom": (0,0), "right": (0,0),
+                    "left": (ms_a0_list_nest_t_r[0], 0),
+                    "top": (0, ms_a0_list_nest_t[1])},
+        "a0_tuple_nest_d": {"bottom": (0,0), "right": (0,0),
+                    "left": (ms_a0_tuple_nest_t_r[0], 0),
+                    "top": (0, ms_a0_tuple_nest_t[1])}
+    }
+
+    # real output (tag_loc and image_loc)
+    for location in ["top", "bottom", "left", "right"]:
+        a0_list = cow.annotation(tags = ["banana", "apple"],
+                                 tags_loc = location)
+        a0_list_nest = cow.annotation(tags = (["young", "old"],
+                                              ["harry", "hermione", "ron"]),
+                                 tags_loc = location,
+                                 tags_format = ("Age: {0}", "Age: {0}, Name: {1}"))
+
+        a0_tuple_nest = cow.annotation(tags_format = ("Fig {0}", "Fig {0}.{1}"),
+                               tags = ("1", "a"),
+                               tags_loc = location)
+
+        ann_options = [a0_list, a0_list_nest, a0_tuple_nest]
+        ann_strings = ["a0_list_d", "a0_list_nest_d", "a0_tuple_nest_d"]
+        full_index_options = [(1,), (1,0), (5,1)]
+
+        # full input is provided (no None)
+        for ann_index in [0,1,2]:
+            ann = ann_options[ann_index]
+            ann_str = ann_strings[ann_index]
+            full_index = full_index_options[ann_index]
+            index = full_index[-1]
+
+            tag_loc, image_loc, _ = ann._get_tag_and_location(index=index,
+                                                     full_index=full_index,
+                                                     width=standard_width,
+                                                     height=standard_height,
+                                                     fundamental=False)
+
+            assert np.allclose(tag_loc, tag_loc_d[ann_str][location]), \
+                ("tag loc (%s, %s) doesn't match expected as a function " +
+                "of location and tag min_size") % (ann_str, location)
+
+            assert np.allclose(image_loc, image_loc_d[ann_str][location]), \
+                ("image loc (%s, %s) doesn't match expected as a function " +
+                "of location and tag min_size") % (ann_str, location)
+
+        # full_index = None (no error),
+        # would be seen as non-fundamental for nested items (why we only look at case 0)
+        for ann_index in [0]:
+            ann = ann_options[ann_index]
+            ann_str = ann_strings[ann_index]
+            index = full_index_options[ann_index][-1]
+
+            tag_loc, image_loc, _ = ann._get_tag_and_location(index=index,
+                                                     full_index=None,
+                                                     width=standard_width,
+                                                     height=standard_height,
+                                                     fundamental=False)
+
+            assert np.allclose(tag_loc, tag_loc_d[ann_str][location]), \
+                ("tag loc (%s, %s) doesn't match expected as a function " +
+                "of location and tag min_size, "+
+                "even when full_index is None") % (ann_str, location)
+
+            assert np.allclose(image_loc, image_loc_d[ann_str][location]), \
+                ("image loc (%s, %s) doesn't match expected as a function " +
+                "of location and tag min_size, "+
+                "even when full_index is None") % (ann_str, location)
+
+        # type(full_index) = integer (no error),
+        # would be seen as non-fundamental for nested items (why we only look at case 0)
+        for ann_index in [0]:
+            ann = ann_options[ann_index]
+            ann_str = ann_strings[ann_index]
+            index = full_index_options[ann_index][-1]
+            full_index = index
+
+            tag_loc, image_loc, _ = ann._get_tag_and_location(index=index,
+                                                     full_index=full_index,
+                                                     width=standard_width,
+                                                     height=standard_height,
+                                                     fundamental=False)
+
+            assert np.allclose(tag_loc, tag_loc_d[ann_str][location]), \
+                ("tag loc (%s, %s) doesn't match expected as a function " +
+                "of location and tag min_size, "+
+                "even when full_index is None") % (ann_str, location)
+
+            assert np.allclose(image_loc, image_loc_d[ann_str][location]), \
+                ("image loc (%s, %s) doesn't match expected as a function " +
+                "of location and tag min_size, "+
+                "even when full_index is None") % (ann_str, location)
+
+
+    # special cases - no real output
+    for location in ["top", "bottom", "left", "right"]:
+
+        a0_list = cow.annotation(tags = ["banana", "apple"],
+                                 tags_loc = location)
+        a0_list_nest = cow.annotation(tags = (["young", "old"],
+                                              ["harry", "hermione", "ron"]),
+                                 tags_loc = location,
+                                 tags_format = ("Age: {0}", "Age: {0}, Name: {1}"))
+
+        a0_tuple_nest = cow.annotation(tags_format = ("Fig {0}", "Fig {0}.{1}"),
+                               tags = ("1", "a"),
+                               tags_loc = location)
+
+        # returns (None)^3 ---------------
+        # fundamental = False
+        out_list_fF = a0_list_nest._get_tag_and_location(index=0,
+                                                 full_index=(0,),
+                                                 width=100, # really large
+                                                 height=100, # really large
+                                                 fundamental=False)
+
+        assert np.all(out_list_fF == (None,None,None)), \
+            ("if fundamental is False, return None^3 is expected from " +
+             "_get_tag_and_location, loc: %s, type = list" % location)
+
+        out_tuple_fF = a0_tuple_nest._get_tag_and_location(index =0,
+                                                   full_index = (0,),
+                                                   width=100, # really large
+                                                   height=100, # really large
+                                                   fundamental=False)
+        assert np.all(out_tuple_fF == (None,None,None)), \
+            ("if fundamental is False, return None^3 is expected from " +
+             "_get_tag_and_location, loc: %s, type = tuple"  % location)
+
+
+        # outside list size
+        out_list_l1 = a0_list_nest._get_tag_and_location(index=3,
+                                                 full_index=(3,),
+                                                 width=100, # really large
+                                                 height=100) # really large
+        assert np.all(out_tuple_fF == (None,None,None)), \
+            ("if index > list length, return None^3 is expected from " +
+             "_get_tag_and_location, loc: %s, type = list, level 1"  % location)
+
+        out_list_l2 = a0_list_nest._get_tag_and_location(index=5,
+                                                 full_index=(0,5),
+                                                 width=100, # really large
+                                                 height=100) # really large
+
+        assert np.all(out_tuple_fF == (None,None,None)), \
+            ("if index > list length, return None^3 is expected from " +
+             "_get_tag_and_location, loc: %s, type = list, level 2"  % location)
+
+        # None for full index + fundamental=False with nested structure
+        # leads to (None)^2 output
+        for ann_index in [1,2]:
+            ann = ann_options[ann_index]
+            ann_str = ann_strings[ann_index]
+            index = full_index_options[ann_index][-1]
+
+            info_out = ann._get_tag_and_location(index=index,
+                                                     full_index=None,
+                                                     width=standard_width,
+                                                     height=standard_height,
+                                                     fundamental=False)
+
+            assert np.all(info_out == (None,None,None)), \
+                ("tag loc (%s, %s) with full_index=None, fundamental=False" +
+                "should not produce any tags, leading to all output of "+
+                "_get_tag_and_location being None") % (ann_str, location)
+
+        # type(full_index) = integer + fundamental=False with nested structure
+        # leads to (None)^2 output
+        for ann_index in [1,2]:
+            ann = ann_options[ann_index]
+            ann_str = ann_strings[ann_index]
+            index = full_index_options[ann_index][-1]
+            full_index = index
+
+            info_out = ann._get_tag_and_location(index=index,
+                                                     full_index=full_index,
+                                                     width=standard_width,
+                                                     height=standard_height,
+                                                     fundamental=False)
+            assert np.all(info_out == (None,None,None)), \
+                ("tag loc (%s, %s) with type(full_index)=int, fundamental=False" +
+                "should not produce any tags, leading to all output of "+
+                "_get_tag_and_location being None") % (ann_str, location)
+
+        # errors -----------
+        # index != full_index[-1] (error)
+        with pytest.raises(Exception) as e_info:
+            a0_list._get_tag_and_location(index=5,
+                                                 full_index=(4),
+                                                 width=100, # really large
+                                                 height=100)
+        with pytest.raises(Exception) as e_info:
+            a0_list_nest._get_tag_and_location(index=5,
+                                                 full_index=(0,4),
+                                                 width=100, # really large
+                                                 height=100)
+        with pytest.raises(Exception) as e_info:
+            a0_tuple_nest._get_tag_and_location(index=5,
+                                                 full_index=(0,4),
+                                                 width=100, # really large
+                                                 height=100)
+
+        # width or height too small (error)
+
+        with pytest.raises(Exception) as e_info:
+            a0_list._get_tag_and_location(index=0,
+                                                 full_index=(0),
+                                                 width=1, # really small
+                                                 height=1)
+        with pytest.raises(Exception) as e_info:
+            a0_list_nest._get_tag_and_location(index=0,
+                                                 full_index=(0,0),
+                                                 width=1, # really small
+                                                 height=1)
+        with pytest.raises(Exception) as e_info:
+            a0_tuple_nest._get_tag_and_location(index=0,
+                                                 full_index=(0,0),
+                                                 width=1, # really small
+                                                 height=1)
+
+
+
+@pytest.mark.parametrize("location", ["top", "bottom", "left", "right"])
+@pytest.mark.parametrize("ann_index", [0,1,2])
+def test__get_tag_and_location2(image_regression, location, ann_index):
+    """
+    regression tests for tag images for get_tag_and_location
+
+    Details
+    -------
+    Includes implicit rotations, different nesting, different types
+    of tags (lists or types)
+    """
+
+    a0_list = cow.annotation(tags = ["banana", "apple"],
+                             tags_loc = location)
+    a0_list_nest = cow.annotation(tags = (["young", "old"],
+                                          ["harry", "hermione", "ron"]),
+                             tags_loc = location,
+                             tags_format = ("Age: {0}", "Age: {0}, Name: {1}"))
+
+    a0_tuple_nest = cow.annotation(tags_format = ("Fig {0}", "Fig {0}.{1}"),
+                           tags = ("1", "a"),
+                           tags_loc = location)
+
+    # tag names for manual checks
+    tag_names = ["banana", "Age: old, Name: harry", "Fig 5.b"]
+
+
+    ann_options = [a0_list, a0_list_nest, a0_tuple_nest]
+    full_index_options = [(1,), (1,0), (5,1)]
+
+    # actual assessment
+    ann = ann_options[ann_index]
+    full_index = full_index_options[ann_index]
+    index = full_index[-1]
+
+    _,_,tag_image = ann._get_tag_and_location(width=175,
+                                      height=175,
+                                      index=index,
+                                      full_index = full_index)
+
+
+    with io.BytesIO() as fid2:
+        _save_svg_wrapper(tag_image, fid2,
+                          width=to_inches(175, "pt"),
+                          height=to_inches(175, "pt"),
+                          _format="png", verbose=False)
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+
 
 def test__get_titles_and_locations():
     # create a set of static combinations of
