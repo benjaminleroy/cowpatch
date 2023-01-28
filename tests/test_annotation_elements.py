@@ -1162,9 +1162,9 @@ def test_annotation__get_tag_and_location():
 
 @pytest.mark.parametrize("location", ["top", "bottom", "left", "right"])
 @pytest.mark.parametrize("ann_index", [0,1,2])
-def test__get_tag_and_location2(image_regression, location, ann_index):
+def test_annotation__get_tag_and_location2(image_regression, location, ann_index):
     """
-    regression tests for tag images for get_tag_and_location
+    regression tests for tag images for annotation's _get_tag_and_location
 
     Details
     -------
@@ -1210,7 +1210,7 @@ def test__get_tag_and_location2(image_regression, location, ann_index):
 
 
 
-def test__get_titles_and_locations():
+def test_annotation__get_titles_and_locations():
     # create a set of static combinations of
     # titles, subtitles, captions (in different locations)
     # identify expected locations and potentially try to create
