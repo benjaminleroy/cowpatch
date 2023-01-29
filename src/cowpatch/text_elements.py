@@ -181,14 +181,21 @@ class text:
             return new_text_object
 
         if new_text_object.element_text is None:
-            new_text_object += p9.element_text(angle = angle)
+            rotation = (((angle) / 360.) -
+                        np.floor(((angle) / 360.))) * 360
+            new_text_object += p9.element_text(angle=rotation)
         else:
             # grab the elment_text from text object
             et = new_text_object.element_text.theme_element
-            current_angle = et.properties["rotation"]
-            et.properties["rotation"] = \
-                (((current_angle + angle) / 360.) -
-                    np.floor(((current_angle + angle) / 360.))) * 360
+            current_angle = et.properties.get("rotation")
+            if current_angle is not None:
+                et.properties["rotation"] = \
+                    (((current_angle + angle) / 360.) -
+                        np.floor(((current_angle + angle) / 360.))) * 360
+            else: # if no rotation has currently been set
+                et.properties["rotation"] = \
+                     (((angle) / 360.) -
+                        np.floor(((angle) / 360.))) * 360
 
             new_text_object += et
 
@@ -433,6 +440,9 @@ class text:
         -------
         svg_obj : svgutils.transform.SVGFigure
             svg representation of text with correct format and image size
+        (width_pt, height_pt) : tuple
+            tuple of width and height (in pt) of image out (given inputs
+            can be None)
 
         See also
         --------

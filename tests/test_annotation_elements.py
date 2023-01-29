@@ -1,6 +1,6 @@
 import cowpatch as cow
-from cowpatch.svg_utils import _save_svg_wrapper
-from cowpatch.utils import to_inches
+from cowpatch.svg_utils import _save_svg_wrapper, _add_to_base_image
+from cowpatch.utils import to_inches, inherits
 import numpy as np
 import pandas as pd
 import copy
@@ -12,6 +12,7 @@ from hypothesis import given, strategies as st, settings
 from pytest_regressions import image_regression, data_regression
 import itertools
 import io
+import svgutils.transform as sg
 
 def test_annotation__update_tdict_info():
     """
@@ -570,10 +571,175 @@ def test_annotation__clean_up_attributes():
                 "_clean_up_attributes function " +\
                 "(key = %s)" % key
 
+@pytest.mark.parametrize("location", ["top", "left", "right", "bottom"])
+@pytest.mark.parametrize("_type", ["title", "subtitle", "caption"])
+def test_annotation__get_title(location, _type):
+    """
+    test annotation's _get_title function
+    """
+    full_ann = cow.annotation(title = {"top": cow.text(label="top title",
+                                                       element_text=p9.element_text(angle=0)),
+                                       "bottom": cow.text(label="bottom title",
+                                                       element_text=p9.element_text(angle=0)),
+                                       "left": cow.text(label="left title",
+                                                       element_text=p9.element_text(angle=0)),
+                                       "right": cow.text(label="right title",
+                                                       element_text=p9.element_text(angle=0))},
+                              subtitle = {"top": cow.text(label="top subtitle",
+                                                       element_text=p9.element_text(angle=0)),
+                                       "bottom": cow.text(label="bottom subtitle",
+                                                       element_text=p9.element_text(angle=0)),
+                                       "left": cow.text(label="left subtitle",
+                                                       element_text=p9.element_text(angle=0)),
+                                       "right": cow.text(label="right subtitle",
+                                                       element_text=p9.element_text(angle=0))},
+                              caption = "caption",
+                              tags = ("0",))
+    if _type in ["title", "subtitle"]:
+        attributes_dict = dict(tags = ("0",))
+        attributes_dict[_type] = {"top": "top level",
+                               "bottom": "bottom level",
+                               "left": "left level",
+                               "right": "right level"}
+        all_single_level_ann = cow.annotation(**attributes_dict)
+
+        attributes_dict2 = {_type: {location: "current (sub)title"} }
+        single_ann = cow.annotation(**attributes_dict2)
+    else:
+        all_single_level_ann = cow.annotation(caption = "caption",
+                                              tags = ("0",))
+        single_ann = cow.annotation(caption = "caption")
+
+
+    # without value ----------
+    no_ann = cow.annotation(tags = ("0",))
+
+    if _type in ["title", "subtitle"]:
+        n_element = no_ann._get_title(_type=_type, location=location)
+
+        assert n_element is None, \
+            "no element returned if none defined, type %s, loc %s" % (_type, location)
+    else:
+        n_element1 = no_ann._get_title(_type=_type, location=location)
+
+        assert n_element1 is None, \
+            "no element returned if none defined, type %s, loc %s" % (_type, location)
+
+        n_element2 = no_ann._get_title(_type=_type)
+
+        assert n_element2 is None, \
+            "no element returned if none defined, type %s, loc: default" % (_type)
+
+    # with values ----------
+    et_full = full_ann._get_title(_type=_type, location=location)
+    et_level_full = all_single_level_ann._get_title(_type=_type, location=location)
+    et_single = single_ann._get_title(_type=_type, location=location)
+
+    # label check
+    if _type in ["title", "subtitle"]:
+        assert et_full.label == ("%s %s" % (location, _type)), \
+            "expected %s element's label grabbed doesn't match static type (full)" % _type
+        assert et_level_full.label == ("%s level" % (location)), \
+            "expected %s element's label grabbed doesn't match static type (level full)" % _type
+        assert et_single.label == "current (sub)title", \
+            "expected %s element's label grabbed doesn't match static type (single)" % _type
+    else:
+        assert et_full.label == ("%s" % (_type)), \
+            "expected %s element's label grabbed doesn't match static type (full)" % _type
+        assert et_level_full.label == ("%s" % (_type)), \
+            "expected %s element's label grabbed doesn't match static type (level full)" % _type
+        assert et_single.label == ("%s" % (_type)), \
+            "expected %s element's label grabbed doesn't match static type (single)" % _type
+    # text._type check
+    for et_i, et in enumerate([et_full, et_level_full, et_single]):
+        assert et._type == "cow_" + _type, \
+            ("expected %s element grabbed to inherit "+
+             "text _type cow_%s, et_i: %i" % (_type, _type, et_i))
+
+    # rotation angle check
+    for et_i, et in enumerate([et_full, et_level_full, et_single]):
+        if _type in ["title", "subtitle"]:
+            if location in ["left", "right"]:
+                assert np.allclose(et.element_text.theme_element.properties["rotation"], 90), \
+                    ("if type: %s, expect location %s to "+
+                     "have 90 degree rotation (et_i %i)" % (_type, location, et_i))
+            else:
+                # None if no element_text has been defined
+                assert (et.element_text is None) or \
+                    np.allclose(et.element_text.theme_element.properties["rotation"], 0), \
+                    ("if type: %s, expect location %s to "+
+                     "have 90 degree rotation (et_i %i)" % (_type, location, et_i))
+        else:
+            # None if no element_text has been defined
+            assert (et.element_text is None) or \
+                np.allclose(et.element_text.theme_element.properties["rotation"], 0), \
+                ("if type: caption, expect location %s show not alter "+
+                 "rotation as caption is always on bottom (et_i %i)" % (location, et_i))
+
+
+    # save image
+
+@pytest.mark.parametrize("location", ["top", "left", "right", "bottom"])
+@pytest.mark.parametrize("_type", ["title", "subtitle", "caption"])
+@pytest.mark.parametrize("et_i", [0,1,2])
+def test_annotation__get_title_ir(image_regression, location, _type, et_i):
+    """
+    test annotation _get_title -- image regression tests
+    """
+
+    # data set-up ---
+
+    full_ann = cow.annotation(title = {"top": "top title",
+                                       "bottom": "bottom title",
+                                       "left": "left title",
+                                       "right": "right title"},
+                              subtitle = {"top": "top subtitle",
+                                       "bottom": "bottom subtitle",
+                                       "left": "left subtitle",
+                                       "right": "right subtitle"},
+                              caption = "caption",
+                              tags = ("0",))
+    if _type in ["title", "subtitle"]:
+        attributes_dict = dict(tags = ("0",))
+        attributes_dict[_type] = {"top": "top level",
+                               "bottom": "bottom level",
+                               "left": "left level",
+                               "right": "right level"}
+        all_single_level_ann = cow.annotation(**attributes_dict)
+
+        attributes_dict2 = {_type: {location: "current (sub)title"} }
+        single_ann = cow.annotation(**attributes_dict2)
+    else:
+        all_single_level_ann = cow.annotation(caption = "caption",
+                                              tags = ("0",))
+        single_ann = cow.annotation(caption = "caption")
+
+
+    ann_options = [full_ann, all_single_level_ann, single_ann]
+
+
+    # regression test ----------
+    ann = ann_options[et_i]
+    et = ann._get_title(_type=_type, location=location)
+
+    with io.BytesIO() as fid2:
+        et.save(filename=fid2, _format = "png", verbose=False)
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+
+
+
 @pytest.mark.parametrize("location", ["title", "subtitle", "caption"])
 def test_annontation__calculate_margin_sizes_basic(location):
     """
     test annotation's _calculate_margin_sizes, static / basic
+
+    Details
+    -------
+    loops over a single type (title, subtitle, caption) - which means
+    everything focuses on *top* functionality. Additionally, not a one
+    after actual numberical assessments, more comparisons with different
+    sizes for default cow.text types.
     """
     a0 = cow.annotation(**{location:"example title"})
     a0_size_dict = a0._calculate_margin_sizes(to_inches=False)
@@ -639,6 +805,16 @@ def test_annontation__calculate_margin_sizes_basic(location):
 def test_annotation__calculate_margin_sizes_non_basic(types, location1, location2):
     """
     test annnotation's _calculate_margin_sizes (non-basic)
+
+    Details
+    -------
+    types : tuple
+        of title, subtitle, caption (no dupplicates)
+    location1, location2 : str
+        different location decisions, can duplicate.
+
+    The checks across these options don't examine static values but more
+    how alterations are reflected into the code
     """
     # lets of left, right, top, bottom + some other option.
     # allow for overrides and combinations
@@ -694,12 +870,68 @@ def test_annotation__calculate_margin_sizes_non_basic(types, location1, location
     else:
         top_side = 0
 
-    # TODO this failed...
     assert a0_size_dict["top_left_loc"] == (left_side, top_side), \
         ("expected image starting location doesn't match expectation "+\
         "relative to text on top and left ({t1}:{l1}, {t2}:{l2}").\
             format(t1=types[0], t2=types[1],
                    l1=locations[0], l2=locations[1])
+
+@pytest.mark.parametrize("_type", ["title", "subtitle", "caption"])
+@pytest.mark.parametrize("location", ["top", "bottom", "left", "right"])
+def test_annotation__calculate_margin_sizes_static(data_regression, _type, location):
+    """
+    test annotation's _calculate_margin_sizes - focuses on locational rotation
+    differences by using data_regression
+
+    Details:
+    --------
+    we also check the relative scaling of all attributes to ensure to_inches
+    parameter is working correctly
+    """
+    if _type in ["title", "subtitle"]:
+        parameter_dict = {_type:
+            {location: "type: %s, location: %s" % (_type, location)}}
+    else:
+        parameter_dict = {_type: "type: %s, location: %s" % (_type, location)}
+
+    ann = cow.annotation(**parameter_dict)
+
+
+    out_info = ann._calculate_margin_sizes(to_inches=False)
+    out_info_in =  ann._calculate_margin_sizes(to_inches=True)
+
+    # to_inches comparison ----------
+    for key in out_info.keys():
+        if key != "top_left_loc":
+            if out_info_in[key] == 0:
+                assert out_info_in[key] == out_info[key], \
+                    ("to_inches =T/F should be a expicit scaling of 72 between "+
+                    "inches and pt, type: %s, location %s, key: %s" % (_type, location, key))
+            else:
+                assert np.allclose(out_info_in[key]*72, out_info[key]), \
+                    ("to_inches =T/F should be a expicit scaling of 72 between "+
+                    "inches and pt, type: %s, location %s, key: %s" % (_type, location, key))
+        else:
+            for idx in [0,1]:
+                if out_info_in[key] == 0:
+                    assert out_info_in[key][idx] == out_info[key][idx], \
+                        ("to_inches =T/F should be a expicit scaling of 72 between "+
+                        "inches and pt, type: %s, location %s, key: %s, idx: %i" % (_type, location, key, idx))
+                else:
+                    assert np.allclose(out_info_in[key][idx]*72, out_info[key][idx]), \
+                        ("to_inches =T/F should be a expicit scaling of 72 between "+
+                        "inches and pt, type: %s, location %s, key: %s, idx: %i" % (_type, location, key, idx))
+
+    data_dict_out = {}
+    for key in out_info.keys():
+        if key != "top_left_loc":
+            data_dict_out[key] = str(out_info[key])
+        else:
+            data_dict_out[key] = \
+                {str(i): str(value) for i, value in enumerate(out_info[key])}
+
+    data_regression.check(data_dict_out)
+
 
 @pytest.mark.parametrize("location", ["top", "bottom", "left", "right"])
 def test_annotation__calculate_tag_margin_sizes(data_regression, location):
@@ -1210,11 +1442,197 @@ def test_annotation__get_tag_and_location2(image_regression, location, ann_index
 
 
 
-def test_annotation__get_titles_and_locations():
+
+def _create_blank_image_with_titles_helper(out, width, height):
+    """
+    takes in list from annotation's _get_titles_and_locations and
+    creates an image
+
+    Arguments
+    ---------
+    out : list
+        list of output from annotation's _get_titles_and_locations
+    width : float
+        width (in pt) used to generate `out`
+    height : float
+        height (in pt) used to generate `out`
+
+    Returns
+    -------
+    svg object with titles/subtitles/captions inserted
+    """
+    base_image = sg.SVGFigure()
+    base_image.set_size((str(width)+"pt", str(height)+"pt"))
+    # add a view box... (set_size doesn't correctly update this...)
+    base_image.root.set("viewBox", "0 0 %s %s" % (str(width), str(height)))
+
+    for loc_tuple, (svg_obj, _) in out:
+        _add_to_base_image(base_image, svg_obj, loc_tuple)
+
+    return base_image
+
+
+def test_annotation__get_titles_and_locations_basic_full(image_regression):
+
+
+    full_ann = cow.annotation(title = {"top": "top title",
+                                       "bottom": "bottom title",
+                                       "left": "left title",
+                                       "right": "right title"},
+                              subtitle = {"top": "top subtitle",
+                                       "bottom": "bottom subtitle",
+                                       "left": "left subtitle",
+                                       "right": "right subtitle"},
+                              caption = "caption",
+                              tags = ("0",))
+
+    width_pt = 400
+    height_pt = 400
+
+    out_full = full_ann._get_titles_and_locations(width=width_pt,
+                                                  height=height_pt)
+
+    # basic correct outcome sizes ----------
+    assert (len(out_full) == 9) and \
+        np.all([len(x) == 2 for x in out_full]) and \
+        np.all([len(x[1]) == 2 for x in out_full]) and \
+        np.all([inherits(x[1][0], sg.SVGFigure) for x in out_full]) and \
+        np.all([inherits(x[1][1], tuple) for x in out_full]) and \
+        np.all([inherits(x[0], tuple) for x in out_full]), \
+        ("if all title/subtitle/caption element is used " +
+         "outcome of _get_titles_and_locations structure " +
+         "should be length 9, tuples of correct structure")
+
+    full_svg = _create_blank_image_with_titles_helper(out_full,
+                                                      width=width_pt,
+                                                      height=height_pt)
+
+    with io.BytesIO() as fid2:
+        _save_svg_wrapper(full_svg, fid2,
+                          width=to_inches(width_pt, "pt"),
+                          height=to_inches(height_pt, "pt"),
+                          _format="png", verbose=False)
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+
+
+@pytest.mark.parametrize("_type", ["title", "subtitle", "caption"])
+def test_annotation__get_titles_and_locations_basic_level(image_regression,_type):
     # create a set of static combinations of
     # titles, subtitles, captions (in different locations)
     # identify expected locations and potentially try to create
     # svg objects of the image themselves to compare the output too
-    raise ValueError("Not Tested")
+
+    if _type in ["title", "subtitle"]:
+        attributes_dict = dict(tags = ("0",))
+        attributes_dict[_type] = {"top": "top level",
+                               "bottom": "bottom level",
+                               "left": "left level",
+                               "right": "right level"}
+        all_single_level_ann = cow.annotation(**attributes_dict)
+    else:
+        all_single_level_ann = cow.annotation(caption = "caption",
+                                              tags = ("0",))
+
+
+    width_pt = 400
+    height_pt = 400
+
+    out_level = all_single_level_ann._get_titles_and_locations(width=width_pt,
+                                                              height=height_pt)
+
+
+    # basic correct outcome sizes ----------
+    if _type in ["title", "subtitle"]:
+        assert (len(out_level) == 4) and \
+            np.all([len(x) == 2 for x in out_level]) and \
+            np.all([len(x[1]) == 2 for x in out_level]) and \
+            np.all([inherits(x[1][0], sg.SVGFigure) for x in out_level]) and \
+            np.all([inherits(x[1][1], tuple) for x in out_level]) and \
+            np.all([inherits(x[0], tuple) for x in out_level]), \
+            ("if all %s element is used " +
+             "outcome of _get_titles_and_locations structure " +
+             "should be length 9, tuples of correct structure") % (_type)
+    else:
+        assert (len(out_level) == 1) and \
+            np.all([len(x) == 2 for x in out_level]) and \
+            np.all([len(x[1]) == 2 for x in out_level]) and \
+            np.all([inherits(x[1][0], sg.SVGFigure) for x in out_level]) and \
+            np.all([inherits(x[1][1], tuple) for x in out_level]) and \
+            np.all([inherits(x[0], tuple) for x in out_level]), \
+            ("if only %s element is used " +
+             "outcome of _get_titles_and_locations structure " +
+             "should be length 9, tuples of correct structure") % (_type)
+
+
+    level_svg = _create_blank_image_with_titles_helper(out_level,
+                                                      width=width_pt,
+                                                      height=height_pt)
+
+    with io.BytesIO() as fid2:
+        _save_svg_wrapper(level_svg, fid2,
+                          width=to_inches(width_pt, "pt"),
+                          height=to_inches(height_pt, "pt"),
+                          _format="png", verbose=False)
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
+
+@pytest.mark.parametrize("location", ["top", "left", "right", "bottom"])
+@pytest.mark.parametrize("_type", ["title", "subtitle", "caption"])
+def test_annotation__get_titles_and_locations_basic_single(image_regression,
+                                                           location, _type):
+    # create a set of static combinations of
+    # titles, subtitles, captions (in different locations)
+    # identify expected locations and potentially try to create
+    # svg objects of the image themselves to compare the output too
+
+    if _type in ["title", "subtitle"]:
+        attributes_dict2 = {_type: {location: "current (sub)title"} }
+        single_ann = cow.annotation(**attributes_dict2)
+    else:
+        single_ann = cow.annotation(caption = "caption")
+
+
+    width_pt = 400
+    height_pt = 400
+
+    out_single = single_ann._get_titles_and_locations(width = width_pt,
+                                                      height = height_pt)
+
+
+    # basic correct outcome sizes ----------
+    if _type in ["title", "subtitle"]:
+        assert (len(out_single) == 1) and \
+            np.all([len(x) == 2 for x in out_single]) and \
+            np.all([len(x[1]) == 2 for x in out_single]) and \
+            np.all([inherits(x[1][0], sg.SVGFigure) for x in out_single]) and \
+            np.all([inherits(x[1][1], tuple) for x in out_single]) and \
+            np.all([inherits(x[0], tuple) for x in out_single]), \
+            ("if single %s, %s element is used " +
+             "outcome of _get_titles_and_locations structure " +
+             "should be length 9, tuples of correct structure") % (_type, location)
+    else:
+        assert (len(out_single) == 1) and \
+            np.all([len(x) == 2 for x in out_single]) and \
+            np.all([len(x[1]) == 2 for x in out_single]) and \
+            np.all([inherits(x[1][0], sg.SVGFigure) for x in out_single]) and \
+            np.all([inherits(x[1][1], tuple) for x in out_single]) and \
+            np.all([inherits(x[0], tuple) for x in out_single]), \
+            ("if only %s, (pointless location: %s) element is used " +
+             "outcome of _get_titles_and_locations structure " +
+             "should be length 9, tuples of correct structure") % (_type, location)
+
+
+    single_svg = _create_blank_image_with_titles_helper(out_single,
+                                                      width=width_pt,
+                                                      height=height_pt)
+
+    with io.BytesIO() as fid2:
+        _save_svg_wrapper(single_svg, fid2,
+                          width=to_inches(width_pt, "pt"),
+                          height=to_inches(height_pt, "pt"),
+                          _format="png", verbose=False)
+        image_regression.check(fid2.getvalue(), diff_threshold=.1)
+
 
 

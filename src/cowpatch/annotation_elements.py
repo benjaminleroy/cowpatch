@@ -341,6 +341,37 @@ class annotation:
         #     self.tags_depth = len(self.tags_format)
 
 
+    def _get_title(self, _type=["title", "subtitle", "caption"][0],
+                   location="top"):
+        """
+        obtain title/subtitle/caption with proper rotation
+
+        Arguments
+        ---------
+        _type : str
+            type of title/subtitle/caption we're trying to return
+        location : str
+            if _type = "caption", then this isn't looked at, else
+            selected from ["top", "bottom", "left", "right"]
+
+        Returns
+        -------
+        cow.text object
+            cow.text object that has the desired rotation for the location
+        """
+        if _type == "title":
+            et = self.title.get(location)
+        elif _type == "subtitle":
+            et = self.subtitle.get(location)
+        else:
+            return self.caption
+
+        if location in ["left","right"] and et is not None:
+            et = et._additional_rotation(angle=90)
+
+        return et
+
+
     def _get_tag_full(self, index=(0,)):
         """
         Create text of tag for given level and index (fully goes down)
@@ -725,44 +756,58 @@ class annotation:
             tuple of top left corner of inner image relative to title text
         """
         min_inner_width = \
-            np.sum([t._min_size(to_inches=to_inches)[0] for t in [self.title.get("top"),
-                                        self.title.get("bottom"),
-                                        self.subtitle.get("top"),
-                                        self.subtitle.get("bottom")]
+            np.sum([t._min_size(to_inches=to_inches)[0]
+                    for t in
+                        [self._get_title(_type="title", location="top"),
+                         self._get_title(_type="title", location="bottom"),
+                         self._get_title(_type="subtitle", location="top"),
+                         self._get_title(_type="subtitle", location="bottom")]
                 if t is not None] + [0])
 
         min_full_width = \
-            np.sum([t._min_size(to_inches=to_inches)[0] for t in [self.caption]
+            np.sum([t._min_size(to_inches=to_inches)[0]
+                    for t in
+                    [self._get_title(_type="caption")]
                 if t is not None] + [0])
 
         extra_used_width = \
-            np.sum([t._min_size(to_inches=to_inches)[0] for t in [self.title.get("left"),
-                                        self.title.get("right"),
-                                        self.subtitle.get("left"),
-                                        self.subtitle.get("right")]
+            np.sum([t._min_size(to_inches=to_inches)[0]
+                    for t in
+                    [self._get_title(_type="title",location="left"),
+                     self._get_title(_type="title",location="right"),
+                     self._get_title(_type="subtitle", location="left"),
+                     self._get_title(_type="subtitle", location="right")]
                 if t is not None]+ [0])
 
         min_inner_height = \
-            np.sum([t._min_size(to_inches=to_inches)[1] for t in [self.title.get("left"),
-                                        self.title.get("right"),
-                                        self.subtitle.get("left"),
-                                        self.subtitle.get("right")]
+            np.sum([t._min_size(to_inches=to_inches)[1]
+                   for t in
+                   [self._get_title(_type="title",location="left"),
+                    self._get_title(_type="title",location="right"),
+                    self._get_title(_type="subtitle",location="left"),
+                    self._get_title(_type="subtitle",location="right")]
                 if t is not None] +[0])
 
         extra_used_height = \
-            np.sum([t._min_size(to_inches=to_inches)[1] for t in [self.title.get("top"),
-                                        self.title.get("bottom"),
-                                        self.subtitle.get("top"),
-                                        self.subtitle.get("bottom"),
-                                        self.caption]
+            np.sum([t._min_size(to_inches=to_inches)[1]
+                   for t in
+                   [self._get_title(_type="title",location="top"),
+                    self._get_title(_type="title",location="bottom"),
+                    self._get_title(_type="subtitle",location="top"),
+                    self._get_title(_type="subtitle",location="bottom"),
+                    self._get_title(_type="caption")]
                 if t is not None] + [0])
 
         top_left_loc = (
             np.sum([t._min_size(to_inches=to_inches)[0]
-                    for t in [self.title.get("left"), self.subtitle.get("left")]
+                    for t in
+                    [self._get_title(_type="title",location="left"),
+                     self._get_title(_type="subtitle",location="left")]
                         if t is not None] + [0]),
             np.sum([t._min_size(to_inches=to_inches)[1]
-                    for t in [self.title.get("top"), self.subtitle.get("top")]
+                    for t in
+                    [self._get_title(_type="title",location="top"),
+                    self._get_title(_type="subtitle",location="top")]
                         if t is not None] + [0])
 
             )
@@ -783,9 +828,9 @@ class annotation:
         Arguments
         ---------
         width : float
-            width of overall image (in inches?)
+            width of overall image (in pt)
         height : float
-            height of overall image (in inches?)
+            height of overall image (in pt)
 
         Returns
         -------
@@ -794,7 +839,8 @@ class annotation:
             and the image of the title itself. The list has entries for any
             titles, then any subtitles and then the caption (if any). Each
             entry is a tuple with (1) a tuple of the top left corner location
-            for the title and (2) the svg object of the title itself
+            for the title and (2) a tuple of (a) the svg object of the title
+            itself and (b) a tuple of the size of the svg object in pt
 
         Notes
         -----
@@ -844,19 +890,19 @@ class annotation:
         # TODO: make sure the pt vs inch question is settled
 
         # minimum size of each object
-        title_min_size_dict = {key : [t.min_size() if t is not None else (0,0)
-                                         for t in [self.title.get(key),
-                                                   self.subtitle.get(key)]]
+        title_min_size_dict = {key : [t._min_size() if t is not None else (0,0)
+                                         for t in [self._get_title(_type="title",location=key),
+                                                   self._get_title(_type="subtitle",location=key)]]
                                 for key in ["top", "bottom", "left", "right"]}
 
         if self.caption is not None:
-            title_min_size_dict["caption"] = self.caption.min_size()
+            title_min_size_dict["caption"] = self._get_title(_type="caption")._min_size()
         else:
             title_min_size_dict["caption"] = (0,0)
 
 
         # shifts for top left positioning
-        shift_horizonal = {
+        shift_horizontal = {
             # same value
             ("title", "top") : np.sum([tu[0] for tu in title_min_size_dict["left"]]),
             ("subtitle", "top") : np.sum([tu[0] for tu in title_min_size_dict["left"]]),
@@ -871,7 +917,7 @@ class annotation:
             ("subtitle", "right") : width - title_min_size_dict["right"][1][0]
         }
 
-        shift_horizonal = {
+        shift_vertical = {
             # same value
             ("title", "left") : np.sum([tu[1] for tu in title_min_size_dict["top"]]),
             ("subtitle", "left") : np.sum([tu[1] for tu in title_min_size_dict["top"]]),
@@ -882,16 +928,16 @@ class annotation:
 
             ("title", "top") : 0,
             ("subtitle", "top") : title_min_size_dict["top"][0][1],
-            ("title", "bottom") : width - np.sum([tu[1] for tu in title_min_size_dict["right"]]) -\
+            ("title", "bottom") : width - np.sum([tu[1] for tu in title_min_size_dict["bottom"]]) -\
                                     title_min_size_dict["caption"][1],
             ("subtitle", "bottom") : width - title_min_size_dict["bottom"][1][1] -\
                                     title_min_size_dict["caption"][1]
         }
 
         # sizes to create each title element with
-        inner_width = np.sum([tu[0] for tu in title_min_size_dict["left"] +\
+        inner_width = width - np.sum([tu[0] for tu in title_min_size_dict["left"] +\
                                      title_min_size_dict["right"]])
-        inner_height = np.sum([tu[1] for tu in title_min_size_dict["top"] +\
+        inner_height = height - np.sum([tu[1] for tu in title_min_size_dict["top"] +\
                                      title_min_size_dict["bottom"]])
 
         size_request = {
@@ -910,23 +956,26 @@ class annotation:
         out_list = []
         out_list += [ ( (shift_horizontal[("title",key)], \
                             shift_vertical[("title",key)]), \
-                        self.title.get(key)._svg(width_pt = size_request[("title", key)][0],
-                                                 height_pt = size_request[("title", key)][1])
+                        self._get_title(_type="title", location=key).\
+                            _svg(width_pt = size_request[("title", key)][0],
+                                 height_pt = size_request[("title", key)][1])
                         ) for key in ["top", "bottom", "left", "right"]
-                            if self.title.get(key) is not None]
+                            if self._get_title(_type="title",location=key) is not None]
 
         out_list += [ ( (shift_horizontal[("subtitle",key)], \
                             shift_vertical[("subtitle",key)]), \
-                        self.subtitle.get(key)._svg(width_pt = size_request[("subtitle", key)][0],
-                                                 height_pt = size_request[("subtitle", key)][1])
+                        self._get_title(_type="subtitle",location=key).\
+                            _svg(width_pt = size_request[("subtitle", key)][0],
+                                 height_pt = size_request[("subtitle", key)][1])
                         ) for key in ["top", "bottom", "left", "right"]
-                            if self.subtitle.get(key) is not None]
+                            if self._get_title(_type="subtitle",location=key) is not None]
 
         out_list += [((shift_horizontal[key], shift_vertical[key]), \
-                        self.caption._svg(width_pt = size_request[key][0], \
-                                         height_pt = size_request[key][1])
+                        self._get_title(_type="caption").\
+                            _svg(width_pt = size_request[key][0], \
+                                height_pt = size_request[key][1])
                         ) for key in ["caption"] if
-                            self.caption is not None]
+                            self._get_title(_type="caption") is not None]
 
 
         return out_list

@@ -283,6 +283,25 @@ def test_text__additional_rotation0(image_regression):
         myt.save(filename=fid2, _format = "png")
         image_regression.check(fid2.getvalue(), diff_threshold=.1)
 
+    # some attribute is added but not angle
+    myt_e = cow.text(label="Portland",
+                   element_text=p9.element_text(size=15),
+                   _type="cow_text")
+    myt_e_2 = myt_e._additional_rotation(angle=0)
+
+    assert myt_e_2 == myt_e_2, \
+        ("default rotation of 0 should return the same text element, " +
+         "intial has element_text without angle defined")
+
+    myt_e_3 = myt_e._additional_rotation(angle=15)
+    expected_attributes_e_3 = myt_e.element_text.theme_element.properties
+    expected_attributes_e_3["rotation"] = 15
+    assert myt_e_3.element_text.theme_element.properties == expected_attributes_e_3, \
+        ("for intial has element_text without angle defined, non-zero angle "+
+         "should update it from zero")
+
+
+
 def test_text__additional_rotation(image_regression):
     """
     test text's _additional_rotation function

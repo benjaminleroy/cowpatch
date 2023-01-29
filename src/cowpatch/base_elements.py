@@ -847,7 +847,7 @@ class patch:
             tl_loc = title_margin_sizes_dict["top_left_loc"]
 
 
-        if approach == "default-size":
+        if approach == "default-size": # then we want to track relative sizing
             width_inner, height_inner = \
                 to_inches(1, units="pt"), to_inches(1, units="pt")
         else:
@@ -879,12 +879,12 @@ class patch:
 
             #### process titles/subtitles/captions
             titles_and_locs = \
-                cur_annotation._get_titles_and_locations(width = width,
-                                                          height = height)
+                cur_annotation._get_titles_and_locations(
+                    width = from_inches(width, "pt"),
+                    height = from_inches(height, "pt"))
 
-            for loc_tuple, title in titles_and_locs:
+            for loc_tuple, (title, _) in titles_and_locs:
                 _add_to_base_image(base_image, title, loc_tuple)
-
 
             #### sizes of inner grobs:
             if data_dict is None or data_dict.get("sizes") is None:
@@ -939,11 +939,6 @@ class patch:
                     grob_tag_index = None
                     current_index = ()
 
-                # TODO: should it be index=grob_tag_index or index=current_index?
-                # due to the function _step_down_tags_info, I think we need to
-                # update the _calculate_tag_margin_sizes to actual depth
-                # (say length of current_index), but should only use
-                # the _step_down_tags_info
                 tag_margin_dict = cur_annotation._calculate_tag_margin_sizes(
                                         fundamental=fundamental_tag,
                                         index=grob_tag_index,
@@ -964,6 +959,7 @@ class patch:
                                             width=inner_area.width,
                                             height=inner_area.height,
                                             index=grob_tag_index,
+                                            full_index=current_index,
                                             fundamental=fundamental_tag)
 
                 _add_to_base_image(base_image, tag_image, tag_loc)
@@ -974,7 +970,7 @@ class patch:
                 data_dict_pass_through = data_dict.copy()
                 data_dict_pass_through["parent-index"] = current_index
                 data_dict_pass_through["parent-guided-annotation-update"] = \
-                    cur_annotation._step_down_tags_info(parent_index = current_index)
+                    cur_annotation._step_down_tags_info(parent_index=grob_tag_index)
 
                 if approach == "default-size":
                     default_size_prop = (inner_area.width, inner_area.height)
