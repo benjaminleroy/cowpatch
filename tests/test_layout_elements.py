@@ -230,7 +230,7 @@ def test_layout__yokogaki_ordering():
     assert np.all(yorder2 == np.array([0,2,3,1])), \
         "yokogaki ordering with second simple example failed (2)"
 
-def test_layout__eq__():
+def test_layout__not_eq__():
     """
     test layout equal for things not equal... (basic test)
     """
@@ -249,6 +249,24 @@ def test_layout__eq__():
 
     assert l1 != "example string", \
         "layout doesn't equal a string..."
+
+def test_layout__eq__():
+    """
+    test for equal layout even if not complete (nrow, ncol)
+    """
+    l1 = cow.layout(nrow = 1)
+    l2 = cow.layout(nrow=1)
+
+    assert l1 == l2, \
+        "expected equality of layout even if not complete (nrow, but no ncol)"
+
+    l1 = cow.layout(ncol = 1)
+    l2 = cow.layout(ncol=1)
+
+    assert l1 == l2, \
+        "expected equality of layout even if not complete (ncol, but no nrow)"
+
+
 
 def test_layout__element_locations2():
     """

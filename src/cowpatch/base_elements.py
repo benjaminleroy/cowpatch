@@ -8,13 +8,14 @@ from .svg_utils import gg_to_svg, _save_svg_wrapper, _show_image, \
                     _raw_gg_to_svg, _select_correcting_size_svg, \
                     _add_to_base_image, _uniquify_svg_safe
 from .utils import to_inches, from_inches, inherits_plotnine, inherits, \
-                    _flatten_nested_list
+                    _flatten_nested_list, _overall_scale_recommendation_patch
 from .layout_elements import layout
 from .annotation_elements import annotation
 from .config import rcParams
 from .text_elements import text
 
 import copy
+import pdb
 
 class patch:
     def __init__(self, *args, grobs=None):
@@ -118,8 +119,8 @@ class patch:
         else:
             self.grobs = grobs
 
-        self.__layout = "patch" # this is different than None...
-        self.__annotation = None
+        self._layout = "patch" # this is different than None...
+        self._annotation = None
 
     @property
     def layout(self):
@@ -128,17 +129,17 @@ class patch:
         object or the default ``layout`` if no layout has been explicitly
         defined
         """
-        if self.__layout == "patch":
+        if self._layout == "patch":
             if len(self.grobs) < 4:
                 return layout(nrow = len(self.grobs), ncol = 1)
             else:
                 num_grobs = len(self.grobs)
                 nrow = int(np.ceil(np.sqrt(num_grobs)))
-                ncol = int(np.ceil(len(self.grobs) / nrow))
+                ncol = int(np.ceil(num_grobs / nrow))
 
                 return layout(nrow=nrow, ncol=ncol)
         else:
-            return self.__layout
+            return self._layout
 
     @property
     def annotation(self):
@@ -152,18 +153,18 @@ class patch:
         if no annotation is provide, we do make sure that
         "tags_inherit='override'"
         """
-        if self.__annotation is None:
+        if self._annotation is None:
             return annotation(tags_inherit="override")
         else:
-            return self.__annotation
+            return self._annotation
 
 
     def _check_layout(self):
         """
         checks layout if design matrix is fulled defined
         """
-        if self.layout.num_grobs is not None:
-           if self.layout.num_grobs != len(self.grobs):
+        if (self.layout.num_grobs is not None) and \
+            (self.layout.num_grobs != len(self.grobs)):
             raise AttributeError("layout's number of patches does not "+
                                  "matches number of patches in arangement")
 
@@ -222,7 +223,7 @@ class patch:
         elif inherits(other, layout):
             # combine with layout -------------
             object_copy = copy.deepcopy(self)
-            object_copy.__layout = other
+            object_copy._layout = other
 
             return object_copy
         elif inherits(other, annotation):
@@ -231,19 +232,16 @@ class patch:
             if self.annotation is None:
                 other_copy = copy.deepcopy(other)
                 other_copy._clean_up_attributes()
-                object_copy.__annotation = other_copy
+                object_copy._annotation = other_copy
             else:
                 final_copy = copy.deepcopy(self.annotation + other)
                 final_copy._clean_up_attributes()
-                object_copy.__annotation = final_copy
+                object_copy._annotation = final_copy
 
             return object_copy
 
     def __mul__(self, other):
         raise ValueError("currently not implimented *")
-
-    def __and__(self, other):
-        raise ValueError("currently not implimented &")
 
 
     def _get_grob_tag_ordering(self, cur_annotation=None):
@@ -297,6 +295,7 @@ class patch:
             out_array[out_array > len(cur_annotation.tags[0])-1] = None
 
         return out_array
+
 
 
     # def _svg(self, width_pt, height_pt, sizes=None, num_attempts=None):
@@ -724,6 +723,95 @@ class patch:
     #     return max_scaling
 
 
+    def _svg(self, width=None, height=None, data_dict=None):
+        return self._hierarchical_general_process(width, height, data_dict,
+                                                 approach="create")
+
+    def _default_size(self, data_dict=None):
+        """
+        calculate the default size for this patch arrangement based on
+        cow.rcParams that define minimum sizing of figures. This also takes
+        into account the true required sizes to present titles & tags
+
+        Arguments
+        ---------
+        data_dict : dictionary
+            This dictionary is used to pass information from parents to
+            children to help with the overall calculation of the full default
+            size.
+
+            Specifically, `data_dict` can have an attribute
+            `"default-size-proportion"`. If this attribute exists, it should
+            be a tuple with values between (0,1]. These values capture the
+            relative size of this child's shape to the overall parent we
+            are getting the default size for.
+
+            Additionally, this dictionary can store things for the tag creation
+            and sizing, including the attribute
+            `"parent-guided-annotation-update"`. This is the parent's
+            annotation object. If the current level's `annotation` has
+            `tags_inherit="override"` the annotation tag structure will be
+            taken from the parent.
+
+        Returns
+        -------
+        default_size : tuple
+            default size of the image (in inches) to respect minimum sizing
+            desires as defined by cow.rcParams & title & tag sizes.
+
+        Details
+        -------
+        *For code explorers*: this function wraps around
+        `_hierarchical_general_process`. To understand the underlying code
+        see that function (and potentially read the docstring before you do
+        a deep dive).
+
+        """
+        return self._hierarchical_general_process(width=None,
+                                                  height=None,
+                                                  data_dict=data_dict,
+                                                  approach="default-size")
+
+    def _doable_size(self, width=None, height=None, data_dict=None):
+        """
+        calculates a doable size for all grobs, including nested grobs
+        within inner patch objects & assesses "doablity" at the give size
+
+        Arguments
+        ---------
+        width : float
+            inches (TODO - write description)
+        height : float
+            inches (TODO - write description)
+        data_dict : dict
+            dictionary of inner storage (TODO - write description)
+
+            Additionally, this dictionary can store things for the tag creation
+            and sizing, including the attribute
+            `"parent-guided-annotation-update"`. This is the parent's
+            annotation object. If the current level's `annotation` has
+            `tags_inherit="override"` the annotation tag structure will be
+            taken from the parent.
+
+        Returns
+        -------
+        sizes_list : (potentially nested) list
+            if doablity == 1, then this provides tuples of sizes (in pt) for
+            each element base element, which nested structure for patch
+            wrapping. This doesn't contain sizing for titles & tags but does
+            take them into consideration.
+
+            if doablity == 1, TODO - write description
+        doability: boolean
+            0/1 boolean if requested width and height are doable for the
+            overarching image (TODO: make this a true boolean?)
+
+
+        """
+        return self._hierarchical_general_process(width, height, data_dict,
+                                                 approach="size")
+
+
     def _hierarchical_general_process(self,
                             width=None, height=None, data_dict=None,
                             approach=["size", "create", "default-size"][0]):
@@ -734,9 +822,9 @@ class patch:
         Arguments
         ---------
         width: float
-            probably inches based - not 100% sure
+            outcome svg's width requested (in inches). Can be None.
         height: float
-            probably inches based - not 100% sure
+            outcome svg's height requested (in inches). Can be None.
         data_dict : dictionary
             dictionary of data to pass to children patches
         approach : str
@@ -758,7 +846,7 @@ class patch:
         minimum width and height of a images (as stored in rcParams) and for all
         titles, subtitles, captions, and tags to have enough space to be
         correctly presented. For the
-        arguments, (width, height) are ___ and the data_dict may have the
+        arguments, (width, height) are not at all, and the data_dict may have the
         attribute "default-size-proportion" which should be a tuple of positive
         floats (less than or equal to 1) that captures the relative size of this
         patch to the overall.
@@ -777,6 +865,8 @@ class patch:
         include an attribute "parent-guided-annotation-update" which contains
         an annotation object that the parent is providing.
 
+        - data_dict["parent-guided-annotation-update"]
+
         """
 
         # initialization section ----------------------------------------------
@@ -787,7 +877,7 @@ class patch:
             data_dict.get("parent-guided-annotation-update") is not None:
 
             # Note: this addition allows for the keeping of titles but the
-            # update of tags
+            # update of tags (as only the tag information is passed)
             if cur_annotation.inheritance_type() == "override":
                 cur_annotation += data_dict["parent-guided-annotation-update"]
 
@@ -799,12 +889,6 @@ class patch:
 
         ### default size estimation
         if approach == "default-size":
-            if (width is not None and width > 1) or \
-                (height is not None and height > 1):
-                raise ValueError("if using approach \"default-size\", "+\
-                                 "height and width should be greater or "+\
-                                 "equal to one.")
-                # TODO: why do we care they are greater than 1?
             if data_dict is None or \
                 data_dict.get("default-size-proportion") is None:
 
@@ -822,7 +906,7 @@ class patch:
                         "be a 2 length tuple of non-negative floats (less " +\
                         "than or equal to 1")
 
-            overall_default_size = (0,0)
+            overall_default_size = (0,0) # starting storage for overall_default_size
         else: # using default sizings
             if width is None or height is None:
                 default_width, default_height = \
@@ -920,8 +1004,6 @@ class patch:
             if True: # all approaches
                 inner_area = areas[p_idx]
 
-                # TODO: start here
-                # (1/16) what if within this space we check more things?
                 if tag_index_array[p_idx] is not None:
                     grob_tag_index = tag_index_array[p_idx]
 
@@ -947,6 +1029,7 @@ class patch:
 
 
             if approach in ["create", "size"]:
+                # in pt...
                 grob_width, grob_height = \
                     inner_area.width - tag_margin_dict["extra_used_width"],\
                     inner_area.height - tag_margin_dict["extra_used_height"]
@@ -966,21 +1049,26 @@ class patch:
 
             ## grob processing
             if inherits(image, patch):
-                ### default sizing
+
                 data_dict_pass_through = data_dict.copy()
                 data_dict_pass_through["parent-index"] = current_index
                 data_dict_pass_through["parent-guided-annotation-update"] = \
                     cur_annotation._step_down_tags_info(parent_index=grob_tag_index)
 
+                ### default sizing
                 if approach == "default-size":
+                    # (TODO: remove comment once done with pt vs in stuff)
+                    # no need to look at width & height as (relative to PT & IN)
+                    # is actually in the "pure-relative" format (relative to
+                    # overall size of 1 x 1)
                     default_size_prop = (inner_area.width, inner_area.height)
                     data_dict_pass_through["default-size-proportion"] = \
                         default_size_prop
 
-
                     default_inner_size = self.grobs[p_idx]._hierarchical_general_process(
                                     data_dict=data_dict_pass_through,
                                     approach="default-size")
+                        # ^same as calling ._default_size(data_dict=data_dict_pass_through)
                 ### sizing estimation
                 if approach == "size":
                     data_dict_pass_through["size-node-level"] = \
@@ -988,8 +1076,8 @@ class patch:
 
                     inner_sizes, inner_size_multiplier = \
                         image._hierarchical_general_process(
-                                    width=grob_width,
-                                    height=grob_height,
+                                    width=to_inches(grob_width, "pt"),
+                                    height=to_inches(grob_height, "pt"),
                                     data_dict=data_dict_pass_through,
                                     approach="size")
                     sizes_list.append(inner_sizes)
@@ -1050,7 +1138,7 @@ class patch:
             elif inherits(image, text):
                 ### default sizing
                 if approach == "default-size":
-                    m_w,m_h = self.grobs[p_idx]._min_size()
+                    m_w,m_h = self.grobs[p_idx]._min_size(to_inches=True)
 
                     default_inner_size = (
                         np.max([rcParams["base_aspect_ratio"] *\
@@ -1059,7 +1147,8 @@ class patch:
                         )
                 ### sizing estimation
                 if approach == "size":
-                    m_w, m_h = image._min_size()
+                    m_w, m_h = image._min_size(to_inches=False) # PT vs IN
+                    #pdb.set_trace()
                     if m_w > grob_width or m_h > grob_height: # track needed size change
                         inner_size_multiplier = np.max([m_w/grob_width,
                                                         m_h/grob_height])
@@ -1093,6 +1182,7 @@ class patch:
                     default_inner_size[0] + tag_margin_dict["extra_used_width"],
                     default_inner_size[1] + tag_margin_dict["extra_used_height"]
                     )
+
                 overall_default_size = (
                     np.max([1/inner_area.width * grob_default_size[0],
                             overall_default_size[0]]),
@@ -1124,8 +1214,9 @@ class patch:
         ### sizing estimation
         if approach == "size":
             if not np.allclose(size_multiplier, np.ones(len(size_multiplier))): # track needed size change
+                pdb.set_trace()
                 _, inner_size_multiplier = \
-                    _overall_scale_recommendation_patch(interior_image_scalings,
+                    _overall_scale_recommendation_patch(size_multiplier,
                             text_inner_size=(
                                 np.max([title_margin_sizes_dict["min_inner_width"],
                                         title_margin_sizes_dict["min_full_width"] - \
@@ -1138,14 +1229,15 @@ class patch:
                 ### repeat
                 # if sizing incorrect and num-attempts haven't run out,
                 # repeat process with updated sizing
-                if data_dict["size-num-attempts"] > 0 and \
-                    data_dict["size-node-level"] == 0:
+                if data_dict["size-node-level"] == 0:
                     return self._hierarchical_general_process(self,
                                       width=inner_size_multiplier*width,
                                       height=inner_size_multiplier*height,
                                       data_dict={"size-num-attempts":
                                                     data_dict["size-num-attempts"]-1},
                                       approach="size")
+                else:
+                    return (-1,-1), inner_size_multiplier
             else: # collect sizes
                 return sizes_list, 1
 

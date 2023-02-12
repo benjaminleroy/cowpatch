@@ -342,22 +342,22 @@ def _overall_scale_recommendation_single(image_new_size,
 
     Notes
     -----
-    This function assumes ate least one of the new image_new_size values are
+    This function assumes at least one of the new image_new_size values are
     greater than the original requested size (original_overall_size -
     text_extra_sizes)
     """
 
-    min_inner_size_needed = (np.max([image_new_size[i], text_inner_size[i]])
-                                for i in [0,1])
+    min_inner_size_needed = tuple([np.max([image_new_size[i], text_inner_size[i]])
+                                for i in [0,1]])
 
     min_overall_size_needed = tuple(np.array(min_inner_size_needed) +\
         np.array(text_extra_size))
 
-    size_ratio = orginal_overall_size[0] / orginal_overall_size[0]
+    size_ratio = original_overall_size[0] / original_overall_size[1]
 
     out_array = np.zeros(2)
 
-    if min_overall_size_needed[1] < 1/size_ratio * min_overall_size_needed[0]:
+    if min_overall_size_needed[1] > 1/size_ratio * min_overall_size_needed[0]:
         out_array[1] = min_overall_size_needed[1]
         out_array[0] = size_ratio * min_overall_size_needed[1]
     else:
@@ -397,7 +397,7 @@ def _overall_scale_recommendation_patch(interior_image_scalings,
 
     Notes
     -----
-    This function assumes ate least one of the new image_new_size values are
+    This function assumes at least one of the new image_new_size values are
     greater than the original requested size (original_overall_size -
     text_extra_sizes)
     """

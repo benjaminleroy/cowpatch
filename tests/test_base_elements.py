@@ -4,9 +4,12 @@ from hypothesis import given, strategies as st, settings
 import numpy as np
 import cowpatch as cow
 from cowpatch.utils import inherits, _flatten_nested_list, \
-                            _transform_size_to_pt
+                            _transform_size_to_pt, to_inches
+from cowpatch.config import rcParams
+
 import pytest
 import io
+import itertools
 
 import plotnine as p9
 import plotnine.data as p9_data
@@ -63,6 +66,158 @@ def test_patch__init__():
     mypatch_args2 = cow.patch(p0, p1, mypatch)
     assert len(mypatch_args2.grobs) == 3, \
         "grobs can be passed through the grobs parameter indirectly"
+
+def test_patch_layout():
+    """
+    tests when default layout appears and that it's correct
+
+    static tests
+    """
+
+    p0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.facet_wrap("cyl") +\
+        p9.labs(title = 'Plot 0')
+
+    p1 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+        p9.labs(title = 'Plot 1')
+
+    p2 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+        p9.labs(title = 'Plot 2')
+
+
+    # 3 elements
+    base = cow.patch(grobs=[p0,p1,p2])
+    out_layout = base.layout
+
+    assert base._layout == "patch" and \
+        out_layout == cow.layout(nrow=3, ncol=1), \
+        "if only 3 grobs & no layout, expect presented in a single column display"
+
+    base1 = base + cow.layout(nrow=2, ncol=2)
+    out_layout1 = base1.layout
+
+    assert base1._layout == out_layout1 and \
+        out_layout1 == cow.layout(nrow=2, ncol=2), \
+        "layout added to patch should be the one returned (complete layout)"
+
+
+    base2 = base + cow.layout(nrow=2)
+    out_layout2 = base2.layout
+
+    assert base2._layout == out_layout2 and \
+        out_layout2 == cow.layout(nrow=2), \
+        "layout added to patch should be the one returned (partical layout)"
+
+    # 4 elements
+    base = cow.patch(grobs=[p0,p1,p2,p0])
+    out_layout = base.layout
+
+
+    assert base._layout == "patch" and \
+        out_layout == cow.layout(nrow=2, ncol=2), \
+        "if only 4 grobs & no layout, expect presented in a 2 x 2 display"
+
+
+    # > 4 elements
+    ngrobs = np.random.choice(np.arange(5,31))
+    nrow = int(np.ceil(np.sqrt(ngrobs)))
+    ncol = int(np.ceil(ngrobs / nrow))
+    base_large = cow.patch(grobs=[p0 for i in range(ngrobs)])
+    out_layout_large = base_large.layout
+
+    assert base_large._layout == "patch" and \
+        out_layout_large == cow.layout(nrow=nrow, ncol=ncol) and \
+        nrow*ncol >= ngrobs, \
+        ("if only %i grobs & no layout, expect presented in a "+
+         "sqrt(n) x sqrt(n)-ish display") % ngrobs
+
+def test_patch_annotation():
+    """
+    tests when default annotation appears and that it's correct
+
+    static tests
+    """
+
+    p0 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_bar(p9.aes(x="hwy")) +\
+        p9.facet_wrap("cyl") +\
+        p9.labs(title = 'Plot 0')
+
+    p1 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+        p9.labs(title = 'Plot 1')
+
+    p2 = p9.ggplot(p9_data.mpg) +\
+        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+        p9.labs(title = 'Plot 2')
+
+
+    # none, 3 grobs
+    base = cow.patch(grobs=[p0,p1,p2])
+    out_ann = base.annotation
+
+    assert base._annotation == None and \
+        out_ann == cow.annotation(tags_inherit="override"), \
+        "if no annotation set, basic one defined (base has grobs)"
+
+    # none, no grobs
+    base0 = cow.patch()
+    out_ann0 = base0.annotation
+
+
+    assert base0._annotation == None and \
+        out_ann0 == cow.annotation(tags_inherit="override"), \
+        "if no annotation set, basic one defined (base has no grobs)"
+
+
+    # with annotation object
+    for title, subtitle, caption in \
+        itertools.product(["title", cow.text("title"), {"bottom":"title"},
+                    {"bottom": cow.text("title")},
+                    {"left": 'ltitle', "bottom":"btitle"},
+                    {"left": cow.text('ltitle'), "bottom": cow.text("btitle")},
+                     None],
+                     ["subtitle", cow.text("subtitle"), {"bottom":"subtitle"},
+                    {"bottom": cow.text("subtitle")},
+                    {"left": 'lsubtitle', "bottom":"bsubtitle"},
+                    {"left": cow.text('lsubtitle'), "bottom": cow.text("bsubtitle")},
+                     None],
+                     [None, "caption", cow.text("caption")]):
+
+        base_full1 = base + cow.annotation(title=title,subtitle=subtitle,
+                                      caption=caption)
+        out_ann_full1 = base_full1.annotation
+
+        assert base_full1._annotation == out_ann_full1 and \
+            out_ann_full1 == cow.annotation(title=title,subtitle=subtitle,
+                                      caption=caption), \
+            ("annotation properties shouldn't be updated by patch, \n" +
+             "title: {title}, subtitle: {subtitle}, caption: {caption}".\
+                format(title=title,subtitle=subtitle,caption=caption))
+
+    for tags, tags_loc, tags_inherit in \
+        itertools.product(
+                     [('1',), ("0", "a"), ["banana", "apple"],
+                     (["banana", "apple"], "a") , None],
+                     ["top", "bottom", "left", "right", None],
+                     ["fix", "override"]):
+
+        base_full2 = base + cow.annotation(tags=tags,
+                                      tags_loc=tags_loc,
+                                      tags_inherit=tags_inherit)
+        out_annotation_full2 = base_full2.annotation
+
+        assert base_full2._annotation == out_annotation_full2 and \
+            out_annotation_full2 == cow.annotation(tags=tags,
+                                      tags_loc=tags_loc,
+                                      tags_inherit=tags_inherit), \
+            ("annotation properties shouldn't be updated by patch, \n" +
+             "tags: {tags}, tags_loc: {tags_loc}, tags_inherit: {tags_inherit}".\
+                format(tags=tags,tags_loc=tags_loc, tags_inherit=tags_inherit))
+
 
 def test_patch__get_grob_tag_ordering():
     """
@@ -395,7 +550,8 @@ def test_patch__get_grob_tag_ordering2():
         "if annotation object itelf is missing, we expect the "+\
         "_get_grob_tag_ordering to return an empty array"
 
-def test_patch__estimate_default_min_desired_size_NoAnnotation():
+
+def test_patch__default_size_NoAnnotation():
     g0 = p9.ggplot(p9_data.mpg) +\
         p9.geom_bar(p9.aes(x="hwy")) +\
         p9.labs(title = 'Plot 0')
@@ -421,7 +577,7 @@ def test_patch__estimate_default_min_desired_size_NoAnnotation():
                    rel_heights = [1,2])
 
     sug_width, sug_height = \
-        vis1._hierarchical_general_process(approach="default-size")
+        vis1._default_size()
 
     assert np.allclose(sug_width,
                         (2 * # 1/ rel width of smallest width of images
@@ -444,7 +600,7 @@ def test_patch__estimate_default_min_desired_size_NoAnnotation():
 
 
     sug_width_n, sug_height_n = \
-        vis_nested._hierarchical_general_process(approach="default-size")
+        vis_nested._default_size()
 
     assert np.allclose(sug_width_n,
                         (2 * # 1/ rel width of smallest width of images
@@ -459,10 +615,7 @@ def test_patch__estimate_default_min_desired_size_NoAnnotation():
         "suggested height incorrectly sizes the smallest height of the images "+\
         "(v2 - nested, no annotation)"
 
-# TODO: test when some plots have tags, others don't
-# TODO: this test (below) still needs to be examined
-# See "TODO FIX" inside plot
-def test_patch__estimate_default_min_desired_size_Annotation():
+def test_patch__default_size_Annotation():
     g0 = p9.ggplot(p9_data.mpg) +\
         p9.geom_bar(p9.aes(x="hwy")) +\
         p9.labs(title = 'Plot 0')
@@ -483,7 +636,7 @@ def test_patch__estimate_default_min_desired_size_Annotation():
         cow.annotation(title = "My title")
 
     sug_width, sug_height = \
-        vis1._hierarchical_general_process(approach="default-size")
+        vis1._default_size()
 
     assert np.allclose(sug_width,
                         (2 * # 1/ rel width of smallest width of images
@@ -509,7 +662,7 @@ def test_patch__estimate_default_min_desired_size_Annotation():
 
 
     sug_width_n, sug_height_n = \
-        vis_nested._hierarchical_general_process(approach="default-size")
+        vis_nested._default_size()
 
     assert np.allclose(sug_width_n,
                         (2 * # 1/ rel width of smallest width of images
@@ -527,7 +680,7 @@ def test_patch__estimate_default_min_desired_size_Annotation():
         "suggested height incorrectly sizes the smallest height of the images "+\
         "(v2 - nested, annotation)"
 
-    # tag nested option -----------
+    # tag nested option (explicit tags_inherit="override")-----------
     vis_nested_tag = cow.patch(g0,cow.patch(g1,g2)+\
                         cow.layout(ncol=1, rel_heights = [1,2]) +\
                         cow.annotation(tags_inherit="override")) +\
@@ -537,18 +690,15 @@ def test_patch__estimate_default_min_desired_size_Annotation():
                        tags_loc="top")
 
     sug_width_nt, sug_height_nt = \
-        vis_nested_tag._hierarchical_general_process(approach="default-size")
+        vis_nested_tag._default_size()
 
     assert np.allclose(sug_width_nt,
                         (2 * # 1/ rel width of smallest width of images
                          cow.rcParams["base_height"] *
                          cow.rcParams["base_aspect_ratio"])), \
         "suggested width incorrectly sizes the smallest width of the images "+\
-        "(v2 - nested + tagged, annotation)"
+        "(v2 - nested + tagged, annotation - explicit tags_inherit=\"override\")"
 
-    # TODO: this looks like the tag structure isn't being correctly taken into acount
-    # it looks like it's not stepping down correctly (tags_format versus index)
-    # probably associated with _step_down_tags_info
     assert np.allclose(sug_height_nt,
                        (3 * # 1/ rel width of smallest width of images (and include the caption and 1 tag)
                         (cow.rcParams["base_height"] +\
@@ -557,375 +707,590 @@ def test_patch__estimate_default_min_desired_size_Annotation():
                         cow.text("My caption", _type="cow_caption").\
                             _min_size(to_inches=True)[1])), \
         "suggested height incorrectly sizes the smallest height of the images "+\
-        "(v2 - nested + tagged, annotation)"
+        "(v2 - nested + tagged, annotation - explicit tags_inherit=\"override\")"
 
-def test_patch__default_size__both_none():
-    """
-    this test passes none for both parameters
-    """
-    g0 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_bar(p9.aes(x="hwy")) +\
-        p9.labs(title = 'Plot 0')
+    # tag nested option (implicit tags_inherit="override")-----------
+    vis_nested_tag_i = cow.patch(g0,cow.patch(g1,g2)+\
+                        cow.layout(ncol=1, rel_heights = [1,2])) +\
+        cow.layout(nrow=1) +\
+        cow.annotation(caption = "My caption") +\
+        cow.annotation(tags=("0", "a"), tags_format=("Fig {0}", "Fig {0}.{1}"),
+                       tags_loc="top")
 
-    g1 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
-        p9.labs(title = 'Plot 1')
+    sug_width_nt_i, sug_height_nt_i = \
+        vis_nested_tag_i._default_size()
 
-    g2 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
-        p9.labs(title = 'Plot 2')
-
-    g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
-                                                         "suv",
-                                                         "pickup"])]) +\
-        p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
-        p9.facet_wrap("class")
-
-    # basic option ----------
-    vis1 = cow.patch(g0,g1,g2) +\
-        cow.layout(design = np.array([[0,1],
-                                      [0,2]]),
-                   rel_heights = [1,2])
-
-    out_w, out_h = vis1._default_size(height=None,width=None)
-
-    assert np.allclose(out_w,
+    assert np.allclose(sug_width_nt_i,
                         (2 * # 1/ rel width of smallest width of images
                          cow.rcParams["base_height"] *
                          cow.rcParams["base_aspect_ratio"])), \
-        "_default_size incorrectly connects with _size_dive output - width (v1)"
+        "suggested width incorrectly sizes the smallest width of the images "+\
+        "(v2 - nested + tagged, annotation - implicit tags_inherit=\"override\")"
 
-    assert np.allclose(out_h,
-                       (3 * # 1/ rel width of smallest width of images
-                        cow.rcParams["base_height"])), \
-        "_default_size incorrectly connects with _size_dive output - height (v1)"
+    assert np.allclose(sug_height_nt_i,
+                       (3 * # 1/ rel width of smallest width of images (and include the caption and 1 tag)
+                        (cow.rcParams["base_height"] +\
+                        cow.text("Fig 01ab", _type="cow_tag").\
+                            _min_size(to_inches=True)[1]) +\
+                        cow.text("My caption", _type="cow_caption").\
+                            _min_size(to_inches=True)[1])), \
+        "suggested height incorrectly sizes the smallest height of the images "+\
+        "(v2 - nested + tagged, annotation - implicit tags_inherit=\"override\")"
 
+def test_patch_default_size_TextNoAnnotation():
+    """
+    test of patch's _default_size
 
-    # nested option --------
-    vis_nested = cow.patch(g0,cow.patch(g1,g2)+\
-                        cow.layout(ncol=1, rel_heights = [1,2])) +\
-        cow.layout(nrow=1)
+    Static test to ensure sizes of text objects minimum sizing correctly
+    alter default_size output if needed. Also, actual examples ensure that
+    there any error in `_min_size` call relative to `to_inches` parameter
+    is not occuring.
 
-    out_w_n, out_h_n = vis_nested._default_size(height=None,width=None)
+    Note:
+    this test doesn't combine text objects with annotation (so it fits
+    in the NoAnnotation approach). For now we're not going to test that
+    option.
+    """
+    # basic option (text fits in desired box) ----------
 
-    assert np.allclose(out_w_n,
+    t0 = cow.text("An approximate answer to the right problem\n"+
+                  "is worth a good deal more than an exact\n"+
+                  "answer to an approximate problem. ~John Tukey") +\
+        p9.element_text(size = 15)
+
+    t1 = cow.text("If I can’t picture it,\n"+
+                  "I can’t understand it. ~Albert Einstein") +\
+        p9.element_text(size = 17, ha="left")
+
+    t2 = cow.text("Tables usually outperform graphics in\n"+
+                  "reporting on small data sets of 20\n"+
+                  "numbers or less. ~John Tukey") +\
+        p9.element_text(size=12, ha="left")
+
+    vis1 = cow.patch(t0, t1, t2) +\
+        cow.layout(design = np.array([[0,1],
+                                      [0,2]]),
+                   rel_heights = [1,2])
+
+    sug_width, sug_height = vis1._default_size()
+
+    assert np.allclose(sug_width,
                         (2 * # 1/ rel width of smallest width of images
                          cow.rcParams["base_height"] *
                          cow.rcParams["base_aspect_ratio"])), \
-        "_default_size incorrectly connects with _size_dive output - width (v2-nested)"
+        ("when text size elements in image *don't require* larger-than rcParams "+
+        "sizing, width sizing should match rcParam related expectation "+
+        "(no annotation)")
 
-    assert np.allclose(out_h_n,
+    assert np.allclose(sug_height,
                        (3 * # 1/ rel width of smallest width of images
                         cow.rcParams["base_height"])), \
-        "_default_size incorrectly connects with _size_dive output - height (v2-nested)"
+        ("when text size elements in image *don't require* larger-than rcParams "+
+        "sizing, height sizing should match rcParam related expectation "+
+        "(no annotation)")
 
-def test_patch__default_size__both_not_none(height,width):
-    g0 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_bar(p9.aes(x="hwy")) +\
-        p9.labs(title = 'Plot 0')
+    m_w0, m_h0 = t0._min_size(to_inches=True)
+    m_w1, m_h1 = t1._min_size(to_inches=True)
+    m_w2, m_h2 = t2._min_size(to_inches=True)
 
-    g1 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
-        p9.labs(title = 'Plot 1')
+    assert ((sug_height >= m_h0) and
+        (2/3 * sug_height >= m_h2) and
+        (1/3 * sug_height >= m_h1)) and \
+        ((1/2 * sug_width >= m_w0) and
+            (1/2 * sug_width >= m_w2) and
+            (1/2 * sug_width >= m_w1)), \
+        ("when text size elements in image *don't require* larger-than rcParams "+
+         "the min size of text objects should be less than or equal to allocated "+
+         "sizing for the image (no annotation)")
 
-    g2 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
-        p9.labs(title = 'Plot 2')
 
-    g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
-                                                         "suv",
-                                                         "pickup"])]) +\
-        p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
-        p9.facet_wrap("class")
+    # second option (text doesn't fits in desired box) ----------
 
-    # basic option ----------
-    vis1 = cow.patch(g0,g1,g2) +\
+    t0_2 = cow.text("An approximate answer to the right problem\n"+
+                  "is worth a good deal more than an exact\n"+
+                  "answer to an approximate problem. ~John Tukey") +\
+        p9.element_text(size = 25)
+
+    t1_2 = cow.text("If I can’t picture it,\n"+
+                  "I can’t understand it. ~Albert Einstein") +\
+        p9.element_text(size = 20, ha="left")
+
+    t2_2 = cow.text("Tables usually outperform graphics in\n"+
+                  "reporting on small data sets of 20\n"+
+                  "numbers or less. ~John Tukey") +\
+        p9.element_text(size=25, ha="left")
+
+    vis2 = cow.patch(t0_2, t1_2, t2_2) +\
         cow.layout(design = np.array([[0,1],
                                       [0,2]]),
                    rel_heights = [1,2])
 
-    out_w, out_h = vis1._default_size(height=height,width=width)
-    assert out_w == width and out_h == height, \
-        "if height and width are provided, they shouldn't be changed by "+\
-        "default size function (v1 - no nesting)"
 
-    # nested option --------
-    vis_nested = cow.patch(g0,cow.patch(g1,g2)+\
-                        cow.layout(ncol=1, rel_heights = [1,2])) +\
-        cow.layout(nrow=1)
+    sug_width_2, sug_height_2 = vis2._default_size()
 
-    out_w_n, out_h_n = vis_nested._default_size(height=height,width=width)
-    assert out_w_n == width and out_h_n == height, \
-        "if height and width are provided, they shouldn't be changed by "+\
-        "default size function (v2 - nesting)"
+    assert (sug_width_2 >=
+                        (2 * # 1/ rel width of smallest width of images
+                         cow.rcParams["base_height"] *
+                         cow.rcParams["base_aspect_ratio"])), \
+        ("when text size elements in image *require* larger-than rcParams "+
+        "sizing, width sizing be greater or equal to rcParam related expectation "+
+        "(no annotation)")
 
-@given(st.floats(min_value=.5, max_value=49))
-def test_patch__default_size__one_none(height_or_width):
-    g0 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_bar(p9.aes(x="hwy")) +\
-        p9.labs(title = 'Plot 0')
+    assert (sug_height_2 >=
+                       (3 * # 1/ rel width of smallest width of images
+                        cow.rcParams["base_height"])), \
+        ("when text size elements in image *require* larger-than rcParams "+
+        "sizing, height sizing be greater or equal to rcParam related expectation "+
+        "(no annotation)")
 
-    g1 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
-        p9.labs(title = 'Plot 1')
+    m_w0_2, m_h0_2 = t0_2._min_size(to_inches=True)
+    m_w1_2, m_h1_2 = t1_2._min_size(to_inches=True)
+    m_w2_2, m_h2_2 = t2_2._min_size(to_inches=True)
 
-    g2 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
-        p9.labs(title = 'Plot 2')
+    assert ((sug_height_2 >= m_h0_2) and
+        (2/3 * sug_height_2 >= m_h2_2) and
+        (1/3 * sug_height_2 >= m_h1_2)) and \
+        ((1/2 * sug_width_2 >= m_w0_2) and
+            (1/2 * sug_width_2 >= m_w2_2) and
+            (1/2 * sug_width_2 >= m_w1_2)), \
+        ("when text size elements in image *require* larger-than rcParams "+
+         "the min size of text objects should be less than or equal to allocated "+
+         "sizing for the image (no annotation)")
 
-    g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
-                                                         "suv",
-                                                         "pickup"])]) +\
-        p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
-        p9.facet_wrap("class")
+    assert ((2 * # 1/ rel width of smallest width of images
+                         cow.rcParams["base_height"] *
+                         cow.rcParams["base_aspect_ratio"]) <
+            np.max([2 * m_w0_2, 2 * m_w1_2,  2 * m_w2_2])) or \
+            ((3 * # 1/ rel width of smallest width of images
+                        cow.rcParams["base_height"]) <
+            np.max([m_h0_2, 3/2 * m_h2_2,  3 * m_h1_2])), \
+        ("inner test to, ensuring that second example provides case where "+
+         "text size element in image *require* larger-than rcParams "+
+         "default sizing (specifically width, but code allows for either)")
 
 
-    # basic option ----------
-    vis1 = cow.patch(g0,g1,g2) +\
+
+
+
+def test_patch__doable_size_SimpleText():
+    """
+    testing patch's _doable_size functionality
+
+    test focuses on only text objects that would correctly fit inside
+    the suggested size
+    """
+    # overall tests should deal with (1) annotations (title & tags)
+    # (2) nested & not nested (3) vary with too small and acceptably sized
+    # figures.
+
+    # 1. test only text attributes (start with default_size)
+    # should see sizing directly relate to default_size
+
+    # basic option (text fits in desired box) ----------
+
+    t0 = cow.text("An approximate answer to the right problem\n"+
+                  "is worth a good deal more than an exact\n"+
+                  "answer to an approximate problem. ~John Tukey") +\
+        p9.element_text(size = 15)
+
+    t1 = cow.text("If I can’t picture it,\n"+
+                  "I can’t understand it. ~Albert Einstein") +\
+        p9.element_text(size = 17, ha="left")
+
+    t2 = cow.text("Tables usually outperform graphics in\n"+
+                  "reporting on small data sets of 20\n"+
+                  "numbers or less. ~John Tukey") +\
+        p9.element_text(size=12, ha="left")
+
+    t3 = cow.text(label="Pardon my French.\n"+
+                  "~Non-French speaking person") +\
+        p9.element_text(size = 20)
+
+    vis1 = cow.patch(t0, t2, t3) +\
         cow.layout(design = np.array([[0,1],
                                       [0,2]]),
                    rel_heights = [1,2])
 
-    default_w, default_h = vis1._default_size(None,None)
-    static_aspect_ratio = default_h / default_w
+    sug_width, sug_height = vis1._default_size()
 
-    # provide width ----
-    out_w, out_h = vis1._default_size(height=None,width=height_or_width)
-    assert np.allclose(out_w, height_or_width) and \
-        np.allclose(out_h, height_or_width * static_aspect_ratio), \
-        "if *only width* is provided, suggested height is relative to aspect "+\
-        "ratio that would be suggested if neither provided (v1)"
+    sizes_list, doable = vis1._doable_size(width=sug_width, height=sug_height)
 
-    # provide height ----
-    out_w, out_h = vis1._default_size(height=height_or_width,width=None)
-    assert np.allclose(out_h, height_or_width) and \
-        np.allclose(out_w, height_or_width / static_aspect_ratio), \
-        "if *only height* is provided, suggested width is relative to aspect "+\
-        "ratio that would be suggested if neither provided (v1)"
+    sizes_list_in = np.array([[to_inches(x[0], "pt"), to_inches(x[1], "pt")]
+                                for x in sizes_list])
 
-    # nested option --------
-    vis_nested = cow.patch(g0,cow.patch(g1,g2)+\
-                        cow.layout(ncol=1, rel_heights = [1,2])) +\
-        cow.layout(nrow=1)
+    assert doable, \
+        ("if patch's width & height for doable_size is much higher than "+
+        "minimum size possible, _doable_size should return doable")
 
-    default_w_n, default_h_n = vis_nested._default_size(None,None)
-    static_aspect_ratio_n = default_h_n / default_w_n
+    assert np.allclose([sug_width/2]*3, sizes_list_in[:,0]) and \
+        np.allclose(sizes_list_in[:,0].min(),
+                    rcParams["base_height"] * rcParams["base_aspect_ratio"]) and \
+        ("if static patch uses default size, expected width sizing "+
+        "should be met (both relative to rcParams & structure mult)")
 
-    # provide width ----
-    out_w, out_h = vis_nested._default_size(height=None,width=height_or_width)
-    assert np.allclose(out_w, height_or_width) and \
-        np.allclose(out_h, height_or_width * static_aspect_ratio_n), \
-        "if *only width* is provided, suggested height is relative to aspect "+\
-        "ratio that would be suggested if neither provided (v1)"
-
-    # provide height ----
-    out_w, out_h = vis_nested._default_size(height=height_or_width,width=None)
-    assert np.allclose(out_h, height_or_width) and \
-        np.allclose(out_w, height_or_width / static_aspect_ratio_n), \
-        "if *only height* is provided, suggested width is relative to aspect "+\
-        "ratio that would be suggested if neither provided (v1)"
-
-def test_patch__svg_get_sizes():
-    g0 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_bar(p9.aes(x="hwy")) +\
-        p9.labs(title = 'Plot 0')
-
-    g1 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
-        p9.labs(title = 'Plot 1')
-
-    g2 = p9.ggplot(p9_data.mpg) +\
-        p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
-        p9.labs(title = 'Plot 2')
-
-    g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
-                                                         "suv",
-                                                         "pickup"])]) +\
-        p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
-        p9.facet_wrap("class")
+    assert np.allclose(sug_height * np.array([1,1/3,2/3]), sizes_list_in[:,1]) and \
+        np.allclose(sizes_list_in[:,1].min(),
+                    rcParams["base_height"]) and \
+        ("if static patch uses default size, expected height sizing "+
+        "should be met (both relative to rcParams & structure mult)")
 
 
-    # basic option ----------
-    vis1 = cow.patch(g0,g1,g2) +\
+    # non-minimum _default_sizing used:
+
+    sug_width2, sug_height2 = 15,30
+    sizes_list2, doable2 = vis1._doable_size(width=sug_width2, height=sug_height2)
+
+    sizes_list_in2 = np.array([[to_inches(x[0], "pt"), to_inches(x[1], "pt")]
+                                for x in sizes_list2])
+
+    assert doable2, \
+        ("if patch's width & height for doable_size is much higher than "+
+        "minimum size possible, size > _doable_size should return doable")
+
+    assert np.allclose([sug_width2/2]*3, sizes_list_in2[:,0]) and \
+            (sizes_list_in2[:,0].min() >
+             rcParams["base_height"] * rcParams["base_aspect_ratio"]) and \
+        ("if static patch uses sizes > default size, expected width sizing "+
+        "should be met relative to input sizing")
+
+    assert np.allclose(sug_height2 * np.array([1,1/3,2/3]), sizes_list_in2[:,1]) and \
+            (sizes_list_in2[:,1].min() >
+                    rcParams["base_height"]) and \
+        ("if static patch uses sizes > default size, expected height sizing "+
+        "should be met relative to input sizing")
+
+
+
+    # nested structure, _default_sizing used:
+    vis1_nested = cow.patch(grobs = [t0,
+                            cow.patch(t2, t3) + cow.layout(design = np.array([[0],[1],[1]]))]) +\
+        cow.layout(design = np.array([[0,1]]))
+
+
+    sug_width_n, sug_height_n = vis1_nested._default_size()
+
+    sizes_list_n, doable_n = vis1_nested.\
+        _doable_size(width=sug_width_n, height=sug_height_n)
+
+    sizes_list_n_in = np.array([[to_inches(x[0], "pt"), to_inches(x[1], "pt")]
+                                        for x in sizes_list_n[:1]] +
+                            [[to_inches(x[0], "pt"), to_inches(x[1], "pt")]
+                                        for x in sizes_list_n[1]])
+
+    assert doable_n, \
+        ("if patch's width & height for doable_size is much higher than "+
+        "minimum size possible, _doable_size should return doable - nested")
+
+    assert np.allclose([sug_width_n/2]*3, sizes_list_n_in[:,0]) and \
+        np.allclose(sizes_list_n_in[:,0].min(),
+                    rcParams["base_height"] * rcParams["base_aspect_ratio"]) and \
+        ("if static patch uses default size, expected width sizing "+
+        "should be met (both relative to rcParams & structure mult) - nested")
+
+    assert np.allclose(sug_height_n * np.array([1,1/3,2/3]),
+                       sizes_list_n_in[:,1]) and \
+        np.allclose(sizes_list_n_in[:,1].min(),
+                    rcParams["base_height"]) and \
+        ("if static patch uses default size, expected height sizing "+
+        "should be met (both relative to rcParams & structure mult) - nested")
+
+
+    # nested structure, non-minimum _default_sizing used:
+
+
+    sug_width2, sug_height2 = 15,30
+    sizes_list_n2, doable_n2 = vis1_nested.\
+        _doable_size(width=sug_width2, height=sug_height2)
+
+    sizes_list_n_in2 = np.array([[to_inches(x[0], "pt"), to_inches(x[1], "pt")]
+                                        for x in sizes_list_n2[:1]] +
+                            [[to_inches(x[0], "pt"), to_inches(x[1], "pt")]
+                                        for x in sizes_list_n2[1]])
+
+    assert doable_n2, \
+        ("if patch's width & height for doable_size is much higher than "+
+        "minimum size possible, size > _doable_size should return doable - nested")
+
+    assert np.allclose([sug_width2/2]*3, sizes_list_n_in2[:,0]) and \
+            (sizes_list_n_in2[:,0].min() >
+             rcParams["base_height"] * rcParams["base_aspect_ratio"]) and \
+        ("if static patch uses sizes > default size, expected width sizing "+
+        "should be met relative to input sizing - nested")
+
+    assert np.allclose(sug_height2 * np.array([1,1/3,2/3]),
+                       sizes_list_n_in2[:,1]) and \
+            (sizes_list_n_in2[:,1].min() >
+                    rcParams["base_height"]) and \
+        ("if static patch uses sizes > default size, expected height sizing "+
+        "should be met relative to input sizing - nested")
+
+
+
+
+    # second option (text doesn't fits in desired box) ----------
+
+    t0_2 = cow.text("An approximate answer to the right problem\n"+
+                  "is worth a good deal more than an exact\n"+
+                  "answer to an approximate problem. ~John Tukey") +\
+        p9.element_text(size = 25)
+
+    t1_2 = cow.text("If I can’t picture it,\n"+
+                  "I can’t understand it. ~Albert Einstein") +\
+        p9.element_text(size = 20, ha="left")
+
+    t2_2 = cow.text("Tables usually outperform graphics in\n"+
+                  "reporting on small data sets of 20\n"+
+                  "numbers or less. ~John Tukey") +\
+        p9.element_text(size=25, ha="left")
+
+    vis_nf = cow.patch(t0_2, t1_2, t2_2) +\
         cow.layout(design = np.array([[0,1],
                                       [0,2]]),
-                   rel_heights = [4,1])
+                   rel_heights = [1,2])
 
-    # successful sizings ----
-    sizes, logics = vis1._svg_get_sizes(width_pt = 20 * 72,
-                                        height_pt = 20 * 72)
+    sug_width_nf = 2 * rcParams["base_height"] * rcParams["base_aspect_ratio"]
+    sug_height_nf = 3 * rcParams["base_height"]
 
-    requested_sizes = [(10,20), (10,16), (10,4)]
+    sug_width_nf_min, sug_height_nf_min = vis_nf._default_size()
 
-    assert np.all(logics), \
-        "expected all plotnine objects to be able to be sized correctly "+\
-        "in very large output (v1)"
+    assert (sug_width_nf < sug_width_nf_min) and \
+        (sug_height_nf <= sug_height_nf_min), \
+        ("test structure (that rcParams default size is too small for " +
+        "figure creation) was incorrectly defined (needed width is larger)")
 
-    assert type(sizes) is list and \
-        np.all([len(s) == 2 and type(s) is tuple for s in sizes]), \
-        "expected structure of sizes list is incorrect (v1)"
+    sizes_list_nf, doable_nf = vis_nf.\
+        _doable_size(width=sug_width_nf, height=sug_height_nf,
+                     data_dict = {"size-num-attempts": 1})
 
-    assert np.all([2/3 < (sizes[s_idx][0]/requested_sizes[s_idx][0]) < 1.5 and \
-                    2/3 < (sizes[s_idx][1]/requested_sizes[s_idx][1]) < 1.5
-                    for s_idx in [0,1,2]]), \
-        "suggested sizing in sizes isn't too extreme relative to true "+\
-        "requested sizes- this is just a sanity check, "+\
-        "not a robust test (v1)"
+    sizes_list_nf_in = np.array([[to_inches(x[0], "pt"), to_inches(x[1], "pt")]
+                                for x in sizes_list_nf])
 
-    # failed sizings ------
-    sizes_f, logics_f = vis1._svg_get_sizes(width_pt = 10 * 72,
-                                        height_pt = 10 * 72)
-
-    requested_sizes_f = [(5,10), (5,8), (5,2)] # final one should fail...
-
-    assert not np.all(logics_f) and (logics_f == [True, True, False]), \
-        "expected not all plotnine objects to be able to be sized correctly "+\
-        "in small output (v1.1 - failed)"
-
-    assert type(sizes_f) is list and \
-        np.all([len(s) == 2 and type(s) is tuple for s in sizes_f]), \
-        "expected structure of sizes list is incorrect (v1.1 - failed)"
-
-    assert np.all([2/3 < (sizes_f[s_idx][0]/requested_sizes_f[s_idx][0]) < 1.5 and \
-                    2/3 < (sizes_f[s_idx][1]/requested_sizes_f[s_idx][1]) < 1.5
-                    for s_idx in [0,1]]), \
-        "suggested sizing in sizes (that didn't fail) isn't too extreme "+\
-        "relative to true "+\
-        "requested sizes- this is just a sanity check, "+\
-        "not a robust test (v1.1 - failed)"
-
-    assert sizes_f[2][0] < 1 and sizes_f[2][1] < 1, \
-        "expected failed sizing (due to being too small, to return a scaling" +\
-        "below 1 (note the correction to scaling should be 1/suggested scaling))," +\
-        "(v1.1 - failed)"
-
-    # nested option --------
-    vis_nested = cow.patch(g0,cow.patch(g1, g2)+\
-                        cow.layout(ncol=1, rel_heights = [4,1])) +\
-        cow.layout(nrow=1)
-
-    # successful sizings ----
-    sizes_n, logics_n = vis_nested._svg_get_sizes(width_pt = 20 * 72,
-                                                  height_pt = 20 * 72)
-    requested_sizes_n = [(10,20), (10,16), (10,4)]
-
-    assert np.all(_flatten_nested_list(logics_n)), \
-        "expected all plotnine objects to be able to be sized correctly "+\
-        "in very large output (v2 - nested)"
+    vis_nf._doable_size(width=sug_width_nf_min, height=sug_height_nf_min)
 
 
-    assert type(sizes_n) is list and len(sizes_n) == 2 and \
-            type(sizes_n[0]) is tuple and type(sizes_n[1]) is list and \
-            len(sizes_n[0]) == 2 and len(sizes_n[1]) == 2 and \
-            np.all([len(s) == 2 and type(s) is tuple for s in sizes_n[1]]), \
-        "expected structure of sizes list is incorrect (v2 - nested)"
 
-    sizes_n_flattened = _flatten_nested_list(sizes_n)
+    # nested
 
-    assert np.all([2/3 < (sizes_n_flattened[s_idx][0]/requested_sizes[s_idx][0]) < 1.5 and \
-                    2/3 < (sizes_n_flattened[s_idx][1]/requested_sizes[s_idx][1]) < 1.5
-                    for s_idx in [0,1,2]]), \
-        "suggested sizing in sizes isn't too extreme relative to true "+\
-        "requested sizes- this is just a sanity check, "+\
-        "not a robust test (v2 - nested)"
 
-    assert np.allclose(sizes_n_flattened, sizes), \
-        "expected nested and non-nested suggested sizes to be equal (v1 vs v2)"
+def test_patch_doable_size_StaticNonSimple():
+    """
+    testing patch's _doable_size functionality
 
-    # failed sizings ------
-    sizes_f_n, logics_f_n = vis_nested._svg_get_sizes(width_pt = 10 * 72,
-                                        height_pt = 10 * 72)
+    test focuses on varability in acutal requested size
+    based on plotnine's varying correct input size required
+    """
+    # overall tests should deal with (1) annotations (title & tags)
+    # (2) nested & not nested (3) vary with too small and acceptably sized
+    # figures.
 
-    requested_sizes_f = [(5,10), (5,8), (5,2)] # final one should fail ...
+    # 2. write a second test with ggplot images and save the size
+    # for a regression test (data_regression)
 
-    logic_f_n_flat = _flatten_nested_list(logics_f_n)
-    sizes_f_n_flat = _flatten_nested_list(sizes_f_n)
 
-    assert not np.all(logic_f_n_flat) and \
-            (logic_f_n_flat == [True, True, False]), \
-        "expected not all plotnine objects to be able to be sized correctly "+\
-        "in smaller output (v2.1 - nested, failed)"
 
-    assert type(sizes_f_n) is list and len(sizes_f_n) == 2 and \
-            type(sizes_f_n[0]) is tuple and type(sizes_f_n[1]) is list and \
-            len(sizes_f_n[0]) == 2 and len(sizes_f_n[1]) == 2 and \
-            np.all([len(s) == 2 and type(s) is tuple for s in sizes_f_n[1]]), \
-        "expected structure of sizes list is incorrect (v2.1 - nested, failed)"
 
-    assert np.all([2/3 < (sizes_f_n_flat[s_idx][0]/requested_sizes_f[s_idx][0]) < 1.5 and \
-                    2/3 < (sizes_f_n_flat[s_idx][1]/requested_sizes_f[s_idx][1]) < 1.5
-                    for s_idx in [0,1]]), \
-        "suggested sizing in sizes (that didn't fail) isn't too extreme "+\
-        "relative to true "+\
-        "requested sizes- this is just a sanity check, "+\
-        "not a robust test (v2.1 - nested, failed)"
 
-    assert sizes_f_n_flat[2][0] < 1 and sizes_f_n_flat[2][1] < 1, \
-        "expected failed sizing (due to being too small, to return a scaling" +\
-        "below 1 (note the correction to scaling should be 1/suggested scaling))," +\
-        "(v2.1 - nested, failed)"
+# def test_patch__svg_get_sizes():
+#     g0 = p9.ggplot(p9_data.mpg) +\
+#         p9.geom_bar(p9.aes(x="hwy")) +\
+#         p9.labs(title = 'Plot 0')
 
-    assert np.allclose(sizes_f_n_flat, sizes_f), \
-        "expected nested and non-nested suggested sizes to be equal (v1.1 vs v2.1 - failed)"
+#     g1 = p9.ggplot(p9_data.mpg) +\
+#         p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
+#         p9.labs(title = 'Plot 1')
 
-@given(st.floats(min_value=.5, max_value=49),
-       st.floats(min_value=.5, max_value=49),
-       st.floats(min_value=.5, max_value=49),
-       st.floats(min_value=.5, max_value=49),
-       st.floats(min_value=.5, max_value=49),
-       st.floats(min_value=.5, max_value=49))
-def test_patch__process_sizes(w1,h1,w2,h2,w3,h3):
-    # default patch (not needed)
-    empty_patch = cow.patch()
+#     g2 = p9.ggplot(p9_data.mpg) +\
+#         p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
+#         p9.labs(title = 'Plot 2')
 
-    # not nested -------
-    sizes = [(w1,h1),(w2,h2),(w3,h3)]
+#     g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
+#                                                          "suv",
+#                                                          "pickup"])]) +\
+#         p9.geom_histogram(p9.aes(x="hwy"),bins=10) +\
+#         p9.facet_wrap("class")
 
-    # all true ---
-    logics = [True, True, True]
 
-    out_s = empty_patch._process_sizes(sizes = sizes, logics = logics)
-    assert out_s == sizes, \
-        "expected sizes to return if all logics true"
+#     # basic option ----------
+#     vis1 = cow.patch(g0,g1,g2) +\
+#         cow.layout(design = np.array([[0,1],
+#                                       [0,2]]),
+#                    rel_heights = [4,1])
 
-    # not all true ----
-    logics_f = [True, True, False]
-    out_s1 = empty_patch._process_sizes(sizes = sizes, logics = logics_f)
+#     # successful sizings ----
+#     sizes, logics = vis1._svg_get_sizes(width_pt = 20 * 72,
+#                                         height_pt = 20 * 72)
 
-    assert np.allclose(out_s1, 1/np.min(sizes[2])), \
-        "expected max_scaling should be the max of 1/width_scale and "+\
-        "1/height_scale assoicated with failed plot(s) (v1.1 - 1 plot failed)"
+#     requested_sizes = [(10,20), (10,16), (10,4)]
 
-    logics_f2 = [True, False, False]
-    out_s2 = empty_patch._process_sizes(sizes = sizes, logics = logics_f2)
+#     assert np.all(logics), \
+#         "expected all plotnine objects to be able to be sized correctly "+\
+#         "in very large output (v1)"
 
-    assert np.allclose(out_s2, 1/np.min([w2,h2,w3,h3])), \
-        "expected max_scaling should be the max of 1/width_scale and "+\
-        "1/height_scale assoicated with failed plot(s) (v1.2 - 2 plot failed)"
+#     assert type(sizes) is list and \
+#         np.all([len(s) == 2 and type(s) is tuple for s in sizes]), \
+#         "expected structure of sizes list is incorrect (v1)"
 
-    # nested ---------
-    sizes_n = [(w1,h1),[(w2,h2),(w3,h3)]]
+#     assert np.all([2/3 < (sizes[s_idx][0]/requested_sizes[s_idx][0]) < 1.5 and \
+#                     2/3 < (sizes[s_idx][1]/requested_sizes[s_idx][1]) < 1.5
+#                     for s_idx in [0,1,2]]), \
+#         "suggested sizing in sizes isn't too extreme relative to true "+\
+#         "requested sizes- this is just a sanity check, "+\
+#         "not a robust test (v1)"
 
-    # all true ---
-    logics_n = [True, [True, True]]
-    out_s_n = empty_patch._process_sizes(sizes = sizes_n, logics = logics_n)
-    assert out_s_n == sizes_n, \
-        "expected unflatted sizes to return if all logics true (v2 - nested)"
+#     # failed sizings ------
+#     sizes_f, logics_f = vis1._svg_get_sizes(width_pt = 10 * 72,
+#                                         height_pt = 10 * 72)
 
-    # not all true ----
-    logics_n_f = [True, [True, False]]
-    out_s1 = empty_patch._process_sizes(sizes = sizes_n, logics = logics_n_f)
+#     requested_sizes_f = [(5,10), (5,8), (5,2)] # final one should fail...
 
-    assert np.allclose(out_s1, 1/np.min(sizes_n[1][1])), \
-        "expected max_scaling should be the max of 1/width_scale and "+\
-        "1/height_scale assoicated with failed plot(s) (v2.1 - 1 plot failed)"
+#     assert not np.all(logics_f) and (logics_f == [True, True, False]), \
+#         "expected not all plotnine objects to be able to be sized correctly "+\
+#         "in small output (v1.1 - failed)"
 
-    logics_f2 = [True, [False, False]]
-    out_s2 = empty_patch._process_sizes(sizes = sizes, logics = logics_f2)
+#     assert type(sizes_f) is list and \
+#         np.all([len(s) == 2 and type(s) is tuple for s in sizes_f]), \
+#         "expected structure of sizes list is incorrect (v1.1 - failed)"
 
-    assert np.allclose(out_s2, 1/np.min([w2,h2,w3,h3])), \
-        "expected max_scaling should be the max of 1/width_scale and "+\
-        "1/height_scale assoicated with failed plot(s) (v2.2 - 2 plot failed)"
+#     assert np.all([2/3 < (sizes_f[s_idx][0]/requested_sizes_f[s_idx][0]) < 1.5 and \
+#                     2/3 < (sizes_f[s_idx][1]/requested_sizes_f[s_idx][1]) < 1.5
+#                     for s_idx in [0,1]]), \
+#         "suggested sizing in sizes (that didn't fail) isn't too extreme "+\
+#         "relative to true "+\
+#         "requested sizes- this is just a sanity check, "+\
+#         "not a robust test (v1.1 - failed)"
+
+#     assert sizes_f[2][0] < 1 and sizes_f[2][1] < 1, \
+#         "expected failed sizing (due to being too small, to return a scaling" +\
+#         "below 1 (note the correction to scaling should be 1/suggested scaling))," +\
+#         "(v1.1 - failed)"
+
+#     # nested option --------
+#     vis_nested = cow.patch(g0,cow.patch(g1, g2)+\
+#                         cow.layout(ncol=1, rel_heights = [4,1])) +\
+#         cow.layout(nrow=1)
+
+#     # successful sizings ----
+#     sizes_n, logics_n = vis_nested._svg_get_sizes(width_pt = 20 * 72,
+#                                                   height_pt = 20 * 72)
+#     requested_sizes_n = [(10,20), (10,16), (10,4)]
+
+#     assert np.all(_flatten_nested_list(logics_n)), \
+#         "expected all plotnine objects to be able to be sized correctly "+\
+#         "in very large output (v2 - nested)"
+
+
+#     assert type(sizes_n) is list and len(sizes_n) == 2 and \
+#             type(sizes_n[0]) is tuple and type(sizes_n[1]) is list and \
+#             len(sizes_n[0]) == 2 and len(sizes_n[1]) == 2 and \
+#             np.all([len(s) == 2 and type(s) is tuple for s in sizes_n[1]]), \
+#         "expected structure of sizes list is incorrect (v2 - nested)"
+
+#     sizes_n_flattened = _flatten_nested_list(sizes_n)
+
+#     assert np.all([2/3 < (sizes_n_flattened[s_idx][0]/requested_sizes[s_idx][0]) < 1.5 and \
+#                     2/3 < (sizes_n_flattened[s_idx][1]/requested_sizes[s_idx][1]) < 1.5
+#                     for s_idx in [0,1,2]]), \
+#         "suggested sizing in sizes isn't too extreme relative to true "+\
+#         "requested sizes- this is just a sanity check, "+\
+#         "not a robust test (v2 - nested)"
+
+#     assert np.allclose(sizes_n_flattened, sizes), \
+#         "expected nested and non-nested suggested sizes to be equal (v1 vs v2)"
+
+#     # failed sizings ------
+#     sizes_f_n, logics_f_n = vis_nested._svg_get_sizes(width_pt = 10 * 72,
+#                                         height_pt = 10 * 72)
+
+#     requested_sizes_f = [(5,10), (5,8), (5,2)] # final one should fail ...
+
+#     logic_f_n_flat = _flatten_nested_list(logics_f_n)
+#     sizes_f_n_flat = _flatten_nested_list(sizes_f_n)
+
+#     assert not np.all(logic_f_n_flat) and \
+#             (logic_f_n_flat == [True, True, False]), \
+#         "expected not all plotnine objects to be able to be sized correctly "+\
+#         "in smaller output (v2.1 - nested, failed)"
+
+#     assert type(sizes_f_n) is list and len(sizes_f_n) == 2 and \
+#             type(sizes_f_n[0]) is tuple and type(sizes_f_n[1]) is list and \
+#             len(sizes_f_n[0]) == 2 and len(sizes_f_n[1]) == 2 and \
+#             np.all([len(s) == 2 and type(s) is tuple for s in sizes_f_n[1]]), \
+#         "expected structure of sizes list is incorrect (v2.1 - nested, failed)"
+
+#     assert np.all([2/3 < (sizes_f_n_flat[s_idx][0]/requested_sizes_f[s_idx][0]) < 1.5 and \
+#                     2/3 < (sizes_f_n_flat[s_idx][1]/requested_sizes_f[s_idx][1]) < 1.5
+#                     for s_idx in [0,1]]), \
+#         "suggested sizing in sizes (that didn't fail) isn't too extreme "+\
+#         "relative to true "+\
+#         "requested sizes- this is just a sanity check, "+\
+#         "not a robust test (v2.1 - nested, failed)"
+
+#     assert sizes_f_n_flat[2][0] < 1 and sizes_f_n_flat[2][1] < 1, \
+#         "expected failed sizing (due to being too small, to return a scaling" +\
+#         "below 1 (note the correction to scaling should be 1/suggested scaling))," +\
+#         "(v2.1 - nested, failed)"
+
+#     assert np.allclose(sizes_f_n_flat, sizes_f), \
+#         "expected nested and non-nested suggested sizes to be equal (v1.1 vs v2.1 - failed)"
+
+# @given(st.floats(min_value=.5, max_value=49),
+#        st.floats(min_value=.5, max_value=49),
+#        st.floats(min_value=.5, max_value=49),
+#        st.floats(min_value=.5, max_value=49),
+#        st.floats(min_value=.5, max_value=49),
+#        st.floats(min_value=.5, max_value=49))
+# def test_patch__process_sizes(w1,h1,w2,h2,w3,h3):
+#     # default patch (not needed)
+#     empty_patch = cow.patch()
+
+#     # not nested -------
+#     sizes = [(w1,h1),(w2,h2),(w3,h3)]
+
+#     # all true ---
+#     logics = [True, True, True]
+
+#     out_s = empty_patch._process_sizes(sizes = sizes, logics = logics)
+#     assert out_s == sizes, \
+#         "expected sizes to return if all logics true"
+
+#     # not all true ----
+#     logics_f = [True, True, False]
+#     out_s1 = empty_patch._process_sizes(sizes = sizes, logics = logics_f)
+
+#     assert np.allclose(out_s1, 1/np.min(sizes[2])), \
+#         "expected max_scaling should be the max of 1/width_scale and "+\
+#         "1/height_scale assoicated with failed plot(s) (v1.1 - 1 plot failed)"
+
+#     logics_f2 = [True, False, False]
+#     out_s2 = empty_patch._process_sizes(sizes = sizes, logics = logics_f2)
+
+#     assert np.allclose(out_s2, 1/np.min([w2,h2,w3,h3])), \
+#         "expected max_scaling should be the max of 1/width_scale and "+\
+#         "1/height_scale assoicated with failed plot(s) (v1.2 - 2 plot failed)"
+
+#     # nested ---------
+#     sizes_n = [(w1,h1),[(w2,h2),(w3,h3)]]
+
+#     # all true ---
+#     logics_n = [True, [True, True]]
+#     out_s_n = empty_patch._process_sizes(sizes = sizes_n, logics = logics_n)
+#     assert out_s_n == sizes_n, \
+#         "expected unflatted sizes to return if all logics true (v2 - nested)"
+
+#     # not all true ----
+#     logics_n_f = [True, [True, False]]
+#     out_s1 = empty_patch._process_sizes(sizes = sizes_n, logics = logics_n_f)
+
+#     assert np.allclose(out_s1, 1/np.min(sizes_n[1][1])), \
+#         "expected max_scaling should be the max of 1/width_scale and "+\
+#         "1/height_scale assoicated with failed plot(s) (v2.1 - 1 plot failed)"
+
+#     logics_f2 = [True, [False, False]]
+#     out_s2 = empty_patch._process_sizes(sizes = sizes, logics = logics_f2)
+
+#     assert np.allclose(out_s2, 1/np.min([w2,h2,w3,h3])), \
+#         "expected max_scaling should be the max of 1/width_scale and "+\
+#         "1/height_scale assoicated with failed plot(s) (v2.2 - 2 plot failed)"
 
 
 # global savings and showing and creating ------
@@ -1168,40 +1533,7 @@ def test_patch__repr__(capsys):
         " # grobs and layout"
 
 
-# grammar -----------
-
-def test_patch__and__(image_regression):
-    # # creation of some some ggplot objects
-    # g0 = p9.ggplot(p9_data.mpg) +\
-    #     p9.geom_bar(p9.aes(x="hwy")) +\
-    #     p9.labs(title = 'Plot 0')
-
-    # g1 = p9.ggplot(p9_data.mpg) +\
-    #     p9.geom_point(p9.aes(x="hwy", y = "displ")) +\
-    #     p9.labs(title = 'Plot 1')
-
-    # g2 = p9.ggplot(p9_data.mpg) +\
-    #     p9.geom_point(p9.aes(x="hwy", y = "displ", color="class")) +\
-    #     p9.labs(title = 'Plot 2')
-
-    # g3 = p9.ggplot(p9_data.mpg[p9_data.mpg["class"].isin(["compact",
-    #                                                      "suv",
-    #                                                      "pickup"])]) +\
-    #     p9.geom_histogram(p9.aes(x="hwy")) +\
-    #     p9.facet_wrap("class")
-
-    # g0p = cow.patch(g0)
-    # g1p = cow.patch(g1)
-    # g2p = cow.patch(g2)
-    # g3p = cow.patch(g3)
-
-
-    # g01 = g0p + g1p
-    # g02 = g0p + g2p
-    # g012 = g0p + g1p + g2p
-    # g012_2 = g01 + g2p
-    pass
-
+# uniquify -----------
 
 def test_patch_svg_uniquify1(image_regression):
     """
@@ -1265,7 +1597,6 @@ def test_patch_svg_uniquify2(image_regression):
                        dpi=96, _format="png", verbose = False)
 
         image_regression.check(fid.getvalue(), diff_threshold=.1)
-
 
 
 def test_patch_svg_uniquify3(image_regression):

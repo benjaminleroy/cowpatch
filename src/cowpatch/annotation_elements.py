@@ -590,7 +590,7 @@ class annotation:
         if not inherits(full_index, tuple):
             full_index = (full_index, )
 
-        if index != full_index[-1]:
+        if (index is not None) and (index != full_index[-1]):
             raise ValueError("structure between arguments `index` and "+
                              "`full_index` disagree.")
 
@@ -1102,7 +1102,7 @@ class annotation:
 
 
     def inheritance_type(self):
-        return self.tag_inherit
+        return self.tags_inherit
 
 
     def __add__(self, other):
