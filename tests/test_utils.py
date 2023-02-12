@@ -171,3 +171,150 @@ def test__flatten_nested_list():
     x3_flat = cowpatch.utils._flatten_nested_list(x3)
     assert x3_flat == x3, \
         "_flatten_nested_list failed to flatten correctly (v3 - no nesting)"
+
+
+@given(st.integers(min_value=1, max_value=100000),
+       st.floats(min_value = 1.001, max_value=5),
+       st.floats(min_value = .2, max_value=.9),
+       st.floats(min_value = 5, max_value=25),
+       st.floats(min_value = 5, max_value=25))
+def test__overall_scale_recommendation_patch_NoAnnotation(seed,
+                                                          upscale,
+                                                          lesser_upscale,
+                                                          width, height):
+    """
+    basic test _overall_scale_recommendation_patch, without annotation
+    """
+    np.random.seed(seed)
+    size_multiplier = list(np.array([1, upscale, 1,
+                        (upscale * lesser_upscale + (1-lesser_upscale))
+                        ])[np.random.choice(4,4, replace=False)])
+    text_inner_size = (0,0)
+    text_extra_size = (0,0)
+    original_overall_size = (width, height)
+
+    out = cowpatch.utils._overall_scale_recommendation_patch(size_multiplier,
+                                                       text_inner_size,
+                                                       text_extra_size,
+                                                       original_overall_size)
+
+    assert np.allclose(out[0],
+                       np.array([width,height])*upscale) and \
+        np.allclose(out[1], upscale) and \
+        np.allclose(np.max(size_multiplier), upscale), \
+        "overall upscaling matches needs of largest upscale grob"
+
+
+@given(st.integers(min_value=1, max_value=100000),
+       st.floats(min_value = 1.001, max_value=5),
+       st.floats(min_value = .2, max_value=.9),
+       st.floats(min_value = 5, max_value=25),
+       st.floats(min_value = 5, max_value=25),
+
+       st.floats(min_value = .1, max_value=10),
+       st.floats(min_value = .1, max_value=10),
+       st.floats(min_value = .1, max_value=2),
+       st.floats(min_value = .1, max_value=2))
+def test__overall_scale_recommendation_patch_Annotation(seed,
+                                                          upscale,
+                                                          lesser_upscale,
+                                                          width, height,
+                                                          text_inner_w,
+                                                          text_inner_h,
+                                                          text_extra_w,
+                                                          text_extra_h):
+    """
+    basic test _overall_scale_recommendation_patch, with annotation
+
+    solid checks with/without extra_size, with/without inner_size
+    not really any checks on both non-zero
+    """
+    np.random.seed(seed)
+    size_multiplier = list(np.array([1, upscale, 1,
+                        (upscale * lesser_upscale + (1-lesser_upscale))
+                        ])[np.random.choice(4,4, replace=False)])
+    text_inner_size = (text_inner_w,text_inner_h)
+    text_extra_size = (text_extra_w,text_extra_h)
+    original_overall_size = (width, height)
+
+    out_no_ann = cowpatch.utils._overall_scale_recommendation_patch(size_multiplier,
+                                                       (0,0),
+                                                       (0,0),
+                                                       original_overall_size)
+
+
+    # both non-zero ---------------
+
+    out = cowpatch.utils._overall_scale_recommendation_patch(size_multiplier,
+                                                       text_inner_size,
+                                                       text_extra_size,
+                                                       original_overall_size)
+
+
+    # no extra size ------------------
+
+    out_no_extra_size = cowpatch.utils._overall_scale_recommendation_patch(size_multiplier,
+                                                       text_inner_size,
+                                                       (0,0),
+                                                       original_overall_size)
+
+    # text_inner_size < original_overall_size, and text_extra_size = (0,0))
+    if (text_inner_size[0] < width) and (text_inner_size[1] < height):
+        assert np.allclose(out_no_extra_size[0], np.array([width,height])*upscale) and \
+            np.allclose(out_no_extra_size[1], upscale) and \
+            np.allclose(np.max(size_multiplier), upscale), \
+            ("overall upscaling matches needs of largest upscale grob " +
+             "(text_inner_size < original_overall_size, and " +
+             "text_extra_size = (0,0))")
+    elif (text_inner_size[0] > out_no_ann[0][0]) or \
+        (text_inner_size[1] > out_no_ann[0][1]):
+        # text inner size is larger than normal upscale required
+        assert out_no_extra_size[1] > np.max(size_multiplier), \
+            ("if text_inner_size is larger than the base scale-up sizing " +
+             "the scaling will be larger then for just the default")
+
+        if text_inner_size[0] > out_no_ann[0][0]:
+            assert np.allclose(text_inner_size[0], out_no_extra_size[0][0]), \
+                ("if text_inner_size is larger than the base scale-up sizing " +
+                "outputted sizing should be relative to it (width)")
+
+        if text_inner_size[1] > out_no_ann[0][1]:
+            assert np.allclose(text_inner_size[1], out_no_extra_size[0][1]), \
+                ("if text_inner_size is larger than the base scale-up sizing " +
+                "outputted sizing should be relative to it (height)")
+
+    # no inner size ------------------
+
+    # TODO: see comments
+    # Comment: TODO: look at the equation on overleaf (page 2 & 3) and
+    # inspect the ipad notes on why we thought it was $<$ not $>$ for the
+    # logic.)
+
+    out_no_inner_size = cowpatch.utils._overall_scale_recommendation_patch(size_multiplier,
+                                                       (0,0),
+                                                       text_extra_size,
+                                                       original_overall_size)
+
+    # minimum size of height and width
+    expected_size_out_no_inner_size_no_ratio = \
+        (np.array(original_overall_size) - np.array(text_extra_size)) *\
+        np.max(size_multiplier) + np.array(text_extra_size)
+
+    scaling = np.max([expected_size_out_no_inner_size_no_ratio[i]/original_overall_size[i]
+                        for i in [0,1]])
+
+    # calculation to get height and width that obey min sizing and keep height/width ratio
+    # TODO: the idea that you can use an argmin isn't correct - this is relative ratio even now.
+    min_val = np.argmin(expected_size_out_no_inner_size_no_ratio)
+    expected_size_out_no_inner_size =\
+        expected_size_out_no_inner_size_no_ratio[min_val] *\
+            [np.array([1, height/width]), np.array([width,height,1])][min_val]
+
+
+    assert np.allclose(expected_size_out_no_inner_size, out_no_inner_size[0]) and \
+        np.allclose(scaling,  out_no_inner_size[1]), \
+        ("expected (with inner_size = 0), that extra size impacted both the "+
+        "initial scaling estimate and the final estimated size")
+
+
+

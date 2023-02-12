@@ -517,7 +517,7 @@ class layout:
                               "with self.num_grobs")
             num_grobs = self.num_grobs
 
-        areas = self._element_locations(1,1) # basically getting relative positions (doesn't matter) - nor does it matter about rel_height and width, but ah well
+        areas = self._element_locations(1,1, num_grobs=num_grobs) # basically getting relative positions (doesn't matter) - nor does it matter about rel_height and width, but ah well
         all_x_left = np.array([a.x_left for a in areas])
         all_y_top = np.array([a.y_top for a in areas])
 
@@ -624,8 +624,16 @@ class layout:
         return design_logic and \
             self.ncol == value.ncol and \
             self.nrow == value.nrow and \
-            np.unique(self.rel_heights/value.rel_heights).shape[0] == 1 and \
-            np.unique(self.rel_widths/value.rel_widths).shape[0] == 1
+            (
+             ((self.rel_heights is None) and (value.rel_heights is None))
+             or
+             (np.unique(self.rel_heights/value.rel_heights).shape[0] == 1)
+             ) and \
+            (
+             ((self.rel_widths is None) and (value.rel_widths is None))
+             or
+             (np.unique(self.rel_widths/value.rel_widths).shape[0] == 1)
+             )
 
 
 class area:
